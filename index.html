@@ -999,6 +999,9 @@ let callSecs = 0;
 let callCheckState = {};
 let callClockInterval = null;
 let isTyping = false;
+let currentRole = null;
+let currentUser = null;
+let selectedAuthRole = 'admin';
 const sopData = {
   cancel: {
     title: 'Order Cancellation SOP',
@@ -1562,19 +1565,32 @@ function renderRefList(cat) {
 function renderRefListItems(items) {
   const list = document.getElementById('ref-list');
   if(!items.length){ list.innerHTML = '<div style="padding:20px;color:var(--muted);font-size:13px">No results found.</div>'; return; }
-  list.innerHTML = items.map((r, idx) => `
-    <div class="ref-item" id="ref-item-${idx}">
-      <div class="ref-icon" style="background:${r.iconBg};color:${r.iconColor};cursor:pointer" onclick="sendPrompt('Tell me about the Ninja Patches reference guide for: ${r.title}')"><i class="${r.icon}" style="font-size:15px"></i></div>
-      <div style="flex:1;cursor:pointer" onclick="sendPrompt('Tell me about the Ninja Patches reference guide for: ${r.title}')">
-        <div class="ref-title">${r.title}</div>
-        <div class="ref-desc">${r.desc}</div>
-        <div class="ref-tags">${r.tags.map(t => '<span class="ref-tag" style="' + r.tagStyle + '">' + t + '</span>').join('')}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <i class="fas fa-external-link-alt" style="font-size:12px;color:var(--muted);cursor:pointer" onclick="sendPrompt('Tell me about the Ninja Patches reference guide for: ${r.title}')"></i>
-        ${currentRole === 'admin' ? '<button onclick="deleteRefItem(' + idx + ')" style="padding:4px 9px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer"><i class=\"fas fa-trash\"></i></button>' : ''}
-      </div>
-    </div>`).join('');
+  list.innerHTML = '';
+  items.forEach(function(r, idx) {
+    const isAdmin = currentRole === 'admin';
+    const div = document.createElement('div');
+    div.className = 'ref-item';
+    div.id = 'ref-item-' + idx;
+    div.innerHTML = '<div class="ref-icon" style="background:' + r.iconBg + ';color:' + r.iconColor + ';cursor:pointer"><i class="' + r.icon + '" style="font-size:15px"></i></div>'
+      + '<div style="flex:1;cursor:pointer">'
+      + '<div class="ref-title">' + r.title + '</div>'
+      + '<div class="ref-desc">' + r.desc + '</div>'
+      + '<div class="ref-tags">' + r.tags.map(function(t){ return '<span class="ref-tag" style="' + r.tagStyle + '">' + t + '</span>'; }).join('') + '</div>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:8px">'
+      + '<i class="fas fa-external-link-alt" style="font-size:12px;color:var(--muted);cursor:pointer"></i>'
+      + (isAdmin ? '<button style="padding:4px 9px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer"><i class="fas fa-trash"></i></button>' : '')
+      + '</div>';
+    var iconEl = div.querySelector('.ref-icon');
+    if (iconEl) iconEl.onclick = function(){ sendPrompt('Tell me about the Ninja Patches reference guide for: ' + r.title); };
+    var bodyEl = div.querySelector('.ref-title');
+    if (bodyEl && bodyEl.parentNode) bodyEl.parentNode.onclick = function(){ sendPrompt('Tell me about the Ninja Patches reference guide for: ' + r.title); };
+    if (isAdmin) {
+      const delBtn = div.querySelector('button');
+      if (delBtn) { (function(i){ delBtn.onclick = function(){ deleteRefItem(i); }; })(idx); }
+    }
+    list.appendChild(div);
+  });
 }
 
 function copyTemplate(btn, text) {
@@ -1612,9 +1628,7 @@ let platformCredentials = _stored || {
   agents: [{ username: 'agent', password: 'patches2025', name: 'Agent' }]
 };
 
-let currentRole = null;
-let currentUser = null;
-let selectedAuthRole = 'admin';
+// currentRole declared at top of script
 
 function selectRole(role) {
   selectedAuthRole = role;
