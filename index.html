@@ -5,16 +5,16 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
     --bg:#0a0b0d;--surface:#111318;--card:#161b24;--border:#1e2535;--accent:#4caf7d;--accent2:#4caf7d;--accent3:#7c5ce8;--text:#e8eaf0;--muted:#6b7a99;--soft:#b0bbcc;
     --ninja-green:#4caf7d;--ninja-green-light:#4caf7d;--ninja-green-dim:#1a3028;
-    --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+    --font-head:'Geist',sans-serif;--font-body:'Geist',sans-serif;
   }
-  body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;min-height:100vh;overflow-x:hidden}
+  body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden}
 
   /* ── AUTH SCREEN ── */
   #auth-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;background-image:radial-gradient(ellipse at 30% 50%,#4caf7d06 0%,transparent 60%)}
@@ -22,26 +22,26 @@
   .auth-card{width:380px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:36px 32px}
   .auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
   .auth-logo-mark{width:48px;height:48px;background:var(--ninja-green-dim);border-radius:11px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .auth-logo-text{font-family:var(--font-head);font-weight:800;font-size:18px;color:var(--text)}
+  .auth-logo-text{font-family:'Geist',sans-serif;font-weight:800;font-size:18px;color:var(--text)}
   .auth-logo-sub{font-size:10px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase}
-  .auth-title{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--text);margin-bottom:4px}
+  .auth-title{font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:4px}
   .auth-sub{font-size:12px;color:var(--muted);margin-bottom:24px;line-height:1.6}
   .auth-role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-  .auth-role-btn{padding:16px 12px;background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .2s;font-family:var(--font-body)}
+  .auth-role-btn{padding:16px 12px;background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .2s;font-family:'Geist',sans-serif}
   .auth-role-btn:hover{border-color:#4caf7d40}
   .auth-role-btn.selected.admin{border-color:var(--accent);background:#4caf7d10}
   .auth-role-btn.selected.agent{border-color:var(--ninja-green-light);background:#4caf7d10}
   .auth-role-icon{font-size:22px;margin-bottom:6px}
-  .auth-role-name{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text)}
+  .auth-role-name{font-family:'Geist',sans-serif;font-size:13px;font-weight:700;color:var(--text)}
   .auth-role-desc{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.4}
   .auth-field{margin-bottom:14px}
   .auth-field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;font-weight:600}
-  .auth-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none}
+  .auth-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'Geist',sans-serif;font-size:13px;outline:none}
   .auth-input:focus{border-color:#7c5ce855}
   .auth-input::placeholder{color:var(--muted)}
   .auth-error{font-size:12px;color:#ff4757;margin-bottom:12px;padding:8px 12px;background:#ff475710;border-radius:7px;border:1px solid #ff475725;display:none}
   .auth-error.show{display:block}
-  .auth-submit{width:100%;padding:13px;background:var(--accent);border:none;border-radius:9px;font-family:var(--font-head);font-size:14px;font-weight:700;color:#fff;cursor:pointer;letter-spacing:-0.2px}
+  .auth-submit{width:100%;padding:13px;background:var(--accent);border:none;border-radius:9px;font-family:'Geist',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;letter-spacing:-0.2px}
   .auth-submit:hover{opacity:.9}
   .auth-creds-hint{font-size:11px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.6;background:var(--card);padding:10px;border-radius:8px;border:1px solid var(--border)}
   .auth-creds-hint strong{color:var(--soft)}
@@ -50,7 +50,7 @@
   .role-badge{padding:3px 10px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px}
   .role-badge.admin{background:#4caf7d20;color:var(--accent);border:1px solid #ff6b3330}
   .role-badge.agent{background:#4caf7d18;color:var(--accent2);border:1px solid #4caf7d25}
-  .logout-btn{padding:5px 11px;background:var(--card);border:1px solid var(--border);border-radius:7px;font-size:11px;color:var(--muted);cursor:pointer;font-family:var(--font-body)}
+  .logout-btn{padding:5px 11px;background:var(--card);border:1px solid var(--border);border-radius:7px;font-size:11px;color:var(--muted);cursor:pointer;font-family:'Geist',sans-serif}
   .logout-btn:hover{color:var(--text)}
 
   /* ── ADMIN-ONLY ELEMENTS ── */
@@ -65,7 +65,7 @@
   .edit-toolbar{display:none;align-items:center;gap:8px;padding:8px 16px;background:#4caf7d08;border-bottom:1px solid #ff6b3318}
   body.role-admin .edit-toolbar{display:flex}
   .edit-toolbar-label{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;font-weight:600}
-  .edit-btn{padding:5px 12px;background:var(--card);border:1px solid #ff6b3330;border-radius:6px;font-size:11px;color:var(--accent);cursor:pointer;font-family:var(--font-body);display:inline-flex;align-items:center;gap:5px}
+  .edit-btn{padding:5px 12px;background:var(--card);border:1px solid #ff6b3330;border-radius:6px;font-size:11px;color:var(--accent);cursor:pointer;font-family:'Geist',sans-serif;display:inline-flex;align-items:center;gap:5px}
   .edit-btn:hover{background:#4caf7d15}
   .edit-btn.save{background:var(--accent);color:#fff;border-color:var(--accent)}
   .edit-btn.save:hover{opacity:.88}
@@ -80,13 +80,13 @@
   /* ── ADMIN PANEL PAGE ── */
   .admin-panel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;padding:24px 36px}
   .admin-panel-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
-  .admin-panel-card h3{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .admin-panel-card h3{font-family:'Geist',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px}
   .admin-panel-card p{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:14px}
   .admin-stat-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
   .admin-stat{background:var(--surface);border-radius:7px;padding:8px 12px;text-align:center;flex:1;min-width:70px}
-  .admin-stat-num{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)}
+  .admin-stat-num{font-family:'Geist',sans-serif;font-size:18px;font-weight:800;color:var(--text)}
   .admin-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:1px}
-  .admin-action-btn{width:100%;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:7px;font-size:12px;color:var(--soft);cursor:pointer;font-family:var(--font-body);text-align:left;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .admin-action-btn{width:100%;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:7px;font-size:12px;color:var(--soft);cursor:pointer;font-family:'Geist',sans-serif;text-align:left;display:flex;align-items:center;gap:8px;margin-bottom:6px}
   .admin-action-btn:hover{background:var(--card);color:var(--text)}
   .admin-action-btn i{font-size:13px;color:var(--accent);width:14px}
 
@@ -94,17 +94,17 @@
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;align-items:center;justify-content:center}
   .modal-overlay.open{display:flex}
   .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;width:520px;max-width:92vw;max-height:80vh;overflow-y:auto}
-  .modal-box h3{font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--text);margin-bottom:4px}
+  .modal-box h3{font-family:'Geist',sans-serif;font-size:16px;font-weight:800;color:var(--text);margin-bottom:4px}
   .modal-box p{font-size:12px;color:var(--muted);margin-bottom:18px}
   .modal-field{margin-bottom:14px}
   .modal-field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;font-weight:600}
-  .modal-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none}
+  .modal-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:var(--text);font-family:'Geist',sans-serif;font-size:13px;outline:none}
   .modal-input:focus{border-color:#7c5ce850}
-  .modal-textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none;resize:vertical;min-height:80px;line-height:1.5}
+  .modal-textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:var(--text);font-family:'Geist',sans-serif;font-size:13px;outline:none;resize:vertical;min-height:80px;line-height:1.5}
   .modal-textarea:focus{border-color:#7c5ce850}
-  .modal-select{width:100%;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none}
+  .modal-select{width:100%;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:var(--text);font-family:'Geist',sans-serif;font-size:13px;outline:none}
   .modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-  .modal-btn{padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);border:none}
+  .modal-btn{padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;border:none}
   .modal-btn.primary{background:var(--accent);color:#fff}
   .modal-btn.primary:hover{opacity:.88}
   .modal-btn.secondary{background:var(--card);border:1px solid var(--border);color:var(--soft)}
@@ -118,10 +118,10 @@
   .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100}
   .logo{display:flex;align-items:center;gap:10px}
   .logo-mark{width:36px;height:36px;background:var(--ninja-green-dim);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .logo-text{font-family:var(--font-head);font-weight:700;font-size:17px;color:var(--text);letter-spacing:-0.3px}
+  .logo-text{font-family:'Geist',sans-serif;font-weight:700;font-size:17px;color:var(--text);letter-spacing:-0.3px}
   .logo-sub{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px}
   .nav-pills{display:flex;gap:4px}
-  .nav-pill{padding:7px 14px;border-radius:7px;font-size:13px;cursor:pointer;transition:all .2s;border:none;background:transparent;color:var(--muted);font-family:var(--font-body)}
+  .nav-pill{padding:7px 14px;border-radius:7px;font-size:13px;cursor:pointer;transition:all .2s;border:none;background:transparent;color:var(--muted);font-family:'Geist',sans-serif}
   .nav-pill:hover{background:var(--card);color:var(--text)}
   .nav-pill.active{background:var(--card);color:var(--accent);border:1px solid #4caf7d30}
   .user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--card);border-radius:20px;border:1px solid var(--border)}
@@ -154,17 +154,17 @@
   .hero-eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:6px}
   .eyebrow-dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-  .hero h1{font-family:var(--font-head);font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1.15;color:var(--text);margin-bottom:10px}
+  .hero h1{font-family:'Geist',sans-serif;font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1.15;color:var(--text);margin-bottom:10px}
   .hero h1 span{color:var(--accent)}
   .hero p{color:var(--soft);font-size:14px;max-width:560px;line-height:1.65}
   .hero-stats{display:flex;gap:28px;margin-top:24px}
   .hero-stat{text-align:center}
-  .hero-stat-num{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--text)}
+  .hero-stat-num{font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:var(--text)}
   .hero-stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
 
   /* GRID CARDS */
   .section-pad{padding:28px 36px}
-  .section-title{font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .section-title{font-family:'Geist',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px}
   .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
   .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:28px}
   .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
@@ -177,7 +177,7 @@
   .card-icon.blue{background:#3498db18;color:#74b9ff}
   .card-icon.red{background:#e74c3c18;color:#ff7675}
   .card-icon.yellow{background:#f39c1218;color:#ffeaa7}
-  .card h3{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
+  .card h3{font-family:'Geist',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
   .card p{font-size:12px;color:var(--muted);line-height:1.55}
   .card-arrow{position:absolute;top:18px;right:16px;color:var(--accent);font-size:13px;opacity:0;transform:translateX(-4px);transition:all .2s}
   .card-tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-top:8px}
@@ -192,7 +192,7 @@
   .back-btn:hover{color:var(--text)}
   .detail-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
   .detail-badge.sop{background:#4caf7d20;color:var(--accent);border:1px solid #4caf7d35}
-  .detail-title{font-family:var(--font-head);font-size:24px;font-weight:800;letter-spacing:-0.5px;color:var(--text);line-height:1.2;margin-bottom:8px}
+  .detail-title{font-family:'Geist',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.5px;color:var(--text);line-height:1.2;margin-bottom:8px}
   .detail-meta{display:flex;gap:16px;flex-wrap:wrap}
   .meta-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}
   .meta-item i{font-size:12px}
@@ -204,16 +204,16 @@
   .step-list{list-style:none;margin:16px 0 24px}
   .step-item{display:flex;gap:14px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
   .step-item:last-child{border-bottom:none}
-  .step-num{width:28px;height:28px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:12px;font-weight:800;color:#fff;flex-shrink:0;margin-top:1px}
+  .step-num{width:28px;height:28px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;margin-top:1px}
   .step-num.teal{background:var(--accent2)}
   .step-num.purple{background:var(--accent3)}
-  .step-content h4{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+  .step-content h4{font-family:'Geist',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
   .step-content p{font-size:12px;color:var(--soft);line-height:1.6}
   .step-content .tip{background:#7c5ce810;border-left:2px solid var(--accent3);padding:8px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:var(--soft);line-height:1.5}
   .step-content .warn{background:#4caf7d10;border-left:2px solid var(--accent);padding:8px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:var(--soft);line-height:1.5}
 
   .aside-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px}
-  .aside-card h5{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .aside-card h5{font-family:'Geist',sans-serif;font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
   .aside-card h5 i{font-size:12px;color:var(--accent)}
   .check-list{list-style:none}
   .check-list li{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:var(--soft);margin-bottom:6px;line-height:1.5}
@@ -224,7 +224,7 @@
 
   /* TRAINING SCENARIOS */
   .scenario-header{padding:24px 36px;border-bottom:1px solid var(--border)}
-  .scenario-title{font-family:var(--font-head);font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+  .scenario-title{font-family:'Geist',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
   .scenario-sub{font-size:13px;color:var(--muted)}
   .scenario-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:24px 36px}
   .scenario-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:all .2s}
@@ -233,18 +233,18 @@
   .scenario-difficulty.easy{background:#4caf7d15;color:var(--accent2)}
   .scenario-difficulty.medium{background:#f39c1215;color:#ffeaa7}
   .scenario-difficulty.hard{background:#4caf7d15;color:var(--accent)}
-  .scenario-card h3{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
+  .scenario-card h3{font-family:'Geist',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
   .scenario-card p{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:12px}
   .scenario-footer{display:flex;align-items:center;justify-content:space-between}
   .scenario-tag{font-size:11px;color:var(--soft)}
-  .scenario-btn{padding:6px 14px;background:var(--accent);border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-body)}
+  .scenario-btn{padding:6px 14px;background:var(--accent);border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif}
   .scenario-btn:hover{opacity:.9}
   .scenario-btn.teal{background:var(--accent2);color:#0a0b0d}
 
   /* SCENARIO PLAYER */
   .player-wrap{padding:28px 36px}
   .player-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
-  .player-back{padding:7px 14px;background:var(--card);border:1px solid var(--border);border-radius:7px;font-size:12px;color:var(--soft);cursor:pointer;font-family:var(--font-body)}
+  .player-back{padding:7px 14px;background:var(--card);border:1px solid var(--border);border-radius:7px;font-size:12px;color:var(--soft);cursor:pointer;font-family:'Geist',sans-serif}
   .player-back:hover{color:var(--text)}
   .player-progress{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
   .player-fill{height:100%;background:var(--accent2);border-radius:2px;transition:width .4s ease}
@@ -261,7 +261,7 @@
   .bubble-box.wrong{background:#e74c3c15;border:1px solid #e74c3c30;color:var(--text);border-radius:10px 10px 2px 10px}
 
   .choices{display:flex;flex-direction:column;gap:8px;margin-top:16px;max-width:600px;margin-left:auto;margin-right:auto}
-  .choice-btn{padding:11px 15px;background:var(--card);border:1px solid var(--border);border-radius:9px;text-align:left;font-size:13px;color:var(--soft);cursor:pointer;transition:all .18s;font-family:var(--font-body);line-height:1.45}
+  .choice-btn{padding:11px 15px;background:var(--card);border:1px solid var(--border);border-radius:9px;text-align:left;font-size:13px;color:var(--soft);cursor:pointer;transition:all .18s;font-family:'Geist',sans-serif;line-height:1.45}
   .choice-btn:hover{border-color:#7c5ce840;color:var(--text);background:#7c5ce808}
   .choice-btn.selected.correct-ans{border-color:var(--ninja-green-light);background:#4caf7d12;color:var(--text)}
   .choice-btn.selected.wrong-ans{border-color:#e74c3c;background:#e74c3c12;color:var(--text)}
@@ -270,7 +270,7 @@
   .feedback-box.show{display:block;animation:slideIn .3s ease}
   .feedback-box.correct{background:#4caf7d10;border:1px solid #4caf7d30;color:var(--text)}
   .feedback-box.wrong{background:#e74c3c10;border:1px solid #e74c3c30;color:var(--text)}
-  .next-btn{display:flex;align-items:center;gap:7px;padding:10px 20px;background:var(--accent2);border:none;border-radius:8px;color:#0a0b0d;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);margin:14px auto 0;display:none}
+  .next-btn{display:flex;align-items:center;gap:7px;padding:10px 20px;background:var(--accent2);border:none;border-radius:8px;color:#0a0b0d;font-size:13px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;margin:14px auto 0;display:none}
   .next-btn.show{display:flex}
   .next-btn:hover{opacity:.9}
 
@@ -278,10 +278,10 @@
   .ref-search{padding:20px 36px;border-bottom:1px solid var(--border)}
   .search-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:10px 14px}
   .search-box i{color:var(--muted);font-size:15px}
-  .search-box input{background:none;border:none;outline:none;color:var(--text);font-size:14px;flex:1;font-family:var(--font-body)}
+  .search-box input{background:none;border:none;outline:none;color:var(--text);font-size:14px;flex:1;font-family:'Geist',sans-serif}
   .search-box input::placeholder{color:var(--muted)}
   .ref-cats{display:flex;gap:8px;padding:16px 36px;border-bottom:1px solid var(--border);overflow-x:auto;flex-wrap:wrap}
-  .ref-cat{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;border:1px solid var(--border);color:var(--muted);white-space:nowrap;background:none;font-family:var(--font-body)}
+  .ref-cat{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;border:1px solid var(--border);color:var(--muted);white-space:nowrap;background:none;font-family:'Geist',sans-serif}
   .ref-cat:hover{color:var(--text)}
   .ref-cat.active{background:var(--card);color:var(--accent);border-color:#4caf7d40}
   .ref-list{padding:20px 36px}
@@ -298,10 +298,10 @@
   .tmpl-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:all .2s}
   .tmpl-card:hover{border-color:#7c5ce840;transform:translateY(-2px)}
   .tmpl-type{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--accent3);font-weight:600;margin-bottom:8px}
-  .tmpl-card h3{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
+  .tmpl-card h3{font-family:'Geist',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
   .tmpl-card p{font-size:12px;color:var(--muted);line-height:1.5}
   .tmpl-preview{background:var(--surface);border-radius:7px;padding:12px;margin-top:12px;font-size:11px;color:var(--soft);line-height:1.65;border-left:2px solid var(--accent3)}
-  .copy-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--accent3);border:none;border-radius:5px;color:#fff;font-size:11px;font-weight:600;cursor:pointer;margin-top:10px;font-family:var(--font-body)}
+  .copy-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--accent3);border:none;border-radius:5px;color:#fff;font-size:11px;font-weight:600;cursor:pointer;margin-top:10px;font-family:'Geist',sans-serif}
   .copy-btn:hover{opacity:.9}
 
   /* POLICIES */
@@ -310,7 +310,7 @@
   .policy-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
   .policy-header-left{display:flex;align-items:center;gap:10px}
   .policy-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
-  .policy-name{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text)}
+  .policy-name{font-family:'Geist',sans-serif;font-size:14px;font-weight:700;color:var(--text)}
   .policy-body{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
   .policy-body.open{display:block;animation:fadeIn .2s}
   .policy-row{display:flex;gap:8px;margin-bottom:8px;font-size:12px;line-height:1.55}
@@ -461,6 +461,7 @@
       <button class="edit-btn admin-only-inline" onclick="openAddSOPModal()"><i class="fas fa-plus"></i> Add SOP</button>
       <button class="edit-btn admin-only-inline" onclick="openAddTemplateModal()"><i class="fas fa-plus"></i> Add Template</button>
       <button class="edit-btn admin-only-inline" onclick="showPage('adminpanel')"><i class="fas fa-shield-alt"></i> Admin Panel</button>
+      <button class="edit-btn admin-only-inline" onclick="openEditTipsModal()"><i class="fas fa-lightbulb"></i> Edit Tips</button>
     </div>
 
     <!-- HOME PAGE -->
@@ -471,13 +472,13 @@
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
           <div style="width:40px;height:40px;background:#4caf7d20;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--accent2)"><i class="fas fa-graduation-cap"></i></div>
           <div>
-            <div style="font-family:var(--font-head);font-size:17px;font-weight:800;color:var(--text)">Welcome, <span id="agent-welcome-name" style="color:var(--accent2)">Agent</span></div>
+            <div style="font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--text)">Welcome, <span id="agent-welcome-name" style="color:var(--accent2)">Agent</span></div>
             <div style="font-size:12px;color:var(--muted)">You have access to all training materials and the phone simulator.</div>
           </div>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
-          <button style="padding:8px 16px;background:var(--accent2);border:none;border-radius:7px;font-size:12px;font-weight:700;color:#0a0b0d;cursor:pointer;font-family:var(--font-body)" onclick="showPage('training')"><i class="fas fa-graduation-cap" style="margin-right:5px"></i>Start Training</button>
-          <button style="padding:8px 16px;background:var(--card);border:1px solid #4caf7d30;border-radius:7px;font-size:12px;font-weight:700;color:var(--accent2);cursor:pointer;font-family:var(--font-body)" onclick="showPage('phonesim')"><i class="fas fa-phone" style="margin-right:5px"></i>Phone Simulator</button>
+          <button style="padding:8px 16px;background:var(--accent2);border:none;border-radius:7px;font-size:12px;font-weight:700;color:#0a0b0d;cursor:pointer;font-family:'Geist',sans-serif" onclick="showPage('training')"><i class="fas fa-graduation-cap" style="margin-right:5px"></i>Start Training</button>
+          <button style="padding:8px 16px;background:var(--card);border:1px solid #4caf7d30;border-radius:7px;font-size:12px;font-weight:700;color:var(--accent2);cursor:pointer;font-family:'Geist',sans-serif" onclick="showPage('phonesim')"><i class="fas fa-phone" style="margin-right:5px"></i>Phone Simulator</button>
         </div>
       </div>
       <div class="hero">
@@ -589,10 +590,16 @@
       <div class="detail-body">
         <div class="detail-main">
           <p id="sop-desc" style="font-size:13px;color:var(--soft);line-height:1.7;margin-bottom:20px"></p>
-          <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;text-transform:uppercase;letter-spacing:.8px;font-size:11px;color:var(--muted)">STEP-BY-STEP PROCESS</div>
+          <div style="font-family:'Geist',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;text-transform:uppercase;letter-spacing:.8px;font-size:11px;color:var(--muted)">STEP-BY-STEP PROCESS</div>
           <ul class="step-list" id="sop-steps"></ul>
         </div>
         <div class="detail-aside">
+          <div class="aside-card" id="sop-tip-card" style="border-color:#f5a62320;background:#f5a62305">
+            <h5><i class="fas fa-lightbulb" style="color:#f5a623"></i> Training Tip
+              <button class="admin-only" onclick="openEditTipsModal()" style="margin-left:auto;padding:2px 8px;background:none;border:1px solid #f5a62340;border-radius:4px;font-size:10px;color:#f5a623;cursor:pointer;font-family:var(--font-body)">Edit</button>
+            </h5>
+            <div style="font-size:12px;color:var(--soft);line-height:1.6" id="sop-tip-text">—</div>
+          </div>
           <div class="aside-card">
             <h5><i class="fas fa-check-circle"></i> Quick Checklist</h5>
             <ul class="check-list" id="sop-checklist"></ul>
@@ -704,7 +711,7 @@
     <!-- TEMPLATES PAGE -->
     <div id="page-templates" class="page">
       <div style="padding:20px 36px 0">
-        <div style="font-family:var(--font-head);font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px">Communication Templates</div>
+        <div style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px">Communication Templates</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:0">Approved messaging for every customer and vendor situation.</div>
       </div>
       <div class="tmpl-grid">
@@ -756,7 +763,7 @@
     <!-- POLICIES PAGE -->
     <div id="page-policies" class="page">
       <div style="padding:20px 36px 0">
-        <div style="font-family:var(--font-head);font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px">Policies & Rules</div>
+        <div style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px">Policies & Rules</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Official Ninja Patches operational policies. These are the rules agents must follow.</div>
       </div>
       <div class="policy-list">
@@ -859,7 +866,7 @@
     <!-- ADMIN PANEL PAGE -->
     <div id="page-adminpanel" class="page admin-only">
       <div style="padding:24px 36px 0">
-        <div style="font-family:var(--font-head);font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;display:flex;align-items:center;gap:10px"><i class="fas fa-shield-alt" style="color:var(--accent);font-size:18px"></i> Admin Panel</div>
+        <div style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;display:flex;align-items:center;gap:10px"><i class="fas fa-shield-alt" style="color:var(--accent);font-size:18px"></i> Admin Panel</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:0">Full platform management — content, credentials, and configuration.</div>
       </div>
       <div class="admin-panel-grid">
@@ -883,6 +890,7 @@
           </div>
           <button class="admin-action-btn" onclick="openAddSOPModal()"><i class="fas fa-plus"></i> Add New SOP</button>
           <button class="admin-action-btn" onclick="showPage('home');enableEditMode()"><i class="fas fa-edit"></i> Edit Existing SOPs</button>
+          <button class="admin-action-btn" onclick="openEditTipsModal()"><i class="fas fa-lightbulb"></i> Edit Training Tips</button>
         </div>
 
         <div class="admin-panel-card">
@@ -1308,6 +1316,10 @@ function showSOP(key) {
   cl.innerHTML = d.checklist.map(c => `<li><i class="fas fa-check-circle"></i>${c}</li>`).join('');
   const esc = document.getElementById('sop-escalate');
   esc.innerHTML = d.escalate.map(e => `<div class="escalate-item"><i class="fas fa-arrow-right"></i><span>${e}</span></div>`).join('');
+  // Apply saved editable tip
+  const allTips = getSavedTips();
+  const tipBox = document.getElementById('sop-tip-text');
+  if (tipBox && allTips[key]) tipBox.textContent = allTips[key];
   showPage('sop');
 }
 
@@ -1329,7 +1341,7 @@ function renderScenarioStep() {
   const html = `
     <div style="text-align:center;margin-bottom:20px">
       <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px">Step ${currentStep+1} of ${total}</div>
-      <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">${sc.title}</div>
+      <div style="font-family:'Geist',sans-serif;font-size:18px;font-weight:800;color:var(--text)">${sc.title}</div>
     </div>
     <div class="chat-thread">
       <div class="chat-bubble">
@@ -1380,11 +1392,11 @@ function nextScenarioStep() {
     document.getElementById('scenario-content').innerHTML = `
       <div style="text-align:center;padding:40px 20px;max-width:500px;margin:0 auto">
         <div style="width:64px;height:64px;background:#4caf7d20;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;color:var(--accent2)"><i class="fas fa-check"></i></div>
-        <div style="font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--text);margin-bottom:8px">Scenario Complete!</div>
+        <div style="font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:var(--text);margin-bottom:8px">Scenario Complete!</div>
         <div style="font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.65">You completed all ${total} decision points in the "${sc.title}" training scenario. Review the SOPs below to reinforce what you've learned.</div>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-          <button style="padding:10px 20px;background:var(--accent2);border:none;border-radius:8px;color:#0a0b0d;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body)" onclick="showPage('training')">More Scenarios</button>
-          <button style="padding:10px 20px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--soft);font-size:13px;cursor:pointer;font-family:var(--font-body)" onclick="showSOP('cancel')">Review SOPs</button>
+          <button style="padding:10px 20px;background:var(--accent2);border:none;border-radius:8px;color:#0a0b0d;font-size:13px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif" onclick="showPage('training')">More Scenarios</button>
+          <button style="padding:10px 20px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--soft);font-size:13px;cursor:pointer;font-family:'Geist',sans-serif" onclick="showSOP('cancel')">Review SOPs</button>
         </div>
       </div>`;
     return;
@@ -1898,6 +1910,102 @@ function showToast(msg, type = 'info') {
   document.body.appendChild(t);
   setTimeout(() => { if (t.parentNode) t.remove(); }, 3500);
 }
+
+/* ═══════════════════════════════════════════════
+   EDITABLE TIPS SYSTEM
+════════════════════════════════════════════════ */
+
+// Load saved tips from localStorage or use defaults
+const defaultTips = {
+  cancel: "The order IS within the cancellation window. Make sure you ask for the order number — the customer won't volunteer it immediately.",
+  orderchange: "The order is in early production — not yet shipped. The rep CAN attempt a vendor address change but must be honest that it's not guaranteed. Do not promise it will work.",
+  proof: "This customer will try to get unlimited free revisions. The rep must be firm but professional about the 2-revision policy.",
+  delay: "The delay is 5 days — that's a MAJOR delay requiring supervisor notification. The rep must not offer a full refund independently.",
+  vendor: "All vendor contact must use official channels only. Never use personal messaging. Document every interaction.",
+  escalation: "The moment a customer threatens a chargeback — that is the escalation trigger. No exceptions."
+};
+
+function getSavedTips() {
+  return JSON.parse(localStorage.getItem('np_tips') || 'null') || {...defaultTips};
+}
+
+function saveTip(key, value) {
+  const tips = getSavedTips();
+  tips[key] = value;
+  localStorage.setItem('np_tips', JSON.stringify(tips));
+  // Update visible tip boxes in the DOM
+  document.querySelectorAll(`[data-tip-key="${key}"]`).forEach(el => {
+    el.textContent = value;
+  });
+}
+
+function openEditTipsModal() {
+  const tips = getSavedTips();
+  const tipKeys = Object.keys(defaultTips);
+  const tipLabels = {
+    cancel: 'Cancellation SOP',
+    orderchange: 'Order Changes SOP',
+    proof: 'Proof Review SOP',
+    delay: 'Production Delay SOP',
+    vendor: 'Vendor Communication SOP',
+    escalation: 'Escalation Rules SOP'
+  };
+
+  const fieldsHTML = tipKeys.map(k => `
+    <div class="modal-field">
+      <label>${tipLabels[k] || k}</label>
+      <textarea class="modal-textarea" id="tip-edit-${k}" style="min-height:70px">${tips[k] || defaultTips[k]}</textarea>
+    </div>`).join('');
+
+  openModal(`
+    <h3><i class="fas fa-lightbulb" style="color:#f5a623;margin-right:8px"></i>Edit Training Tips</h3>
+    <p>These tips appear in the briefing panel of each phone call scenario and on SOP pages. Agents see them before starting a call.</p>
+    ${fieldsHTML}
+    <div style="display:flex;gap:8px;margin-top:6px">
+      <button class="modal-btn secondary" onclick="resetTipsToDefault()"><i class="fas fa-undo" style="margin-right:4px"></i>Reset to Defaults</button>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary" onclick="saveAllTips()">Save All Tips</button>
+    </div>`);
+}
+
+function saveAllTips() {
+  const tipKeys = Object.keys(defaultTips);
+  const tips = getSavedTips();
+  tipKeys.forEach(k => {
+    const el = document.getElementById('tip-edit-' + k);
+    if (el) tips[k] = el.value.trim() || defaultTips[k];
+  });
+  localStorage.setItem('np_tips', JSON.stringify(tips));
+  // Update all visible tip boxes
+  tipKeys.forEach(k => {
+    document.querySelectorAll(`[data-tip-key="${k}"]`).forEach(el => {
+      el.textContent = tips[k];
+    });
+  });
+  closeModal();
+  showToast('All tips saved successfully!', 'success');
+}
+
+function resetTipsToDefault() {
+  localStorage.removeItem('np_tips');
+  Object.keys(defaultTips).forEach(k => {
+    const el = document.getElementById('tip-edit-' + k);
+    if (el) el.value = defaultTips[k];
+  });
+  showToast('Tips reset to defaults.', 'info');
+}
+
+// Apply saved tips to SOP pages when they render
+function applyTipsToSOP(key) {
+  const tips = getSavedTips();
+  setTimeout(() => {
+    document.querySelectorAll(`[data-tip-key="${key}"]`).forEach(el => {
+      el.textContent = tips[key] || defaultTips[key];
+    });
+  }, 50);
+}
 </script>
 
 <!-- ═══════════════════════════════════════════════
@@ -1911,7 +2019,7 @@ function showToast(msg, type = 'info') {
 /* SIM LOBBY */
 .sim-hero{padding:32px 36px 24px;border-bottom:1px solid var(--border)}
 .sim-hero-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px}
-.sim-hero h2{font-family:var(--font-head);font-size:22px;font-weight:800;letter-spacing:-0.5px;color:var(--text)}
+.sim-hero h2{font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.5px;color:var(--text)}
 .sim-hero h2 span{color:var(--accent2)}
 .sim-hero p{font-size:13px;color:var(--muted);max-width:560px;line-height:1.65;margin-top:6px}
 .sim-live-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#4caf7d15;border:1px solid #4caf7d30;border-radius:20px;font-size:11px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:1px}
@@ -1927,11 +2035,11 @@ function showToast(msg, type = 'info') {
 .call-diff-badge.easy{background:#4caf7d18;color:#4caf7d}
 .call-diff-badge.medium{background:#f5a62318;color:#f5a623}
 .call-diff-badge.hard{background:#ff475718;color:#ff4757}
-.call-scenario-card h3{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
+.call-scenario-card h3{font-family:'Geist',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
 .call-scenario-card p{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:14px}
 .call-scenario-footer{display:flex;align-items:center;justify-content:space-between}
 .call-scenario-meta{font-size:11px;color:var(--soft)}
-.call-launch-btn{padding:7px 15px;border-radius:7px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:var(--font-body)}
+.call-launch-btn{padding:7px 15px;border-radius:7px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:'Geist',sans-serif}
 .call-launch-btn.easy{background:#4caf7d;color:#0a0b0d}
 .call-launch-btn.medium{background:#f5a623;color:#0a0b0d}
 .call-launch-btn.hard{background:#ff4757;color:#fff}
@@ -1939,11 +2047,11 @@ function showToast(msg, type = 'info') {
 
 /* BRIEFING SCREEN */
 .sim-briefing{padding:28px 36px;max-width:680px}
-.sim-back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;margin-bottom:18px;background:none;border:none;font-family:var(--font-body);padding:0;transition:color .15s}
+.sim-back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;margin-bottom:18px;background:none;border:none;font-family:'Geist',sans-serif;padding:0;transition:color .15s}
 .sim-back-btn:hover{color:var(--text)}
 .brief-panel{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:22px;margin-bottom:14px}
 .brief-panel-label{font-size:10px;text-transform:uppercase;letter-spacing:1.8px;color:var(--muted);margin-bottom:5px;font-weight:600}
-.brief-panel-title{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--text);margin-bottom:12px}
+.brief-panel-title{font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:12px}
 .brief-panel-meta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
 .brief-panel-meta span{font-size:12px;color:var(--muted)}
 .brief-section-head{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--soft);font-weight:600;margin:14px 0 8px}
@@ -1953,7 +2061,7 @@ function showToast(msg, type = 'info') {
 .brief-policy-key{color:var(--accent);font-weight:600;min-width:60px;flex-shrink:0}
 .brief-policy-val{color:var(--soft)}
 .brief-tip-box{background:#7c5ce812;border-left:2px solid var(--accent3);border-radius:0 7px 7px 0;padding:10px 12px;margin-top:14px;font-size:12px;color:var(--soft);line-height:1.6}
-.sim-answer-btn{width:100%;padding:14px;background:var(--accent2);border:none;border-radius:10px;font-family:var(--font-head);font-size:15px;font-weight:700;color:#0a0b0d;cursor:pointer;letter-spacing:-0.3px;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:10px}
+.sim-answer-btn{width:100%;padding:14px;background:var(--accent2);border:none;border-radius:10px;font-family:'Geist',sans-serif;font-size:15px;font-weight:700;color:#0a0b0d;cursor:pointer;letter-spacing:-0.3px;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:10px}
 .sim-answer-btn:hover{opacity:.88}
 
 /* ACTIVE CALL SCREEN */
@@ -1964,7 +2072,7 @@ function showToast(msg, type = 'info') {
 .call-red-dot{width:8px;height:8px;background:#ff4757;border-radius:50%;animation:blink-dot 1.1s infinite}
 @keyframes blink-dot{0%,100%{opacity:1}50%{opacity:.15}}
 .call-status-name{font-size:13px;font-weight:600;color:var(--text)}
-.call-timer-display{font-family:var(--font-head);font-size:13px;color:var(--muted);min-width:40px;text-align:center}
+.call-timer-display{font-family:'Geist',sans-serif;font-size:13px;color:var(--muted);min-width:40px;text-align:center}
 .call-caller-chip{display:flex;align-items:center;gap:7px;padding:5px 11px;background:var(--card);border-radius:18px;border:1px solid var(--border);font-size:12px;color:var(--soft)}
 .call-avatar-circle{width:22px;height:22px;border-radius:50%;background:#4caf7d28;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--accent)}
 
@@ -1987,13 +2095,13 @@ function showToast(msg, type = 'info') {
 @keyframes tdot{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
 
 .call-input-row{padding:11px 14px;border-top:1px solid var(--border);display:flex;gap:7px;align-items:flex-end;background:var(--surface);flex-shrink:0}
-.call-textarea{flex:1;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-family:var(--font-body);font-size:13px;resize:none;min-height:40px;max-height:110px;outline:none;line-height:1.5}
+.call-textarea{flex:1;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-family:'Geist',sans-serif;font-size:13px;resize:none;min-height:40px;max-height:110px;outline:none;line-height:1.5}
 .call-textarea:focus{border-color:#7c5ce855}
 .call-textarea::placeholder{color:var(--muted)}
-.call-send-btn{padding:9px 15px;background:var(--accent3);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-body);height:40px;white-space:nowrap}
+.call-send-btn{padding:9px 15px;background:var(--accent3);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Geist',sans-serif;height:40px;white-space:nowrap}
 .call-send-btn:hover{opacity:.88}
 .call-send-btn:disabled{opacity:.35;cursor:not-allowed}
-.call-end-btn{padding:9px 13px;background:#ff475715;border:1px solid #ff475728;border-radius:8px;color:#ff4757;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-body);height:40px;white-space:nowrap}
+.call-end-btn{padding:9px 13px;background:#ff475715;border:1px solid #ff475728;border-radius:8px;color:#ff4757;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;height:40px;white-space:nowrap}
 .call-end-btn:hover{background:#ff475728}
 
 /* SIDE PANEL */
@@ -2016,11 +2124,11 @@ function showToast(msg, type = 'info') {
 .debrief-score-ring svg{width:88px;height:88px}
 .dsr-bg{fill:none;stroke:var(--border);stroke-width:6}
 .dsr-fill{fill:none;stroke-width:6;stroke-linecap:round;transform:rotate(-90deg);transform-origin:44px 44px;transition:stroke-dashoffset 1s ease}
-.dsr-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--text)}
+.dsr-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--text)}
 .debrief-head{text-align:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:20px}
-.debrief-h1{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--text);margin-bottom:3px}
+.debrief-h1{font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:3px}
 .debrief-sub{font-size:12px;color:var(--muted)}
-.rubric-head{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;margin-top:18px;display:flex;align-items:center;gap:6px}
+.rubric-head{font-family:'Geist',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;margin-top:18px;display:flex;align-items:center;gap:6px}
 .rubric-row{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--border)}
 .rubric-row:last-child{border-bottom:none}
 .rubric-icon{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px}
@@ -2030,7 +2138,7 @@ function showToast(msg, type = 'info') {
 .rubric-text strong{color:var(--text);font-weight:500}
 .ai-feedback-box{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:13px;font-size:12px;color:var(--soft);line-height:1.65;margin-top:4px}
 .debrief-btn-row{display:flex;gap:9px;margin-top:20px;flex-wrap:wrap}
-.debrief-action-btn{padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);border:none}
+.debrief-action-btn{padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;border:none}
 .debrief-action-btn.primary{background:var(--accent2);color:#0a0b0d}
 .debrief-action-btn.secondary{background:var(--card);border:1px solid var(--border);color:var(--soft)}
 .debrief-action-btn:hover{opacity:.85}
@@ -2295,7 +2403,11 @@ function populateBriefing() {
     `<div class="brief-obj-row"><div class="brief-obj-arrow">→</div><div>${o}</div></div>`).join('');
   document.getElementById('bp-policies').innerHTML = s.policies.map(p =>
     `<div class="brief-policy-row"><div class="brief-policy-key">${p.k}</div><div class="brief-policy-val">${p.v}</div></div>`).join('');
-  document.getElementById('bp-tip').innerHTML = `<strong style="color:var(--accent3)">Training tip:</strong> ${s.tip}`;
+  const savedTips = getSavedTips();
+  const scenarioTipMap = {'cancel-simple':'cancel','delay-angry':'delay','proof-loop':'proof','wrong-address':'orderchange','chargeback-threat':'escalation','vendor-defect':'escalation'};
+  const mappedKey = scenarioTipMap[s.id] || 'cancel';
+  const tipText = savedTips[mappedKey] || s.tip;
+  document.getElementById('bp-tip').innerHTML = '<strong style="color:var(--accent3)">Training tip:</strong> <span data-tip-key="' + mappedKey + '">' + tipText + '</span>';
 }
 
 function psimStartCall() {
