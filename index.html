@@ -1505,7 +1505,6 @@ function showSOP(key) {
   var allTips = getSavedTips();
   var tipBox = document.getElementById('sop-tip-text');
   if (tipBox) tipBox.textContent = allTips[key] || defaultTips[key] || '';
-  renderSOPSteps(key);
   showPage('sop');
 }
 
