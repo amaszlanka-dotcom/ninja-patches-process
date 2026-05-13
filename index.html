@@ -1335,23 +1335,51 @@ function renderSOPSteps(key) {
   if (!d) return;
   const stepsList = document.getElementById('sop-steps');
   if (!stepsList) return;
-  stepsList.innerHTML = d.steps.map((s, i) => {
+  stepsList.innerHTML = '';
+  const colors = ['', 'teal', 'purple', 'teal', 'purple', '', 'teal', 'purple'];
+  d.steps.forEach(function(s, i) {
+    const li = document.createElement('li');
+    li.className = 'step-item sop-step-li';
     const num = String(i + 1).padStart(2, '0');
-    const colors = ['', 'teal', 'purple', 'teal', 'purple', '', 'teal', 'purple'];
     const col = s.color !== undefined ? s.color : (colors[i] || '');
-    const delBtn = `<button class="sop-step-del-btn" onclick="quickDeleteStep('${key}',${i})" title="Remove this step" style="padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:10px;cursor:pointer;white-space:nowrap;flex-shrink:0"><i class="fas fa-trash"></i> Remove</button>`;
-    return '<li class="step-item sop-step-li" style="position:relative">'
-      + '<div class="step-num ' + col + '">' + num + '</div>'
-      + '<div class="step-content" style="flex:1">'
-      + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px">'
-      + '<h4>' + s.title + '</h4>'
-      + delBtn
-      + '</div>'
-      + '<p>' + s.body + '</p>'
-      + (s.note ? '<div class="tip"><i class="fas fa-lightbulb" style="color:var(--accent3);margin-right:5px"></i>' + s.note + '</div>' : '')
-      + (s.warn ? '<div class="warn"><i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:5px"></i>' + s.warn + '</div>' : '')
-      + '</div></li>';
-  }).join('');
+    const numDiv = document.createElement('div');
+    numDiv.className = 'step-num ' + col;
+    numDiv.textContent = num;
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'step-content';
+    contentDiv.style.flex = '1';
+    const headerRow = document.createElement('div');
+    headerRow.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px';
+    const h4 = document.createElement('h4');
+    h4.textContent = s.title;
+    headerRow.appendChild(h4);
+    const delBtn = document.createElement('button');
+    delBtn.className = 'sop-step-del-btn';
+    delBtn.title = 'Remove this step';
+    delBtn.style.cssText = 'padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:10px;cursor:pointer;white-space:nowrap;flex-shrink:0';
+    delBtn.innerHTML = '<i class="fas fa-trash"></i> Remove';
+    (function(k, idx) { delBtn.onclick = function() { quickDeleteStep(k, idx); }; })(key, i);
+    headerRow.appendChild(delBtn);
+    contentDiv.appendChild(headerRow);
+    const p = document.createElement('p');
+    p.textContent = s.body;
+    contentDiv.appendChild(p);
+    if (s.note) {
+      const tip = document.createElement('div');
+      tip.className = 'tip';
+      tip.innerHTML = '<i class="fas fa-lightbulb" style="color:var(--accent3);margin-right:5px"></i>' + s.note;
+      contentDiv.appendChild(tip);
+    }
+    if (s.warn) {
+      const warn = document.createElement('div');
+      warn.className = 'warn';
+      warn.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:5px"></i>' + s.warn;
+      contentDiv.appendChild(warn);
+    }
+    li.appendChild(numDiv);
+    li.appendChild(contentDiv);
+    stepsList.appendChild(li);
+  });
 }
 
 function showStepDel(li) {
