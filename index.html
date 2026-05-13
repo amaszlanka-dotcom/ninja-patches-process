@@ -1548,23 +1548,22 @@ renderRefList('all');
 ════════════════════════════════════════════════ */
 
 // Default credentials (stored in localStorage after first change)
-const _dc = s => atob(s);
 // Load credentials - validate structure before trusting localStorage
 let _stored = null;
 try {
-  const _raw = localStorage.getItem('np_credentials');
+  const _raw = localStorage.getItem('np_creds_v2');
   if (_raw) {
     const _parsed = JSON.parse(_raw);
     if (_parsed && _parsed.admin && _parsed.admin.username && _parsed.admin.password && Array.isArray(_parsed.agents)) {
       _stored = _parsed;
     } else {
-      localStorage.removeItem('np_credentials');
+      localStorage.removeItem('np_creds_v2');
     }
   }
-} catch(e) { localStorage.removeItem('np_credentials'); }
+} catch(e) { localStorage.removeItem('np_creds_v2'); }
 let platformCredentials = _stored || {
-  admin: { username: _dc('YWRtaW4='), password: _dc('bmluamEyMDI1') },
-  agents: [{ username: _dc('YWdlbnQ='), password: _dc('cGF0Y2hlczIwMjU='), name: 'Agent' }]
+  admin: { username: 'admin', password: 'ninja2025' },
+  agents: [{ username: 'agent', password: 'patches2025', name: 'Agent' }]
 };
 
 let currentRole = null;
@@ -1584,10 +1583,10 @@ function selectRole(role) {
 }
 
 function resetLoginCache() {
-  localStorage.removeItem('np_credentials');
+  localStorage.removeItem('np_creds_v2');
   platformCredentials = {
-    admin: { username: _dc('YWRtaW4='), password: _dc('bmluamEyMDI1') },
-    agents: [{ username: _dc('YWdlbnQ='), password: _dc('cGF0Y2hlczIwMjU='), name: 'Agent' }]
+    admin: { username: 'admin', password: 'ninja2025' },
+    agents: [{ username: 'agent', password: 'patches2025', name: 'Agent' }]
   };
   document.getElementById('auth-error').classList.remove('show');
   document.getElementById('auth-username').value = '';
@@ -1746,7 +1745,7 @@ function addAgentRow() {
 
 function removeAgent(i) {
   platformCredentials.agents.splice(i, 1);
-  localStorage.setItem('np_credentials', JSON.stringify(platformCredentials));
+  localStorage.setItem('np_creds_v2', JSON.stringify(platformCredentials));
   openCredentialsModal();
   showToast('Agent removed.', 'info');
 }
@@ -1764,11 +1763,11 @@ function saveCredentials() {
     const p = row.querySelector(`#m-agent-pass-${i}`);
     if (u && u.value.trim()) {
       const existing = platformCredentials.agents[i] || {};
-      newAgents.push({ username: u.value.trim(), password: p && p.value ? p.value : (existing.password || _dc('cGF0Y2hlczIwMjU=')), name: u.value.trim() });
+      newAgents.push({ username: u.value.trim(), password: p && p.value ? p.value : (existing.password || 'patches2025'), name: u.value.trim() });
     }
   });
   if (newAgents.length > 0) platformCredentials.agents = newAgents;
-  localStorage.setItem('np_credentials', JSON.stringify(platformCredentials));
+  localStorage.setItem('np_creds_v2', JSON.stringify(platformCredentials));
   closeModal();
   showToast('Credentials saved successfully!', 'success');
   document.getElementById('admin-agent-count').textContent = platformCredentials.agents.length;
@@ -1794,7 +1793,7 @@ function addAgent() {
   const pass = document.getElementById('m-new-agent-pass').value;
   if (!user || !pass) { showToast('Username and password are required.', 'warn'); return; }
   platformCredentials.agents.push({ username: user, password: pass, name: name || user });
-  localStorage.setItem('np_credentials', JSON.stringify(platformCredentials));
+  localStorage.setItem('np_creds_v2', JSON.stringify(platformCredentials));
   closeModal();
   showToast('Agent account created: ' + (name || user), 'success');
   document.getElementById('admin-agent-count').textContent = platformCredentials.agents.length;
@@ -2009,8 +2008,8 @@ function confirmReset() {
 }
 
 function doReset() {
-  localStorage.removeItem('np_credentials');
-  platformCredentials = { admin: { username: _dc('YWRtaW4='), password: _dc('bmluamEyMDI1') }, agents: [{ username: _dc('YWdlbnQ='), password: _dc('cGF0Y2hlczIwMjU='), name: 'Agent' }] };
+  localStorage.removeItem('np_creds_v2');
+  platformCredentials = { admin: { username: 'admin', password: 'ninja2025' }, agents: [{ username: 'agent', password: 'patches2025', name: 'Agent' }] };
   closeModal();
   showToast('Platform reset to defaults.', 'info');
 }
