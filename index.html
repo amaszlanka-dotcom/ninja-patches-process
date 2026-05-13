@@ -578,7 +578,10 @@
     <!-- SOP DETAIL PAGE -->
     <div id="page-sop" class="page">
       <div class="detail-header">
-        <div class="back-btn" onclick="showPage('home')"><i class="fas fa-arrow-left"></i> Back to Dashboard</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div class="back-btn" onclick="showPage('home')"><i class="fas fa-arrow-left"></i> Back to Dashboard</div>
+          <button class="admin-only delete-card-btn" id="sop-delete-btn" onclick="deleteCurrentSOP()" style="display:none;padding:6px 12px;background:#ff475715;border:1px solid #ff475730;border-radius:6px;color:#ff4757;font-size:12px;cursor:pointer"><i class="fas fa-trash" style="margin-right:4px"></i>Delete SOP</button>
+        </div>
         <div id="sop-badge" class="detail-badge sop"><i class="fas fa-file-alt"></i> Standard Operating Procedure</div>
         <div id="sop-title" class="detail-title">SOP Title</div>
         <div class="detail-meta">
@@ -623,7 +626,7 @@
           <span class="scenario-difficulty easy"><i class="fas fa-circle" style="font-size:7px"></i> Beginner</span>
           <h3>Customer Cancel Request</h3>
           <p>An order was placed 3 hours ago and the customer wants to cancel. Walk through policy checks.</p>
-          <div class="scenario-footer"><span class="scenario-tag"><i class="fas fa-tasks" style="font-size:11px"></i> 4 decisions</span><button class="scenario-btn" onclick="launchScenario(0)">Start ↗</button></div>
+          <div class="scenario-footer"><span class="scenario-tag"><i class="fas fa-tasks" style="font-size:11px"></i> 4 decisions</span><div style="display:flex;gap:6px"><button class="scenario-btn" onclick="launchScenario(0)">Start ↗</button><button class="admin-only delete-card-btn" onclick="deleteCard(this,'scenario')" style="display:none;padding:6px 10px;background:#ff475715;border:1px solid #ff475730;border-radius:6px;color:#ff4757;font-size:11px;cursor:pointer"><i class="fas fa-trash"></i></button></div></div>
         </div>
         <div class="scenario-card">
           <span class="scenario-difficulty medium"><i class="fas fa-circle" style="font-size:7px"></i> Intermediate</span>
@@ -721,6 +724,8 @@
           <p>Used when the order is within the cancellation window and qualifies for a full refund.</p>
           <div class="tmpl-preview">"Hi [Name], your order #[ORDER] has been successfully cancelled. A full refund of $[AMOUNT] will appear in 3–5 business days. Let us know if you have any questions!"</div>
           <button class="copy-btn" onclick="copyTemplate(this,'Hi [Name], your order #[ORDER] has been successfully cancelled. A full refund of $[AMOUNT] will appear in 3–5 business days. Let us know if you have any questions!')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="admin-only delete-card-btn" onclick="deleteCard(this,'template')" style="display:none;padding:5px 10px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:6px"><i class="fas fa-trash"></i> Delete</button>
+          <button class="admin-only delete-card-btn" onclick="deleteCard(this,'template')" style="display:none;padding:5px 10px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:6px"><i class="fas fa-trash"></i> Delete</button>
         </div>
         <div class="tmpl-card">
           <div class="tmpl-type">Customer — Cancellation</div>
@@ -728,6 +733,7 @@
           <p>When the order is already in production and cannot be cancelled per policy.</p>
           <div class="tmpl-preview">"Hi [Name], unfortunately your order #[ORDER] has entered production and can no longer be cancelled. We're committed to getting it to you quickly — estimated delivery is [DATE]. We apologize for any inconvenience."</div>
           <button class="copy-btn" onclick="copyTemplate(this,'Hi [Name], unfortunately your order #[ORDER] has entered production and can no longer be cancelled. We\'re committed to getting it to you quickly — estimated delivery is [DATE]. We apologize for any inconvenience.')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="admin-only delete-card-btn" onclick="deleteCard(this,'template')" style="display:none;padding:5px 10px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:6px"><i class="fas fa-trash"></i> Delete</button>
         </div>
         <div class="tmpl-card">
           <div class="tmpl-type">Customer — Delay</div>
@@ -735,6 +741,7 @@
           <p>Proactive message when a delay is confirmed and new ETA is known.</p>
           <div class="tmpl-preview">"Hi [Name], we wanted to update you — your order #[ORDER] is experiencing a short production delay. Your new estimated delivery date is [NEW_DATE]. We sincerely apologize and appreciate your patience."</div>
           <button class="copy-btn" onclick="copyTemplate(this,'Hi [Name], we wanted to update you — your order #[ORDER] is experiencing a short production delay. Your new estimated delivery date is [NEW_DATE]. We sincerely apologize and appreciate your patience.')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="admin-only delete-card-btn" onclick="deleteCard(this,'template')" style="display:none;padding:5px 10px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:6px"><i class="fas fa-trash"></i> Delete</button>
         </div>
         <div class="tmpl-card">
           <div class="tmpl-type">Customer — Proof</div>
@@ -742,6 +749,7 @@
           <p>Notify customer that their proof is ready and needs approval before production begins.</p>
           <div class="tmpl-preview">"Hi [Name], your proof for order #[ORDER] is ready for review! Please take a moment to check the design, colors, and text. Reply with APPROVE to proceed or REQUEST CHANGES with your feedback. Production begins once we receive your approval."</div>
           <button class="copy-btn" onclick="copyTemplate(this,'Hi [Name], your proof for order #[ORDER] is ready for review! Please take a moment to check the design, colors, and text. Reply with APPROVE to proceed or REQUEST CHANGES with your feedback.')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="admin-only delete-card-btn" onclick="deleteCard(this,'template')" style="display:none;padding:5px 10px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:6px"><i class="fas fa-trash"></i> Delete</button>
         </div>
         <div class="tmpl-card">
           <div class="tmpl-type">Vendor — Inquiry</div>
@@ -749,6 +757,7 @@
           <p>Internal vendor follow-up when an order status hasn't been updated in 48+ hours.</p>
           <div class="tmpl-preview">"Hello [VENDOR_CONTACT], following up on order [VENDOR_ORDER_ID] / Ninja Patches ref #[NP_ORDER]. We haven't received a status update in 48 hours. Could you confirm the current production stage and estimated completion? Thank you."</div>
           <button class="copy-btn" onclick="copyTemplate(this,'Hello [VENDOR_CONTACT], following up on order [VENDOR_ORDER_ID] / Ninja Patches ref #[NP_ORDER]. We have not received a status update in 48 hours. Could you confirm the current production stage and estimated completion? Thank you.')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="admin-only delete-card-btn" onclick="deleteCard(this,'template')" style="display:none;padding:5px 10px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:6px"><i class="fas fa-trash"></i> Delete</button>
         </div>
         <div class="tmpl-card">
           <div class="tmpl-type">Customer — Order Change</div>
@@ -756,6 +765,7 @@
           <p>When a requested change (address, size, quantity) is successfully applied.</p>
           <div class="tmpl-preview">"Hi [Name], great news — we've updated your order #[ORDER] with the requested change: [CHANGE_DETAIL]. Everything looks good and production will proceed as planned. Your estimated delivery remains [DATE]."</div>
           <button class="copy-btn" onclick="copyTemplate(this,'Hi [Name], great news — we have updated your order #[ORDER] with the requested change: [CHANGE_DETAIL]. Everything looks good and production will proceed as planned. Your estimated delivery remains [DATE].')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="admin-only delete-card-btn" onclick="deleteCard(this,'template')" style="display:none;padding:5px 10px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:6px"><i class="fas fa-trash"></i> Delete</button>
         </div>
       </div>
     </div>
@@ -774,6 +784,7 @@
               <div class="policy-name">Cancellation Policy</div>
             </div>
             <i class="fas fa-chevron-down policy-chevron"></i>
+            <button class="admin-only delete-card-btn" onclick="deleteCard(this,'policy')" style="display:none;padding:4px 9px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer"><i class="fas fa-trash"></i></button>
           </div>
           <div class="policy-body">
             <div class="policy-row"><div class="policy-row-key">Window</div><div class="policy-row-val">Orders may be cancelled within 2 hours of placement if not yet in production</div></div>
@@ -790,6 +801,7 @@
               <div class="policy-name">Order Modification Policy</div>
             </div>
             <i class="fas fa-chevron-down policy-chevron"></i>
+            <button class="admin-only delete-card-btn" onclick="deleteCard(this,'policy')" style="display:none;padding:4px 9px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer"><i class="fas fa-trash"></i></button>
           </div>
           <div class="policy-body">
             <div class="policy-row"><div class="policy-row-key">Pre-Production</div><div class="policy-row-val">Address, quantity (up to +10 units), and size changes permitted before production confirmation received from vendor</div></div>
@@ -805,6 +817,7 @@
               <div class="policy-name">Proof Review Policy</div>
             </div>
             <i class="fas fa-chevron-down policy-chevron"></i>
+            <button class="admin-only delete-card-btn" onclick="deleteCard(this,'policy')" style="display:none;padding:4px 9px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer"><i class="fas fa-trash"></i></button>
           </div>
           <div class="policy-body">
             <div class="policy-row"><div class="policy-row-key">Turnaround</div><div class="policy-row-val">Customer must approve or reject proof within 48 hours. Auto-reminder sent at 24 hours</div></div>
@@ -820,6 +833,7 @@
               <div class="policy-name">Production Delay Policy</div>
             </div>
             <i class="fas fa-chevron-down policy-chevron"></i>
+            <button class="admin-only delete-card-btn" onclick="deleteCard(this,'policy')" style="display:none;padding:4px 9px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer"><i class="fas fa-trash"></i></button>
           </div>
           <div class="policy-body">
             <div class="policy-row"><div class="policy-row-key">Notification</div><div class="policy-row-val">Customer must be notified within 24 hours of confirmed delay, regardless of delay length</div></div>
@@ -836,6 +850,7 @@
               <div class="policy-name">Escalation Policy</div>
             </div>
             <i class="fas fa-chevron-down policy-chevron"></i>
+            <button class="admin-only delete-card-btn" onclick="deleteCard(this,'policy')" style="display:none;padding:4px 9px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer"><i class="fas fa-trash"></i></button>
           </div>
           <div class="policy-body">
             <div class="policy-row"><div class="policy-row-key">Agent Level</div><div class="policy-row-val">Address changes, standard cancellations within policy, proof reminders, delay notifications under 3 days</div></div>
@@ -852,6 +867,7 @@
               <div class="policy-name">Vendor Communication Policy</div>
             </div>
             <i class="fas fa-chevron-down policy-chevron"></i>
+            <button class="admin-only delete-card-btn" onclick="deleteCard(this,'policy')" style="display:none;padding:4px 9px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer"><i class="fas fa-trash"></i></button>
           </div>
           <div class="policy-body">
             <div class="policy-row"><div class="policy-row-key">Primary Channel</div><div class="policy-row-val">All vendor contact must go through the designated vendor portal or approved email thread — never personal messaging</div></div>
@@ -1294,7 +1310,9 @@ function showPage(name) {
   if (name === 'reference') renderRefList('all');
 }
 
+let currentSOPKey = '';
 function showSOP(key) {
+  currentSOPKey = key;
   const d = sopData[key];
   document.getElementById('sop-title').textContent = d.title;
   document.getElementById('sop-category').textContent = d.category;
@@ -1302,14 +1320,17 @@ function showSOP(key) {
   document.getElementById('sop-updated').textContent = d.updated;
   document.getElementById('sop-desc').textContent = d.desc;
   const stepsList = document.getElementById('sop-steps');
-  stepsList.innerHTML = d.steps.map(s => `
-    <li class="step-item">
+  stepsList.innerHTML = d.steps.map((s, stepIdx) => `
+    <li class="step-item" id="step-item-${stepIdx}">
       <div class="step-num ${s.color}">${s.num}</div>
-      <div class="step-content">
-        <h4>${s.title}</h4>
+      <div class="step-content" style="flex:1">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <h4>${s.title}</h4>
+          ${currentRole === 'admin' ? '<button onclick="deleteSOPStep('' + currentSOPKey + '',' + stepIdx + ')" style="padding:2px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:4px;color:#ff4757;font-size:10px;cursor:pointer;white-space:nowrap;flex-shrink:0"><i class=\"fas fa-trash\"></i> Remove step</button>' : ''}
+        </div>
         <p>${s.body}</p>
-        ${s.note ? `<div class="tip"><i class="fas fa-lightbulb" style="color:var(--accent3);margin-right:5px"></i>${s.note}</div>` : ''}
-        ${s.warn ? `<div class="warn"><i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:5px"></i>${s.warn}</div>` : ''}
+        ${s.note ? '<div class="tip"><i class="fas fa-lightbulb" style="color:var(--accent3);margin-right:5px"></i>' + s.note + '</div>' : ''}
+        ${s.warn ? '<div class="warn"><i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:5px"></i>' + s.warn + '</div>' : ''}
       </div>
     </li>`).join('');
   const cl = document.getElementById('sop-checklist');
@@ -1434,15 +1455,18 @@ function renderRefList(cat) {
 function renderRefListItems(items) {
   const list = document.getElementById('ref-list');
   if(!items.length){ list.innerHTML = '<div style="padding:20px;color:var(--muted);font-size:13px">No results found.</div>'; return; }
-  list.innerHTML = items.map(r => `
-    <div class="ref-item" onclick="sendPrompt('Tell me about the Ninja Patches reference guide for: ${r.title}')">
-      <div class="ref-icon" style="background:${r.iconBg};color:${r.iconColor}"><i class="${r.icon}" style="font-size:15px"></i></div>
-      <div style="flex:1">
+  list.innerHTML = items.map((r, idx) => `
+    <div class="ref-item" id="ref-item-${idx}">
+      <div class="ref-icon" style="background:${r.iconBg};color:${r.iconColor};cursor:pointer" onclick="sendPrompt('Tell me about the Ninja Patches reference guide for: ${r.title}')"><i class="${r.icon}" style="font-size:15px"></i></div>
+      <div style="flex:1;cursor:pointer" onclick="sendPrompt('Tell me about the Ninja Patches reference guide for: ${r.title}')">
         <div class="ref-title">${r.title}</div>
         <div class="ref-desc">${r.desc}</div>
-        <div class="ref-tags">${r.tags.map(t => `<span class="ref-tag" style="${r.tagStyle}">${t}</span>`).join('')}</div>
+        <div class="ref-tags">${r.tags.map(t => '<span class="ref-tag" style="' + r.tagStyle + '">' + t + '</span>').join('')}</div>
       </div>
-      <i class="fas fa-external-link-alt" style="font-size:12px;color:var(--muted);margin-top:4px"></i>
+      <div style="display:flex;align-items:center;gap:8px">
+        <i class="fas fa-external-link-alt" style="font-size:12px;color:var(--muted);cursor:pointer" onclick="sendPrompt('Tell me about the Ninja Patches reference guide for: ${r.title}')"></i>
+        ${currentRole === 'admin' ? '<button onclick="deleteRefItem(' + idx + ')" style="padding:4px 9px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer"><i class=\"fas fa-trash\"></i></button>' : ''}
+      </div>
     </div>`).join('');
 }
 
@@ -1519,7 +1543,7 @@ function loginSuccess(role, name) {
   const awn = document.getElementById('agent-welcome-name');
   if (awn) awn.textContent = name;
 
-  // Agents land on training page
+  applyDeleteButtonVisibility();
   if (role === 'agent') {
     showPage('training');
   } else {
@@ -1763,6 +1787,7 @@ function saveNewTemplate() {
         <div class="tmpl-preview">"${body}"</div>
         <div style="display:flex;gap:7px;margin-top:10px">
           <button class="copy-btn" onclick="copyTemplate(this,'${safeBody}')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="admin-only delete-card-btn" onclick="deleteCard(this,'template')" style="display:none;padding:5px 10px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:6px"><i class="fas fa-trash"></i> Delete</button>
           <button onclick="this.closest('.tmpl-card').remove();showToast('Template removed.','info')" style="padding:5px 10px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:11px;cursor:pointer">Remove</button>
         </div>
       </div>`);
@@ -2005,6 +2030,117 @@ function applyTipsToSOP(key) {
       el.textContent = tips[key] || defaultTips[key];
     });
   }, 50);
+}
+
+/* ═══════════════════════════════════════════════
+   DELETE FUNCTIONS
+════════════════════════════════════════════════ */
+
+function deleteCard(btn, type) {
+  if (currentRole !== 'admin') return;
+  const card = btn.closest('.tmpl-card, .policy-item, .scenario-card, .ref-item');
+  if (!card) return;
+  const label = type === 'template' ? 'template' : type === 'policy' ? 'policy' : type === 'scenario' ? 'scenario' : 'item';
+  openModal(`
+    <h3 style="color:#ff4757"><i class="fas fa-trash" style="margin-right:8px"></i>Delete ${label.charAt(0).toUpperCase()+label.slice(1)}?</h3>
+    <p>This will remove the ${label} from the platform. This action cannot be undone within this session.</p>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary" style="background:#ff4757" onclick="confirmDeleteCard(this)">Delete</button>
+    </div>`);
+  // Store reference
+  window._pendingDeleteCard = card;
+}
+
+function confirmDeleteCard(btn) {
+  if (window._pendingDeleteCard) {
+    window._pendingDeleteCard.style.transition = 'opacity .3s, transform .3s';
+    window._pendingDeleteCard.style.opacity = '0';
+    window._pendingDeleteCard.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      if (window._pendingDeleteCard && window._pendingDeleteCard.parentNode) {
+        window._pendingDeleteCard.parentNode.removeChild(window._pendingDeleteCard);
+      }
+      window._pendingDeleteCard = null;
+    }, 300);
+  }
+  closeModal();
+  showToast('Deleted successfully.', 'success');
+}
+
+function deleteRefItem(idx) {
+  if (currentRole !== 'admin') return;
+  openModal(`
+    <h3 style="color:#ff4757"><i class="fas fa-trash" style="margin-right:8px"></i>Delete Reference Doc?</h3>
+    <p>This will remove the reference document from the knowledge base.</p>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary" style="background:#ff4757" onclick="confirmDeleteRef(${idx})">Delete</button>
+    </div>`);
+}
+
+function confirmDeleteRef(idx) {
+  if (idx >= 0 && idx < refItems.length) {
+    refItems.splice(idx, 1);
+    renderRefList('all');
+    showToast('Reference doc deleted.', 'success');
+  }
+  closeModal();
+}
+
+function deleteCurrentSOP() {
+  if (currentRole !== 'admin' || !currentSOPKey) return;
+  const sopName = sopData[currentSOPKey] ? sopData[currentSOPKey].title : 'this SOP';
+  openModal(`
+    <h3 style="color:#ff4757"><i class="fas fa-trash" style="margin-right:8px"></i>Delete SOP?</h3>
+    <p>This will permanently delete <strong style="color:var(--text)">${sopName}</strong> from the platform.</p>
+    <div style="padding:10px 12px;background:#ff475710;border:1px solid #ff475730;border-radius:7px;font-size:12px;color:var(--soft);margin-bottom:4px">
+      Note: Built-in SOPs (Cancel, Proof, Delay, etc.) will be restored on page refresh. Custom SOPs are removed permanently.
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary" style="background:#ff4757" onclick="confirmDeleteSOP()">Delete SOP</button>
+    </div>`);
+}
+
+function confirmDeleteSOP() {
+  if (sopData[currentSOPKey]) {
+    delete sopData[currentSOPKey];
+    // Remove sidebar link if custom
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      if (item.textContent.includes(currentSOPKey)) item.remove();
+    });
+    showToast('SOP deleted.', 'success');
+    showPage('home');
+  }
+  closeModal();
+}
+
+function deleteSOPStep(sopKey, stepIdx) {
+  if (currentRole !== 'admin') return;
+  openModal(`
+    <h3 style="color:#ff4757"><i class="fas fa-trash" style="margin-right:8px"></i>Remove this step?</h3>
+    <p>Step ${stepIdx + 1} will be removed from this SOP. This resets on page refresh.</p>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary" style="background:#ff4757" onclick="confirmDeleteSOPStep('${sopKey}', ${stepIdx})">Remove Step</button>
+    </div>`);
+}
+
+function confirmDeleteSOPStep(sopKey, stepIdx) {
+  if (sopData[sopKey] && sopData[sopKey].steps[stepIdx]) {
+    sopData[sopKey].steps.splice(stepIdx, 1);
+    showSOP(sopKey);
+    showToast('Step removed.', 'success');
+  }
+  closeModal();
+}
+
+/* Show/hide admin delete buttons based on role */
+function applyDeleteButtonVisibility() {
+  document.querySelectorAll('.delete-card-btn').forEach(btn => {
+    btn.style.display = currentRole === 'admin' ? 'inline-flex' : 'none';
+  });
 }
 </script>
 
