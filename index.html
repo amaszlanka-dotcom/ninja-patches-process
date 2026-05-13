@@ -142,9 +142,6 @@
   .sidebar-badge{margin-left:auto;background:#4caf7d30;color:var(--accent);font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600}
   .sidebar-badge.green{background:#4caf7d20;color:var(--accent2)}
   .sidebar-badge.purple{background:#7c5ce820;color:var(--accent3)}
-  .sidebar-del-btn{display:none;padding:3px 7px;background:#ff475715;border:1px solid #ff475730;border-radius:4px;color:#ff4757;font-size:10px;cursor:pointer;margin-left:auto;flex-shrink:0}
-  body.role-admin .sidebar-item:hover .sidebar-del-btn{display:inline-flex;align-items:center}
-  body.role-admin .sidebar-item:hover .sidebar-badge{display:none}
 
   /* PAGES */
   .page{display:none;animation:fadeIn .25s ease}
@@ -323,8 +320,6 @@
   .policy-chevron.open{transform:rotate(180deg)}
 
   /* SCROLLBAR */
-  .sop-step-del-btn{opacity:0;pointer-events:none;transition:opacity .15s}
-  body.role-admin .sop-step-li:hover .sop-step-del-btn{opacity:1;pointer-events:auto}
   ::-webkit-scrollbar{width:5px;height:5px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
@@ -415,26 +410,26 @@
   <div class="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-label">Quick Access</div>
-      <div class="sidebar-item admin-only active" onclick="showSOP('cancel')"><i class="fas fa-ban"></i> Cancellations <span class="sidebar-badge">SOP</span><button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this)"><i class="fas fa-times"></i></button></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('orderchange')"><i class="fas fa-edit"></i> Order Changes <span class="sidebar-badge">SOP</span><button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this)"><i class="fas fa-times"></i></button></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('proof')"><i class="fas fa-eye"></i> Proof Review <span class="sidebar-badge">SOP</span><button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this)"><i class="fas fa-times"></i></button></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('delay')"><i class="fas fa-clock"></i> Production Delays <span class="sidebar-badge">SOP</span><button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this)"><i class="fas fa-times"></i></button></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('vendor')"><i class="fas fa-industry"></i> Vendor Comms <span class="sidebar-badge">SOP</span><button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this)"><i class="fas fa-times"></i></button></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('escalation')"><i class="fas fa-exclamation-triangle"></i> Escalation Rules <span class="sidebar-badge">SOP</span><button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this)"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item admin-only active" onclick="showSOP('cancel')"><i class="fas fa-ban"></i> Cancellations <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item admin-only" onclick="showSOP('orderchange')"><i class="fas fa-edit"></i> Order Changes <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item admin-only" onclick="showSOP('proof')"><i class="fas fa-eye"></i> Proof Review <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item admin-only" onclick="showSOP('delay')"><i class="fas fa-clock"></i> Production Delays <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item admin-only" onclick="showSOP('vendor')"><i class="fas fa-industry"></i> Vendor Comms <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item admin-only" onclick="showSOP('escalation')"><i class="fas fa-exclamation-triangle"></i> Escalation Rules <span class="sidebar-badge">SOP</span></div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Training Scenarios</div>
       <div class="sidebar-item" onclick="showPage('training')"><i class="fas fa-graduation-cap"></i> All Scenarios <span class="sidebar-badge green">9</span></div>
-      <div class="sidebar-item" onclick="launchScenario(0)"><i class="fas fa-bolt"></i> Cancel Request<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this)"><i class="fas fa-times"></i></button></div>
-      <div class="sidebar-item" onclick="launchScenario(1)"><i class="fas fa-bolt"></i> Delayed Shipment<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this)"><i class="fas fa-times"></i></button></div>
-      <div class="sidebar-item" onclick="launchScenario(2)"><i class="fas fa-bolt"></i> Proof Rejected<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this)"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item" onclick="launchScenario(0)"><i class="fas fa-bolt"></i> Cancel Request</div>
+      <div class="sidebar-item" onclick="launchScenario(1)"><i class="fas fa-bolt"></i> Delayed Shipment</div>
+      <div class="sidebar-item" onclick="launchScenario(2)"><i class="fas fa-bolt"></i> Proof Rejected</div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Phone Simulator</div>
       <div class="sidebar-item" onclick="showPage('phonesim')" style="color:var(--accent2);background:#4caf7d12;border:1px solid #4caf7d25"><i class="fas fa-phone"></i> Call Simulator <span class="sidebar-badge green">Live</span></div>
-      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('cancel-simple'),100)"><i class="fas fa-bolt"></i> Simple Cancel<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this)"><i class="fas fa-times"></i></button></div>
-      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('delay-angry'),100)"><i class="fas fa-bolt"></i> Angry Delay<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this)"><i class="fas fa-times"></i></button></div>
-      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('chargeback-threat'),100)"><i class="fas fa-bolt"></i> Chargeback Threat<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this)"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('cancel-simple'),100)"><i class="fas fa-bolt"></i> Simple Cancel</div>
+      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('delay-angry'),100)"><i class="fas fa-bolt"></i> Angry Delay</div>
+      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('chargeback-threat'),100)"><i class="fas fa-bolt"></i> Chargeback Threat</div>
     </div>
     <div class="sidebar-section admin-only">
       <div class="sidebar-label">Reference</div>
@@ -466,7 +461,6 @@
       <button class="edit-btn admin-only-inline" onclick="openAddSOPModal()"><i class="fas fa-plus"></i> Add SOP</button>
       <button class="edit-btn admin-only-inline" onclick="openAddTemplateModal()"><i class="fas fa-plus"></i> Add Template</button>
       <button class="edit-btn admin-only-inline" onclick="showPage('adminpanel')"><i class="fas fa-shield-alt"></i> Admin Panel</button>
-      <button class="edit-btn admin-only-inline" onclick="openEditTipsModal()"><i class="fas fa-lightbulb"></i> Edit Tips</button>
     </div>
 
     <!-- HOME PAGE -->
@@ -599,10 +593,6 @@
           <ul class="step-list" id="sop-steps"></ul>
         </div>
         <div class="detail-aside">
-          <div class="aside-card" style="border-color:#f5a62320">
-            <h5 style="display:flex;align-items:center;justify-content:space-between"><span><i class="fas fa-lightbulb" style="color:#f5a623"></i> Training Tip</span><button class="admin-only" onclick="openEditTipsModal()" style="padding:2px 7px;background:none;border:1px solid #f5a62340;border-radius:4px;font-size:10px;color:#f5a623;cursor:pointer;display:none">Edit</button></h5>
-            <div style="font-size:12px;color:var(--soft);line-height:1.6" id="sop-tip-text"></div>
-          </div>
           <div class="aside-card">
             <h5><i class="fas fa-check-circle"></i> Quick Checklist</h5>
             <ul class="check-list" id="sop-checklist"></ul>
@@ -776,7 +766,7 @@
               <div class="policy-icon" style="background:#4caf7d20;color:var(--accent)"><i class="fas fa-ban"></i></div>
               <div class="policy-name">Cancellation Policy</div>
             </div>
-            <i class="fas fa-chevron-down policy-chevron"></i><button class="admin-only delete-card-btn" onclick="this.closest('.policy-item').remove();showToast('Policy removed.','info')" style="display:none;padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:4px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:8px"><i class="fas fa-trash"></i></button>
+            <i class="fas fa-chevron-down policy-chevron"></i>
           </div>
           <div class="policy-body">
             <div class="policy-row"><div class="policy-row-key">Window</div><div class="policy-row-val">Orders may be cancelled within 2 hours of placement if not yet in production</div></div>
@@ -792,7 +782,7 @@
               <div class="policy-icon" style="background:#4caf7d18;color:var(--accent2)"><i class="fas fa-edit"></i></div>
               <div class="policy-name">Order Modification Policy</div>
             </div>
-            <i class="fas fa-chevron-down policy-chevron"></i><button class="admin-only delete-card-btn" onclick="this.closest('.policy-item').remove();showToast('Policy removed.','info')" style="display:none;padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:4px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:8px"><i class="fas fa-trash"></i></button>
+            <i class="fas fa-chevron-down policy-chevron"></i>
           </div>
           <div class="policy-body">
             <div class="policy-row"><div class="policy-row-key">Pre-Production</div><div class="policy-row-val">Address, quantity (up to +10 units), and size changes permitted before production confirmation received from vendor</div></div>
@@ -807,7 +797,7 @@
               <div class="policy-icon" style="background:#7c5ce818;color:var(--accent3)"><i class="fas fa-eye"></i></div>
               <div class="policy-name">Proof Review Policy</div>
             </div>
-            <i class="fas fa-chevron-down policy-chevron"></i><button class="admin-only delete-card-btn" onclick="this.closest('.policy-item').remove();showToast('Policy removed.','info')" style="display:none;padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:4px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:8px"><i class="fas fa-trash"></i></button>
+            <i class="fas fa-chevron-down policy-chevron"></i>
           </div>
           <div class="policy-body">
             <div class="policy-row"><div class="policy-row-key">Turnaround</div><div class="policy-row-val">Customer must approve or reject proof within 48 hours. Auto-reminder sent at 24 hours</div></div>
@@ -822,7 +812,7 @@
               <div class="policy-icon" style="background:#3498db18;color:#74b9ff"><i class="fas fa-clock"></i></div>
               <div class="policy-name">Production Delay Policy</div>
             </div>
-            <i class="fas fa-chevron-down policy-chevron"></i><button class="admin-only delete-card-btn" onclick="this.closest('.policy-item').remove();showToast('Policy removed.','info')" style="display:none;padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:4px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:8px"><i class="fas fa-trash"></i></button>
+            <i class="fas fa-chevron-down policy-chevron"></i>
           </div>
           <div class="policy-body">
             <div class="policy-row"><div class="policy-row-key">Notification</div><div class="policy-row-val">Customer must be notified within 24 hours of confirmed delay, regardless of delay length</div></div>
@@ -838,7 +828,7 @@
               <div class="policy-icon" style="background:#e74c3c18;color:#ff7675"><i class="fas fa-exclamation-triangle"></i></div>
               <div class="policy-name">Escalation Policy</div>
             </div>
-            <i class="fas fa-chevron-down policy-chevron"></i><button class="admin-only delete-card-btn" onclick="this.closest('.policy-item').remove();showToast('Policy removed.','info')" style="display:none;padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:4px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:8px"><i class="fas fa-trash"></i></button>
+            <i class="fas fa-chevron-down policy-chevron"></i>
           </div>
           <div class="policy-body">
             <div class="policy-row"><div class="policy-row-key">Agent Level</div><div class="policy-row-val">Address changes, standard cancellations within policy, proof reminders, delay notifications under 3 days</div></div>
@@ -854,7 +844,7 @@
               <div class="policy-icon" style="background:#f39c1218;color:#ffeaa7"><i class="fas fa-industry"></i></div>
               <div class="policy-name">Vendor Communication Policy</div>
             </div>
-            <i class="fas fa-chevron-down policy-chevron"></i><button class="admin-only delete-card-btn" onclick="this.closest('.policy-item').remove();showToast('Policy removed.','info')" style="display:none;padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:4px;color:#ff4757;font-size:11px;cursor:pointer;margin-left:8px"><i class="fas fa-trash"></i></button>
+            <i class="fas fa-chevron-down policy-chevron"></i>
           </div>
           <div class="policy-body">
             <div class="policy-row"><div class="policy-row-key">Primary Channel</div><div class="policy-row-val">All vendor contact must go through the designated vendor portal or approved email thread — never personal messaging</div></div>
@@ -1279,9 +1269,16 @@ function showSOP(key) {
   document.getElementById('sop-updated').textContent = d.updated;
   document.getElementById('sop-desc').textContent = d.desc;
   const stepsList = document.getElementById('sop-steps');
-  renderSOPSteps(key);
-  // apply tip
-  applySavedTip(key);
+  stepsList.innerHTML = d.steps.map(s => `
+    <li class="step-item">
+      <div class="step-num ${s.color}">${s.num}</div>
+      <div class="step-content">
+        <h4>${s.title}</h4>
+        <p>${s.body}</p>
+        ${s.note ? `<div class="tip"><i class="fas fa-lightbulb" style="color:var(--accent3);margin-right:5px"></i>${s.note}</div>` : ''}
+        ${s.warn ? `<div class="warn"><i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:5px"></i>${s.warn}</div>` : ''}
+      </div>
+    </li>`).join('');
   const cl = document.getElementById('sop-checklist');
   cl.innerHTML = d.checklist.map(c => `<li><i class="fas fa-check-circle"></i>${c}</li>`).join('');
   const esc = document.getElementById('sop-escalate');
@@ -1883,124 +1880,6 @@ function showToast(msg, type = 'info') {
   t.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':type==='warn'?'exclamation-triangle':type==='error'?'times-circle':'info-circle'}" style="color:${colors[type]};font-size:14px"></i>${msg}`;
   document.body.appendChild(t);
   setTimeout(() => { if (t.parentNode) t.remove(); }, 3500);
-}
-
-
-/* ═══ EDITABLE TIPS ═══ */
-var defaultTips = {
-  cancel: "The order IS within the cancellation window. Ask for the order number — the customer won't volunteer it.",
-  orderchange: "Order is in early production. Address change possible via vendor but not guaranteed. No false promises.",
-  proof: "Customer will try to get unlimited free revisions. Be firm about the 2-revision policy.",
-  delay: "This is a MAJOR delay (4+ days). Supervisor notification required. Cannot offer full refund independently.",
-  vendor: "All vendor contact must use official channels only. Document every interaction.",
-  escalation: "Chargeback threat = mandatory supervisor escalation. No exceptions."
-};
-function getSavedTips() {
-  try { var t=JSON.parse(localStorage.getItem('np_tips')); return t||Object.assign({},defaultTips); } catch(e){ return Object.assign({},defaultTips); }
-}
-function openEditTipsModal() {
-  var tips=getSavedTips();
-  var keys=Object.keys(defaultTips);
-  var labels={cancel:'Cancellation SOP',orderchange:'Order Changes SOP',proof:'Proof Review SOP',delay:'Production Delay SOP',vendor:'Vendor Comms SOP',escalation:'Escalation Rules SOP'};
-  var box=document.getElementById('modal-box');
-  box.innerHTML='';
-  var h3=document.createElement('h3');
-  h3.innerHTML='<i class="fas fa-lightbulb" style="color:#f5a623;margin-right:8px"></i>Edit Training Tips';
-  var p=document.createElement('p');
-  p.textContent='These tips appear in SOP pages and phone call briefings.';
-  box.appendChild(h3); box.appendChild(p);
-  keys.forEach(function(k){
-    var wrap=document.createElement('div'); wrap.className='modal-field';
-    var lbl=document.createElement('label'); lbl.textContent=labels[k];
-    var ta=document.createElement('textarea'); ta.className='modal-textarea'; ta.id='tip-'+k; ta.style.minHeight='60px';
-    ta.value=tips[k]||defaultTips[k];
-    wrap.appendChild(lbl); wrap.appendChild(ta); box.appendChild(wrap);
-  });
-  var footer=document.createElement('div'); footer.className='modal-footer';
-  var resetBtn=document.createElement('button'); resetBtn.className='modal-btn secondary'; resetBtn.textContent='Reset Defaults';
-  resetBtn.onclick=function(){ localStorage.removeItem('np_tips'); closeModal(); showToast('Reset to defaults.','info'); };
-  var saveBtn=document.createElement('button'); saveBtn.className='modal-btn primary'; saveBtn.textContent='Save Tips';
-  saveBtn.onclick=saveAllTips;
-  footer.appendChild(resetBtn); footer.appendChild(saveBtn); box.appendChild(footer);
-  document.getElementById('modal-overlay').classList.add('open');
-}
-function saveAllTips() {
-  var tips={};
-  Object.keys(defaultTips).forEach(function(k){ var el=document.getElementById('tip-'+k); if(el) tips[k]=el.value.trim()||defaultTips[k]; });
-  localStorage.setItem('np_tips',JSON.stringify(tips));
-  var tipEl=document.getElementById('sop-tip-text');
-  if(tipEl && currentSOPKey && tips[currentSOPKey]) tipEl.textContent=tips[currentSOPKey];
-  closeModal(); showToast('Tips saved!','success');
-}
-function applySavedTip(key) {
-  var tips=getSavedTips();
-  var el=document.getElementById('sop-tip-text');
-  if(el) el.textContent=tips[key]||defaultTips[key]||'';
-}
-
-/* ═══ SIDEBAR DELETE ═══ */
-function deleteSidebarItem(btn) {
-  var item=btn.closest('.sidebar-item');
-  if(!item) return;
-  item.style.transition='opacity .2s';
-  item.style.opacity='0';
-  setTimeout(function(){ if(item.parentNode) item.parentNode.removeChild(item); },200);
-  showToast('Removed from sidebar.','success');
-}
-
-/* ═══ SOP STEP DELETE ═══ */
-var currentSOPKey='';
-function renderSOPSteps(key) {
-  currentSOPKey=key;
-  var d=sopData[key]; if(!d) return;
-  var list=document.getElementById('sop-steps'); if(!list) return;
-  list.innerHTML='';
-  var colors=['','teal','purple','teal','purple','','teal','purple'];
-  d.steps.forEach(function(s,i) {
-    var li=document.createElement('li');
-    li.className='step-item sop-step-li';
-    var num=String(i+1).padStart(2,'0');
-    var col=s.color!==undefined?s.color:(colors[i]||'');
-    var numDiv=document.createElement('div');
-    numDiv.className='step-num '+col;
-    numDiv.textContent=num;
-    var content=document.createElement('div');
-    content.className='step-content';
-    content.style.flex='1';
-    var row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px';
-    var h4=document.createElement('h4');
-    h4.textContent=s.title;
-    row.appendChild(h4);
-    if(currentRole==='admin'){
-      var delBtn=document.createElement('button');
-      delBtn.className='sop-step-del-btn';
-      delBtn.innerHTML='<i class="fas fa-trash"></i> Remove';
-      delBtn.style.cssText='padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:10px;cursor:pointer;white-space:nowrap;flex-shrink:0';
-      (function(k,idx){ delBtn.onclick=function(){ deleteSOPStep(k,idx); }; })(key,i);
-      row.appendChild(delBtn);
-    }
-    content.appendChild(row);
-    var p=document.createElement('p'); p.textContent=s.body; content.appendChild(p);
-    if(s.note){ var tip=document.createElement('div'); tip.className='tip'; tip.innerHTML='<i class="fas fa-lightbulb" style="color:var(--accent3);margin-right:5px"></i>'+s.note; content.appendChild(tip); }
-    if(s.warn){ var warn=document.createElement('div'); warn.className='warn'; warn.innerHTML='<i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:5px"></i>'+s.warn; content.appendChild(warn); }
-    li.appendChild(numDiv); li.appendChild(content);
-    list.appendChild(li);
-  });
-  applySavedTip(key);
-}
-function deleteSOPStep(key,idx) {
-  if(!sopData[key]||!sopData[key].steps[idx]) return;
-  sopData[key].steps.splice(idx,1);
-  renderSOPSteps(key);
-  showToast('Step removed. Steps renumbered.','success');
-}
-
-/* ═══ SHOW/HIDE ADMIN BUTTONS ═══ */
-function applyAdminUI() {
-  document.querySelectorAll('.admin-only,.delete-card-btn').forEach(function(el){
-    el.style.display=currentRole==='admin'?'':'none';
-  });
 }
 </script>
 
