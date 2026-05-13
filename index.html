@@ -1248,6 +1248,24 @@ const refItems = [
 ];
 
 function showPage(name) {
+  /* phone sim — lazy init */
+  if (name === 'phonesim') {
+    if (typeof ensurePhoneSimPage === 'function') ensurePhoneSimPage();
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const ps = document.getElementById('page-phonesim');
+    if (ps) ps.classList.add('active');
+    document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-pill').forEach(b => { if (b.textContent.trim().includes('Phone Sim')) b.classList.add('active'); });
+    if (typeof renderCallLobby === 'function' && (callSimView === 'lobby' || !callSimView)) { psimShowView('lobby'); renderCallLobby(); }
+    return;
+  }
+  /* agent route guard */
+  const agentBlocked = ['reference','templates','policies','adminpanel','sop'];
+  if (currentRole === 'agent' && agentBlocked.includes(name)) {
+    showToast('This area requires admin access.', 'warn');
+    return;
+  }
+  /* normal page switch */
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const target = document.getElementById('page-' + name);
   if (target) target.classList.add('active');
@@ -1256,7 +1274,6 @@ function showPage(name) {
   document.querySelectorAll('.nav-pill').forEach(b => {
     const txt = b.textContent.trim();
     if (navMap[name] && txt === navMap[name]) b.classList.add('active');
-    if (name === 'phonesim' && txt.includes('Phone Sim')) b.classList.add('active');
   });
   if (name === 'reference') renderRefList('all');
 }
@@ -1500,16 +1517,7 @@ function doLogout() {
   cancelEdits();
 }
 
-/* ── Route guard: block agent access to admin pages ── */
-const _baseShowPage = showPage;
-function showPage(name) {
-  const agentBlocked = ['reference','templates','policies','adminpanel','sop'];
-  if (currentRole === 'agent' && agentBlocked.includes(name)) {
-    showToast('This area requires admin access.', 'warn');
-    return;
-  }
-  _baseShowPage(name);
-}
+/* route guard merged into showPage above */
 
 /* ═══════════════════════════════════════════════
    INLINE EDIT MODE (admin only)
@@ -2453,20 +2461,7 @@ async function psimEndCall() {
   }
 }
 
-/* Hook showPage to init phone sim page on first visit */
-const _origShowPage = showPage;
-function showPage(name) {
-  if (name === 'phonesim') {
-    ensurePhoneSimPage();
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-phonesim').classList.add('active');
-    document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.nav-pill').forEach(b => { if (b.textContent.trim().includes('Phone Sim')) b.classList.add('active'); });
-    if (callSimView === 'lobby' || !callSimView) { psimShowView('lobby'); renderCallLobby(); }
-    return;
-  }
-  _origShowPage(name);
-}
+/* phone sim hook merged into showPage above */
 </script>
 </body>
 </html>
