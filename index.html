@@ -949,6 +949,14 @@
 </div>
 
 <script>
+let callSimView = 'lobby';
+let activeCallScenario = null;
+let callMsgHistory = [];
+let callBusy = false;
+let callSecs = 0;
+let callCheckState = {};
+let callClockInterval = null;
+let isTyping = false;
 const sopData = {
   cancel: {
     title: 'Order Cancellation SOP',
@@ -1256,7 +1264,7 @@ function showPage(name) {
     if (ps) ps.classList.add('active');
     document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.nav-pill').forEach(b => { if (b.textContent.trim().includes('Phone Sim')) b.classList.add('active'); });
-    if (typeof renderCallLobby === 'function' && (callSimView === 'lobby' || !callSimView)) { psimShowView('lobby'); renderCallLobby(); }
+    if (typeof renderCallLobby === 'function' && (typeof callSimView === 'undefined' || callSimView === 'lobby' || !callSimView)) { if(typeof psimShowView==='function') psimShowView('lobby'); renderCallLobby(); }
     return;
   }
   /* agent route guard */
@@ -2122,7 +2130,7 @@ let callClockInterval = null;
 let callSecs = 0;
 let callBusy = false;
 let callCheckState = {};
-let callSimView = 'lobby'; // lobby | briefing | call | debrief
+callSimView = 'lobby'; // lobby | briefing | call | debrief
 
 /* ── Inject page HTML on first use ── */
 function ensurePhoneSimPage() {
