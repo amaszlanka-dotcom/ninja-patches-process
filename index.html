@@ -1588,16 +1588,29 @@ function renderRefList(cat) {
 function renderRefListItems(items) {
   const list = document.getElementById('ref-list');
   if(!items.length){ list.innerHTML = '<div style="padding:20px;color:var(--muted);font-size:13px">No results found.</div>'; return; }
-  list.innerHTML = items.map(r => `
-    <div class="ref-item" onclick="sendPrompt('Tell me about the Ninja Patches reference guide for: ${r.title}')">
-      <div class="ref-icon" style="background:${r.iconBg};color:${r.iconColor}"><i class="${r.icon}" style="font-size:15px"></i></div>
-      <div style="flex:1">
-        <div class="ref-title">${r.title}</div>
-        <div class="ref-desc">${r.desc}</div>
-        <div class="ref-tags">${r.tags.map(t => `<span class="ref-tag" style="${r.tagStyle}">${t}</span>`).join('')}</div>
-      </div>
-      <i class="fas fa-external-link-alt" style="font-size:12px;color:var(--muted);margin-top:4px"></i>
-    </div>`).join('');
+  list.innerHTML = '';
+  items.forEach(function(r) {
+    var div = document.createElement('div');
+    div.className = 'ref-item';
+    div.onclick = function() { sendPrompt('Tell me about: ' + r.title); };
+    var iconDiv = document.createElement('div');
+    iconDiv.className = 'ref-icon';
+    iconDiv.style.background = r.iconBg;
+    iconDiv.style.color = r.iconColor;
+    iconDiv.innerHTML = '<i class="' + r.icon + '" style="font-size:15px"></i>';
+    var bodyDiv = document.createElement('div');
+    bodyDiv.style.flex = '1';
+    bodyDiv.innerHTML = '<div class="ref-title">' + r.title + '</div>'
+      + '<div class="ref-desc">' + r.desc + '</div>'
+      + '<div class="ref-tags">' + r.tags.map(function(t){ return '<span class="ref-tag" style="' + r.tagStyle + '">' + t + '</span>'; }).join('') + '</div>';
+    var icon = document.createElement('i');
+    icon.className = 'fas fa-external-link-alt';
+    icon.style.cssText = 'font-size:12px;color:var(--muted);margin-top:4px';
+    div.appendChild(iconDiv);
+    div.appendChild(bodyDiv);
+    div.appendChild(icon);
+    list.appendChild(div);
+  });
 }
 
 function copyTemplate(btn, text) {
