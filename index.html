@@ -380,6 +380,10 @@
     <div class="auth-creds-hint" id="auth-hint-block">
       <span id="agent-hint-text"><strong>Agent login:</strong> Contact your admin for credentials.</span>
       <span id="admin-hint-text" style="display:none"><strong>Admin access.</strong> Full platform control enabled.</span>
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+        <span style="font-size:10px;color:var(--muted)">Login not working? </span>
+        <button onclick="resetLoginCache()" style="font-size:10px;color:var(--accent2);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:var(--font-body);padding:0">Reset saved credentials</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1545,7 +1549,20 @@ renderRefList('all');
 
 // Default credentials (stored in localStorage after first change)
 const _dc = s => atob(s);
-let platformCredentials = JSON.parse(localStorage.getItem('np_credentials') || 'null') || {
+// Load credentials - validate structure before trusting localStorage
+let _stored = null;
+try {
+  const _raw = localStorage.getItem('np_credentials');
+  if (_raw) {
+    const _parsed = JSON.parse(_raw);
+    if (_parsed && _parsed.admin && _parsed.admin.username && _parsed.admin.password && Array.isArray(_parsed.agents)) {
+      _stored = _parsed;
+    } else {
+      localStorage.removeItem('np_credentials');
+    }
+  }
+} catch(e) { localStorage.removeItem('np_credentials'); }
+let platformCredentials = _stored || {
   admin: { username: _dc('YWRtaW4='), password: _dc('bmluamEyMDI1') },
   agents: [{ username: _dc('YWdlbnQ='), password: _dc('cGF0Y2hlczIwMjU='), name: 'Agent' }]
 };
@@ -1564,6 +1581,26 @@ function selectRole(role) {
   const adminHint = document.getElementById('admin-hint-text');
   if (agentHint) agentHint.style.display = role === 'agent' ? 'inline' : 'none';
   if (adminHint) adminHint.style.display = role === 'admin' ? 'inline' : 'none';
+}
+
+function resetLoginCache() {
+  localStorage.removeItem('np_credentials');
+  platformCredentials = {
+    admin: { username: _dc('YWRtaW4='), password: _dc('bmluamEyMDI1') },
+    agents: [{ username: _dc('YWdlbnQ='), password: _dc('cGF0Y2hlczIwMjU='), name: 'Agent' }]
+  };
+  document.getElementById('auth-error').classList.remove('show');
+  document.getElementById('auth-username').value = '';
+  document.getElementById('auth-password').value = '';
+  // Show brief confirmation
+  const hint = document.getElementById('auth-hint-block');
+  if (hint) {
+    const msg = document.createElement('div');
+    msg.style.cssText = 'font-size:11px;color:#4caf7d;margin-top:6px;font-weight:600';
+    msg.textContent = 'Credentials reset to defaults. Try logging in again.';
+    hint.appendChild(msg);
+    setTimeout(() => msg.remove(), 4000);
+  }
 }
 
 function doLogin() {
