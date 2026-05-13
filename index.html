@@ -324,6 +324,16 @@
   .policy-chevron.open{transform:rotate(180deg)}
 
   /* SCROLLBAR */
+  /* SOP step delete button — pure CSS hover, only shows for admin */
+  .sop-step-del-btn{
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .15s;
+  }
+  body.role-admin .sop-step-li:hover .sop-step-del-btn{
+    opacity:1;
+    pointer-events:auto;
+  }
   ::-webkit-scrollbar{width:5px;height:5px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
@@ -1325,10 +1335,8 @@ function renderSOPSteps(key) {
     const num = String(i + 1).padStart(2, '0');
     const colors = ['', 'teal', 'purple', 'teal', 'purple', '', 'teal', 'purple'];
     const col = s.color !== undefined ? s.color : (colors[i] || '');
-    const delBtn = currentRole === 'admin'
-      ? `<button class="sop-step-del-btn" onclick="quickDeleteStep('${key}',${i})" title="Remove this step" style="opacity:0;padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:10px;cursor:pointer;white-space:nowrap;transition:opacity .15s;flex-shrink:0"><i class="fas fa-trash"></i> Remove</button>`
-      : '';
-    return '<li class="step-item sop-step-li" style="position:relative" onmouseenter="showStepDel(this)" onmouseleave="hideStepDel(this)">'
+    const delBtn = `<button class="sop-step-del-btn" onclick="quickDeleteStep('${key}',${i})" title="Remove this step" style="padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:10px;cursor:pointer;white-space:nowrap;flex-shrink:0"><i class="fas fa-trash"></i> Remove</button>`;
+    return '<li class="step-item sop-step-li" style="position:relative">'
       + '<div class="step-num ' + col + '">' + num + '</div>'
       + '<div class="step-content" style="flex:1">'
       + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px">'
