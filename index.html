@@ -1395,12 +1395,30 @@ function quickDeleteStep(key, idx) {
   if (currentRole !== 'admin') return;
   if (!sopData[key] || !sopData[key].steps[idx]) return;
   const stepTitle = sopData[key].steps[idx].title;
-  openModal('<h3 style="color:#ff4757"><i class="fas fa-trash" style="margin-right:8px"></i>Remove step?</h3>'
-    + '<p>Remove <strong style="color:var(--text)">' + stepTitle + '</strong> from this SOP? The remaining steps will automatically renumber.</p>'
-    + '<div class="modal-footer">'
-    + '<button class="modal-btn secondary" onclick="closeModal()">Cancel</button>'
-    + '<button class="modal-btn primary" style="background:#ff4757" onclick="confirmQuickDeleteStep('' + key + '',' + idx + ')">Remove Step</button>'
-    + '</div>');
+  const box = document.getElementById('modal-box');
+  box.innerHTML = '';
+  const h3 = document.createElement('h3');
+  h3.style.color = '#ff4757';
+  h3.innerHTML = '<i class="fas fa-trash" style="margin-right:8px"></i>Remove step?';
+  const p = document.createElement('p');
+  p.innerHTML = 'Remove <strong style="color:var(--text)">' + stepTitle + '</strong> from this SOP? Remaining steps will renumber automatically.';
+  const footer = document.createElement('div');
+  footer.className = 'modal-footer';
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'modal-btn secondary';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = closeModal;
+  const confirmBtn = document.createElement('button');
+  confirmBtn.className = 'modal-btn primary';
+  confirmBtn.style.background = '#ff4757';
+  confirmBtn.textContent = 'Remove Step';
+  confirmBtn.onclick = function() { confirmQuickDeleteStep(key, idx); };
+  footer.appendChild(cancelBtn);
+  footer.appendChild(confirmBtn);
+  box.appendChild(h3);
+  box.appendChild(p);
+  box.appendChild(footer);
+  document.getElementById('modal-overlay').classList.add('open');
 }
 
 function confirmQuickDeleteStep(key, idx) {
