@@ -142,6 +142,10 @@
   .sidebar-badge{margin-left:auto;background:#4caf7d30;color:var(--accent);font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600}
   .sidebar-badge.green{background:#4caf7d20;color:var(--accent2)}
   .sidebar-badge.purple{background:#7c5ce820;color:var(--accent3)}
+  .sidebar-item{position:relative}
+  .sidebar-del-btn{display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);width:20px;height:20px;background:#ff475720;border:none;border-radius:4px;color:#ff4757;font-size:10px;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .15s}
+  body.role-admin .sidebar-item:hover .sidebar-del-btn{display:flex;opacity:1}
+  body.role-admin .sidebar-item:hover .sidebar-badge{display:none}
 
   /* PAGES */
   .page{display:none;animation:fadeIn .25s ease}
@@ -410,32 +414,32 @@
   <div class="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-label">Quick Access</div>
-      <div class="sidebar-item admin-only active" onclick="showSOP('cancel')"><i class="fas fa-ban"></i> Cancellations <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('orderchange')"><i class="fas fa-edit"></i> Order Changes <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('proof')"><i class="fas fa-eye"></i> Proof Review <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('delay')"><i class="fas fa-clock"></i> Production Delays <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('vendor')"><i class="fas fa-industry"></i> Vendor Comms <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('escalation')"><i class="fas fa-exclamation-triangle"></i> Escalation Rules <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item admin-only active" onclick="showSOP('cancel')"><i class="fas fa-ban"></i> Cancellations <span class="sidebar-badge">SOP</span><button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Cancellations SOP')"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item admin-only" onclick="showSOP('orderchange')"><i class="fas fa-edit"></i> Order Changes <span class="sidebar-badge">SOP</span><button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Order Changes SOP')"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item admin-only" onclick="showSOP('proof')"><i class="fas fa-eye"></i> Proof Review <span class="sidebar-badge">SOP</span><button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Proof Review SOP')"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item admin-only" onclick="showSOP('delay')"><i class="fas fa-clock"></i> Production Delays <span class="sidebar-badge">SOP</span><button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Production Delays SOP')"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item admin-only" onclick="showSOP('vendor')"><i class="fas fa-industry"></i> Vendor Comms <span class="sidebar-badge">SOP</span><button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Vendor Comms SOP')"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item admin-only" onclick="showSOP('escalation')"><i class="fas fa-exclamation-triangle"></i> Escalation Rules <span class="sidebar-badge">SOP</span><button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Escalation Rules SOP')"><i class="fas fa-times"></i></button></div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Training Scenarios</div>
       <div class="sidebar-item" onclick="showPage('training')"><i class="fas fa-graduation-cap"></i> All Scenarios <span class="sidebar-badge green">9</span></div>
-      <div class="sidebar-item" onclick="launchScenario(0)"><i class="fas fa-bolt"></i> Cancel Request</div>
-      <div class="sidebar-item" onclick="launchScenario(1)"><i class="fas fa-bolt"></i> Delayed Shipment</div>
-      <div class="sidebar-item" onclick="launchScenario(2)"><i class="fas fa-bolt"></i> Proof Rejected</div>
+      <div class="sidebar-item" onclick="launchScenario(0)"><i class="fas fa-bolt"></i> Cancel Request<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Cancel Request')"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item" onclick="launchScenario(1)"><i class="fas fa-bolt"></i> Delayed Shipment<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Delayed Shipment')"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item" onclick="launchScenario(2)"><i class="fas fa-bolt"></i> Proof Rejected<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Proof Rejected')"><i class="fas fa-times"></i></button></div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Phone Simulator</div>
       <div class="sidebar-item" onclick="showPage('phonesim')" style="color:var(--accent2);background:#4caf7d12;border:1px solid #4caf7d25"><i class="fas fa-phone"></i> Call Simulator <span class="sidebar-badge green">Live</span></div>
-      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('cancel-simple'),100)"><i class="fas fa-bolt"></i> Simple Cancel</div>
-      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('delay-angry'),100)"><i class="fas fa-bolt"></i> Angry Delay</div>
-      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('chargeback-threat'),100)"><i class="fas fa-bolt"></i> Chargeback Threat</div>
+      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('cancel-simple'),100)"><i class="fas fa-bolt"></i> Simple Cancel<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Simple Cancel')"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('delay-angry'),100)"><i class="fas fa-bolt"></i> Angry Delay<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Angry Delay')"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('chargeback-threat'),100)"><i class="fas fa-bolt"></i> Chargeback Threat<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Chargeback Threat')"><i class="fas fa-times"></i></button></div>
     </div>
     <div class="sidebar-section admin-only">
       <div class="sidebar-label">Reference</div>
       <div class="sidebar-item" onclick="showPage('reference')"><i class="fas fa-book"></i> Knowledge Base <span class="sidebar-badge purple">24</span></div>
-      <div class="sidebar-item" onclick="showPage('templates')"><i class="fas fa-envelope"></i> Templates</div>
-      <div class="sidebar-item" onclick="showPage('policies')"><i class="fas fa-shield-alt"></i> Policies</div>
+      <div class="sidebar-item" onclick="showPage('templates')"><i class="fas fa-envelope"></i> Templates<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Templates link')"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-item" onclick="showPage('policies')"><i class="fas fa-shield-alt"></i> Policies<button class="sidebar-del-btn" onclick="event.stopPropagation();deleteSidebarItem(this,'Policies link')"><i class="fas fa-times"></i></button></div>
     </div>
     <div class="sidebar-section admin-only">
       <div class="sidebar-label">Admin</div>
@@ -1311,6 +1315,63 @@ function showPage(name) {
 }
 
 let currentSOPKey = '';
+
+function renderSOPSteps(key) {
+  const d = sopData[key];
+  if (!d) return;
+  const stepsList = document.getElementById('sop-steps');
+  if (!stepsList) return;
+  stepsList.innerHTML = d.steps.map((s, i) => {
+    const num = String(i + 1).padStart(2, '0');
+    const colors = ['', 'teal', 'purple', 'teal', 'purple', '', 'teal', 'purple'];
+    const col = s.color !== undefined ? s.color : (colors[i] || '');
+    const delBtn = currentRole === 'admin'
+      ? `<button class="sop-step-del-btn" onclick="quickDeleteStep('${key}',${i})" title="Remove this step" style="opacity:0;padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:10px;cursor:pointer;white-space:nowrap;transition:opacity .15s;flex-shrink:0"><i class="fas fa-trash"></i> Remove</button>`
+      : '';
+    return '<li class="step-item sop-step-li" style="position:relative" onmouseenter="showStepDel(this)" onmouseleave="hideStepDel(this)">'
+      + '<div class="step-num ' + col + '">' + num + '</div>'
+      + '<div class="step-content" style="flex:1">'
+      + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px">'
+      + '<h4>' + s.title + '</h4>'
+      + delBtn
+      + '</div>'
+      + '<p>' + s.body + '</p>'
+      + (s.note ? '<div class="tip"><i class="fas fa-lightbulb" style="color:var(--accent3);margin-right:5px"></i>' + s.note + '</div>' : '')
+      + (s.warn ? '<div class="warn"><i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:5px"></i>' + s.warn + '</div>' : '')
+      + '</div></li>';
+  }).join('');
+}
+
+function showStepDel(li) {
+  const btn = li.querySelector('.sop-step-del-btn');
+  if (btn) btn.style.opacity = '1';
+}
+function hideStepDel(li) {
+  const btn = li.querySelector('.sop-step-del-btn');
+  if (btn) btn.style.opacity = '0';
+}
+
+function quickDeleteStep(key, idx) {
+  if (currentRole !== 'admin') return;
+  if (!sopData[key] || !sopData[key].steps[idx]) return;
+  const stepTitle = sopData[key].steps[idx].title;
+  openModal('<h3 style="color:#ff4757"><i class="fas fa-trash" style="margin-right:8px"></i>Remove step?</h3>'
+    + '<p>Remove <strong style="color:var(--text)">' + stepTitle + '</strong> from this SOP? The remaining steps will automatically renumber.</p>'
+    + '<div class="modal-footer">'
+    + '<button class="modal-btn secondary" onclick="closeModal()">Cancel</button>'
+    + '<button class="modal-btn primary" style="background:#ff4757" onclick="confirmQuickDeleteStep('' + key + '',' + idx + ')">Remove Step</button>'
+    + '</div>');
+}
+
+function confirmQuickDeleteStep(key, idx) {
+  if (sopData[key] && sopData[key].steps[idx]) {
+    sopData[key].steps.splice(idx, 1);
+    renderSOPSteps(key);
+    showToast('Step removed. Steps renumbered automatically.', 'success');
+  }
+  closeModal();
+}
+
 function showSOP(key) {
   currentSOPKey = key;
   const d = sopData[key];
@@ -1320,19 +1381,7 @@ function showSOP(key) {
   document.getElementById('sop-updated').textContent = d.updated;
   document.getElementById('sop-desc').textContent = d.desc;
   const stepsList = document.getElementById('sop-steps');
-  stepsList.innerHTML = d.steps.map((s, stepIdx) => `
-    <li class="step-item" id="step-item-${stepIdx}">
-      <div class="step-num ${s.color}">${s.num}</div>
-      <div class="step-content" style="flex:1">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
-          <h4>${s.title}</h4>
-          ${currentRole === 'admin' ? '<button onclick="deleteSOPStep('' + currentSOPKey + '',' + stepIdx + ')" style="padding:2px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:4px;color:#ff4757;font-size:10px;cursor:pointer;white-space:nowrap;flex-shrink:0"><i class=\"fas fa-trash\"></i> Remove step</button>' : ''}
-        </div>
-        <p>${s.body}</p>
-        ${s.note ? '<div class="tip"><i class="fas fa-lightbulb" style="color:var(--accent3);margin-right:5px"></i>' + s.note + '</div>' : ''}
-        ${s.warn ? '<div class="warn"><i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:5px"></i>' + s.warn + '</div>' : ''}
-      </div>
-    </li>`).join('');
+  renderSOPSteps(key);
   const cl = document.getElementById('sop-checklist');
   cl.innerHTML = d.checklist.map(c => `<li><i class="fas fa-check-circle"></i>${c}</li>`).join('');
   const esc = document.getElementById('sop-escalate');
@@ -2141,6 +2190,34 @@ function applyDeleteButtonVisibility() {
   document.querySelectorAll('.delete-card-btn').forEach(btn => {
     btn.style.display = currentRole === 'admin' ? 'inline-flex' : 'none';
   });
+}
+
+function deleteSidebarItem(btn, label) {
+  if (currentRole !== 'admin') return;
+  const item = btn.closest('.sidebar-item');
+  if (!item) return;
+  openModal(`
+    <h3 style="color:#ff4757"><i class="fas fa-trash" style="margin-right:8px"></i>Remove from sidebar?</h3>
+    <p>This will remove <strong style="color:var(--text)">${label}</strong> from the sidebar navigation. The content itself is not deleted — you can still access it from the main pages. Reloading the page will restore all sidebar links.</p>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary" style="background:#ff4757" onclick="confirmDeleteSidebarItem()">Remove</button>
+    </div>`);
+  window._pendingSidebarItem = item;
+}
+
+function confirmDeleteSidebarItem() {
+  if (window._pendingSidebarItem) {
+    const item = window._pendingSidebarItem;
+    item.style.transition = 'opacity .25s, max-height .25s';
+    item.style.opacity = '0';
+    item.style.maxHeight = '0';
+    item.style.overflow = 'hidden';
+    setTimeout(() => { if (item.parentNode) item.parentNode.removeChild(item); }, 260);
+    window._pendingSidebarItem = null;
+  }
+  closeModal();
+  showToast('Removed from sidebar.', 'success');
 }
 </script>
 
