@@ -485,10 +485,10 @@
         <h1>Your <span>Operational</span><br/>Brain. Always On.</h1>
         <p>The single source of truth for every process, policy, and decision. Train, reference, and operate with full confidence — before ever touching a live system.</p>
         <div class="hero-stats">
-          <div class="hero-stat"><div class="hero-stat-num">24</div><div class="hero-stat-label">SOPs</div></div>
+          <div class="hero-stat"><div class="hero-stat-num">8</div><div class="hero-stat-label">SOPs</div></div>
           <div class="hero-stat"><div class="hero-stat-num">9</div><div class="hero-stat-label">Scenarios</div></div>
-          <div class="hero-stat"><div class="hero-stat-num">18</div><div class="hero-stat-label">Templates</div></div>
-          <div class="hero-stat"><div class="hero-stat-num">11</div><div class="hero-stat-label">Policies</div></div>
+          <div class="hero-stat"><div class="hero-stat-num">12</div><div class="hero-stat-label">Templates</div></div>
+          <div class="hero-stat"><div class="hero-stat-num">8</div><div class="hero-stat-label">Policies</div></div>
           <div class="hero-stat"><div class="hero-stat-num" style="color:var(--accent2)">6</div><div class="hero-stat-label">Call Sims</div></div>
         </div>
       </div>
@@ -496,45 +496,59 @@
       <div class="section-pad">
         <div class="section-title"><i class="fas fa-layer-group" style="font-size:13px;color:var(--accent)"></i> Core SOPs</div>
         <div class="card-grid">
-          <div class="card" onclick="showSOP('cancel')">
-            <div class="card-icon orange"><i class="fas fa-ban"></i></div>
-            <h3>Cancellations</h3>
-            <p>When to approve, deny, or escalate cancellation requests within policy limits.</p>
+          <div class="card" onclick="showSOP('unreviewed')">
+            <div class="card-icon teal"><i class="fas fa-inbox"></i></div>
+            <h3>Unreviewed Orders</h3>
+            <p>How to access, review, and assign new orders from the Periscope dashboard.</p>
             <span class="card-tag sop">SOP</span>
             <i class="fas fa-arrow-right card-arrow"></i>
           </div>
-          <div class="card" onclick="showSOP('orderchange')">
-            <div class="card-icon teal"><i class="fas fa-edit"></i></div>
-            <h3>Order Changes</h3>
-            <p>Pre-production modifications — size, design, address, quantity adjustments.</p>
+          <div class="card" onclick="showSOP('vendorminimums')">
+            <div class="card-icon orange"><i class="fas fa-chart-bar"></i></div>
+            <h3>Vendor Chart & MOQs</h3>
+            <p>Which vendor handles which patch type, minimum order quantities, and NinjaFast vendors.</p>
+            <span class="card-tag sop">SOP</span>
+            <i class="fas fa-arrow-right card-arrow"></i>
+          </div>
+          <div class="card" onclick="showSOP('cancel')">
+            <div class="card-icon red"><i class="fas fa-ban"></i></div>
+            <h3>Order Cancellations</h3>
+            <p>When and how to cancel orders based on W3os status. Cannot cancel once Sent to Production.</p>
             <span class="card-tag sop">SOP</span>
             <i class="fas fa-arrow-right card-arrow"></i>
           </div>
           <div class="card" onclick="showSOP('proof')">
             <div class="card-icon purple"><i class="fas fa-eye"></i></div>
             <h3>Proof Review Cycle</h3>
-            <p>Managing proof submissions, customer approvals, and rejected proofs.</p>
-            <span class="card-tag training">Training</span>
-            <i class="fas fa-arrow-right card-arrow"></i>
-          </div>
-          <div class="card" onclick="showSOP('delay')">
-            <div class="card-icon blue"><i class="fas fa-clock"></i></div>
-            <h3>Production Delays</h3>
-            <p>Identifying, communicating, and managing customer expectations for delays.</p>
+            <p>Managing proof submissions, customer approvals, rejections, and revision cycles.</p>
             <span class="card-tag sop">SOP</span>
             <i class="fas fa-arrow-right card-arrow"></i>
           </div>
           <div class="card" onclick="showSOP('vendor')">
             <div class="card-icon yellow"><i class="fas fa-industry"></i></div>
             <h3>Vendor Communication</h3>
-            <p>Approved channels, escalation contacts, and communication guidelines.</p>
-            <span class="card-tag ref">Ref</span>
+            <p>Vendor reps, approved channels, and how to tag and notify each vendor correctly.</p>
+            <span class="card-tag sop">SOP</span>
+            <i class="fas fa-arrow-right card-arrow"></i>
+          </div>
+          <div class="card" onclick="showSOP('nda')">
+            <div class="card-icon blue"><i class="fas fa-shipping-fast"></i></div>
+            <h3>NDA Shipping</h3>
+            <p>Next Day Air eligibility, upgrade process, and NinjaFast shipping rules.</p>
+            <span class="card-tag sop">SOP</span>
+            <i class="fas fa-arrow-right card-arrow"></i>
+          </div>
+          <div class="card" onclick="showSOP('lostandtransit')">
+            <div class="card-icon orange"><i class="fas fa-search-location"></i></div>
+            <h3>Lost in Transit</h3>
+            <p>How to identify and resolve orders lost in transit. Resolution options and $500 escalation rule.</p>
+            <span class="card-tag sop">SOP</span>
             <i class="fas fa-arrow-right card-arrow"></i>
           </div>
           <div class="card" onclick="showSOP('escalation')">
             <div class="card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
             <h3>Escalation Rules</h3>
-            <p>Decision tree for when to act, when to escalate, and who to involve.</p>
+            <p>When to escalate, what to include, and how to handle customers requesting supervisors.</p>
             <span class="card-tag policy">Policy</span>
             <i class="fas fa-arrow-right card-arrow"></i>
           </div>
@@ -705,50 +719,92 @@
     <div id="page-templates" class="page">
       <div style="padding:20px 36px 0">
         <div style="font-family:var(--font-head);font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px">Communication Templates</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:0">Approved messaging for every customer and vendor situation.</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:0">Approved messaging for every customer and vendor situation. These are official Ninja Patches email and timeline templates.</div>
       </div>
       <div class="tmpl-grid">
         <div class="tmpl-card">
-          <div class="tmpl-type">Customer — Cancellation</div>
-          <h3>Cancel Within Policy</h3>
-          <p>Used when the order is within the cancellation window and qualifies for a full refund.</p>
-          <div class="tmpl-preview">"Hi [Name], your order #[ORDER] has been successfully cancelled. A full refund of $[AMOUNT] will appear in 3–5 business days. Let us know if you have any questions!"</div>
-          <button class="copy-btn" onclick="copyTemplate(this,'Hi [Name], your order #[ORDER] has been successfully cancelled. A full refund of $[AMOUNT] will appear in 3–5 business days. Let us know if you have any questions!')"><i class="fas fa-copy"></i> Copy</button>
+          <div class="tmpl-type">Vendor Timeline — Standard Order</div>
+          <h3>Assigning to Desent (Standard)</h3>
+          <p>Used when tagging Jessie Ye in Shopify timeline or admin website for a standard order.</p>
+          <div class="tmpl-preview">@Jessie Ye We're assigning this order to you. Thank you.</div>
+          <button class="copy-btn" onclick="copyTemplate(this,'@Jessie Ye We\'re assigning this order to you. Thank you.')"><i class="fas fa-copy"></i> Copy</button>
         </div>
         <div class="tmpl-card">
-          <div class="tmpl-type">Customer — Cancellation</div>
-          <h3>Cancel Denied — In Production</h3>
-          <p>When the order is already in production and cannot be cancelled per policy.</p>
-          <div class="tmpl-preview">"Hi [Name], unfortunately your order #[ORDER] has entered production and can no longer be cancelled. We're committed to getting it to you quickly — estimated delivery is [DATE]. We apologize for any inconvenience."</div>
-          <button class="copy-btn" onclick="copyTemplate(this,'Hi [Name], unfortunately your order #[ORDER] has entered production and can no longer be cancelled. We\'re committed to getting it to you quickly — estimated delivery is [DATE]. We apologize for any inconvenience.')"><i class="fas fa-copy"></i> Copy</button>
+          <div class="tmpl-type">Vendor Timeline — NinjaFast</div>
+          <h3>Assigning Rush Order to Vendor</h3>
+          <p>Used when assigning a NinjaFast/rush order to any vendor representative.</p>
+          <div class="tmpl-preview">@[Vendor Rep] This is a RUSH order. Please produce and ship within 5 days. Thank you.</div>
+          <button class="copy-btn" onclick="copyTemplate(this,'@[Vendor Rep] This is a RUSH order. Please produce and ship within 5 days. Thank you.')"><i class="fas fa-copy"></i> Copy</button>
         </div>
         <div class="tmpl-card">
-          <div class="tmpl-type">Customer — Delay</div>
-          <h3>Production Delay Notification</h3>
-          <p>Proactive message when a delay is confirmed and new ETA is known.</p>
-          <div class="tmpl-preview">"Hi [Name], we wanted to update you — your order #[ORDER] is experiencing a short production delay. Your new estimated delivery date is [NEW_DATE]. We sincerely apologize and appreciate your patience."</div>
-          <button class="copy-btn" onclick="copyTemplate(this,'Hi [Name], we wanted to update you — your order #[ORDER] is experiencing a short production delay. Your new estimated delivery date is [NEW_DATE]. We sincerely apologize and appreciate your patience.')"><i class="fas fa-copy"></i> Copy</button>
+          <div class="tmpl-type">World Vendor — 24 pcs Below</div>
+          <h3>World Vendor — No Proof Note</h3>
+          <p>Used in the Admin website timeline when tagging @Daniel for orders 24 pcs and below with no proof.</p>
+          <div class="tmpl-preview">NEW ORDER - No Proof Sent to Prod</div>
+          <button class="copy-btn" onclick="copyTemplate(this,'NEW ORDER - No Proof Sent to Prod')"><i class="fas fa-copy"></i> Copy</button>
         </div>
         <div class="tmpl-card">
-          <div class="tmpl-type">Customer — Proof</div>
-          <h3>Proof Ready for Review</h3>
-          <p>Notify customer that their proof is ready and needs approval before production begins.</p>
-          <div class="tmpl-preview">"Hi [Name], your proof for order #[ORDER] is ready for review! Please take a moment to check the design, colors, and text. Reply with APPROVE to proceed or REQUEST CHANGES with your feedback. Production begins once we receive your approval."</div>
-          <button class="copy-btn" onclick="copyTemplate(this,'Hi [Name], your proof for order #[ORDER] is ready for review! Please take a moment to check the design, colors, and text. Reply with APPROVE to proceed or REQUEST CHANGES with your feedback.')"><i class="fas fa-copy"></i> Copy</button>
+          <div class="tmpl-type">Cancellation & Refund — Embroidery</div>
+          <h3>Classic Embroidery — Not Viable</h3>
+          <p>When embroidery is not viable due to high detail at scale or gradients in the design.</p>
+          <div class="tmpl-preview">Hey there, Thank you for your interest in Ninja Patches Embroidery. After reviewing your order, we have determined that embroidery is not viable for the design you submitted due to high detail at scale or the presence of gradients in your design. We have canceled this item and issued a credit to your account. You are welcome to place an order using a more accommodating product type like Full-Color Printed, or submit a revised embroidery design.</div>
+          <button class="copy-btn" onclick="copyTemplate(this,'Hey there, Thank you for your interest in Ninja Patches Embroidery. After reviewing your order, we have determined that embroidery is not viable for the design you submitted due to high detail at scale or the presence of gradients in your design. We have canceled this item and issued a credit to your account. You are welcome to place an order using a more accommodating product type like Full-Color Printed, or submit a revised embroidery design.')"><i class="fas fa-copy"></i> Copy</button>
         </div>
         <div class="tmpl-card">
-          <div class="tmpl-type">Vendor — Inquiry</div>
-          <h3>Order Status Follow-Up</h3>
-          <p>Internal vendor follow-up when an order status hasn't been updated in 48+ hours.</p>
-          <div class="tmpl-preview">"Hello [VENDOR_CONTACT], following up on order [VENDOR_ORDER_ID] / Ninja Patches ref #[NP_ORDER]. We haven't received a status update in 48 hours. Could you confirm the current production stage and estimated completion? Thank you."</div>
-          <button class="copy-btn" onclick="copyTemplate(this,'Hello [VENDOR_CONTACT], following up on order [VENDOR_ORDER_ID] / Ninja Patches ref #[NP_ORDER]. We have not received a status update in 48 hours. Could you confirm the current production stage and estimated completion? Thank you.')"><i class="fas fa-copy"></i> Copy</button>
+          <div class="tmpl-type">Cancellation & Refund — Chenille</div>
+          <h3>Chenille — Not Viable</h3>
+          <p>When chenille is not viable due to level of detail and scale.</p>
+          <div class="tmpl-preview">Hey there, Thank you for your interest in Ninja Patches Chenille. After reviewing your order, we have determined that chenille is not viable for the design you submitted due to the level of detail and scale. We have canceled this item and issued a credit to your account. You are welcome to place an order using a more accommodating product type like Full-Color Printed, or submit a revised chenille design (ideally at a larger scale).</div>
+          <button class="copy-btn" onclick="copyTemplate(this,'Hey there, Thank you for your interest in Ninja Patches Chenille. After reviewing your order, we have determined that chenille is not viable for the design you submitted due to the level of detail and scale. We have canceled this item and issued a credit to your account. You are welcome to place an order using a more accommodating product type like Full-Color Printed, or submit a revised chenille design (ideally at a larger scale).')"><i class="fas fa-copy"></i> Copy</button>
         </div>
         <div class="tmpl-card">
-          <div class="tmpl-type">Customer — Order Change</div>
-          <h3>Change Confirmed Pre-Production</h3>
-          <p>When a requested change (address, size, quantity) is successfully applied.</p>
-          <div class="tmpl-preview">"Hi [Name], great news — we've updated your order #[ORDER] with the requested change: [CHANGE_DETAIL]. Everything looks good and production will proceed as planned. Your estimated delivery remains [DATE]."</div>
-          <button class="copy-btn" onclick="copyTemplate(this,'Hi [Name], great news — we have updated your order #[ORDER] with the requested change: [CHANGE_DETAIL]. Everything looks good and production will proceed as planned. Your estimated delivery remains [DATE].')"><i class="fas fa-copy"></i> Copy</button>
+          <div class="tmpl-type">Cancellation & Refund — Woven</div>
+          <h3>Woven — Not Viable</h3>
+          <p>When woven patches are not viable due to high detail or gradients.</p>
+          <div class="tmpl-preview">Hey there, Thank you for your interest in Ninja Patches Woven. After reviewing your order, we have determined that woven patches are not viable for the design you submitted due to high detail at scale or the presence of gradients in your design. We have canceled this item and issued a credit to your account. You are welcome to place an order using a more accommodating product type like Full-Color Printed, or submit a revised woven design.</div>
+          <button class="copy-btn" onclick="copyTemplate(this,'Hey there, Thank you for your interest in Ninja Patches Woven. After reviewing your order, we have determined that woven patches are not viable for the design you submitted due to high detail at scale or the presence of gradients in your design. We have canceled this item and issued a credit to your account. You are welcome to place an order using a more accommodating product type like Full-Color Printed, or submit a revised woven design.')"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <div class="tmpl-card">
+          <div class="tmpl-type">Cancellation & Refund — Leather</div>
+          <h3>Leather/Faux Leather — Not Viable</h3>
+          <p>When leather engraving is not viable due to high detail, scale, or multiple colors.</p>
+          <div class="tmpl-preview">Hey there, Thank you for your interest in Ninja Patches Leather. After reviewing your order, we have determined that leather engraving is not viable for the design you submitted due to high detail, scale, or multiple colors in your design. We have canceled this item and issued a credit to your account. You are welcome to place an order using a more accommodating product type like Full-Color Printed, or submit an alternative leather-compatible design.</div>
+          <button class="copy-btn" onclick="copyTemplate(this,'Hey there, Thank you for your interest in Ninja Patches Leather. After reviewing your order, we have determined that leather engraving is not viable for the design you submitted due to high detail, scale, or multiple colors in your design. We have canceled this item and issued a credit to your account. You are welcome to place an order using a more accommodating product type like Full-Color Printed, or submit an alternative leather-compatible design.')"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <div class="tmpl-card">
+          <div class="tmpl-type">Proof — Single Stitch Warning</div>
+          <h3>Single Stitch Quality Notice</h3>
+          <p>When a proof comes back with single-stitch text — send to customer before production.</p>
+          <div class="tmpl-preview">Due to the scale requested for this patch the text could only be embroidered in a "single-stitch" style. This can often lead to an illegible, poor quality look in the final product.</div>
+          <button class="copy-btn" onclick="copyTemplate(this,'Due to the scale requested for this patch the text could only be embroidered in a \"single-stitch\" style. This can often lead to an illegible, poor quality look in the final product.')"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <div class="tmpl-card">
+          <div class="tmpl-type">Escalation — Customer Insists on Hold</div>
+          <h3>Cannot Keep Customer On Hold</h3>
+          <p>When a customer insists on waiting for a supervisor while on the call.</p>
+          <div class="tmpl-preview">I'm unable to keep you on the line while waiting for a Supervisor/Manager to become available, but I have escalated your request. I will take down your information and follow up with you as soon as possible.</div>
+          <button class="copy-btn" onclick="copyTemplate(this,'I\'m unable to keep you on the line while waiting for a Supervisor/Manager to become available, but I have escalated your request. I will take down your information and follow up with you as soon as possible.')"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <div class="tmpl-card">
+          <div class="tmpl-type">Escalation — Customer Refuses Info</div>
+          <h3>Customer Won't Provide Account Info</h3>
+          <p>When a customer refuses to provide identifying information but requests a manager.</p>
+          <div class="tmpl-preview">I understand you'd like to speak with a manager. I can definitely look into that for you, but I'll need a bit of information so I can pull up your order and get you to the right person.</div>
+          <button class="copy-btn" onclick="copyTemplate(this,'I understand you\'d like to speak with a manager. I can definitely look into that for you, but I\'ll need a bit of information so I can pull up your order and get you to the right person.')"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <div class="tmpl-card">
+          <div class="tmpl-type">NDA Shipping</div>
+          <h3>Reason for Edit — NDA Upgrade</h3>
+          <p>Used in Shopify when editing shipping to upgrade to Next Day Air.</p>
+          <div class="tmpl-preview">Cx upgrade to NDA</div>
+          <button class="copy-btn" onclick="copyTemplate(this,'Cx upgrade to NDA')"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <div class="tmpl-card">
+          <div class="tmpl-type">Cancellation & Refund — Puff Transfer</div>
+          <h3>3D Puff Transfer — Not Viable</h3>
+          <p>When a Puff Transfer order cannot be produced because the design is multicolor.</p>
+          <div class="tmpl-preview">Hey there, Thank you for your interest in Ninja Transfers 3D Puff Transfers. We have canceled and refunded your Puff Transfer order. Your design is a multicolor image which cannot be produced as a Puff Transfer. 3D Puff transfers can only be produced as single-color prints and work best with minimal detail. We highly suggest reviewing examples on the Puff Transfer page to determine whether your artwork is a good fit before placing a new order.</div>
+          <button class="copy-btn" onclick="copyTemplate(this,'Hey there, Thank you for your interest in Ninja Transfers 3D Puff Transfers. We have canceled and refunded your Puff Transfer order. Your design is a multicolor image which cannot be produced as a Puff Transfer. 3D Puff transfers can only be produced as single-color prints and work best with minimal detail. We highly suggest reviewing examples on the Puff Transfer page to determine whether your artwork is a good fit before placing a new order.')"><i class="fas fa-copy"></i> Copy</button>
         </div>
       </div>
     </div>
@@ -763,94 +819,129 @@
         <div class="policy-item">
           <div class="policy-header" onclick="togglePolicy(this)">
             <div class="policy-header-left">
-              <div class="policy-icon" style="background:#4caf7d20;color:var(--accent)"><i class="fas fa-ban"></i></div>
-              <div class="policy-name">Cancellation Policy</div>
+              <div class="policy-icon" style="background:#4caf7d18;color:#4caf7d"><i class="fas fa-list-ol"></i></div>
+              <div class="policy-name">Shopify Order Status Reference (W3os)</div>
             </div>
             <i class="fas fa-chevron-down policy-chevron"></i>
           </div>
           <div class="policy-body">
-            <div class="policy-row"><div class="policy-row-key">Window</div><div class="policy-row-val">Orders may be cancelled within 2 hours of placement if not yet in production</div></div>
-            <div class="policy-row"><div class="policy-row-key">Refund</div><div class="policy-row-val">Full refund if cancelled within window. Partial refund (minus production costs) if in early production with supervisor approval</div></div>
-            <div class="policy-row"><div class="policy-row-key">No Cancel</div><div class="policy-row-val">Orders in active production or shipped cannot be cancelled. Offer store credit or replacement options</div></div>
-            <div class="policy-row"><div class="policy-row-key">Escalation</div><div class="policy-row-val">Any cancellation disputes, refund amounts over $200, or bulk order cancellations require supervisor approval</div></div>
-            <div class="policy-row"><div class="policy-row-key">Documentation</div><div class="policy-row-val">All cancellations must be logged in Shopify with cancellation reason and approval source noted</div></div>
+            <div class="policy-row"><div class="policy-row-key">Unreviewed</div><div class="policy-row-val">New order — not yet placed with a vendor. Can be canceled or changed.</div></div>
+            <div class="policy-row"><div class="policy-row-key">Waiting on Proof</div><div class="policy-row-val">Assigned to vendor, waiting on proof development. Can be edited, canceled, or changed.</div></div>
+            <div class="policy-row"><div class="policy-row-key">Proof Approved</div><div class="policy-row-val">Proof approved for production. Very close to production — still editable but act fast.</div></div>
+            <div class="policy-row"><div class="policy-row-key">Proof Sent to Customer</div><div class="policy-row-val">Customer reviewing proof. Ideal time for feedback or cancellation. Still editable.</div></div>
+            <div class="policy-row"><div class="policy-row-key">Waiting on Revision</div><div class="policy-row-val">Design revision requested. Changes can be made but will delay further.</div></div>
+            <div class="policy-row"><div class="policy-row-key">Sent to Production</div><div class="policy-row-val">CANNOT be canceled or edited. Patches are being made per last approved proof.</div></div>
+            <div class="policy-row"><div class="policy-row-key">Vendor Shipped</div><div class="policy-row-val">Finished, in transit to Ninja for quality check. Cannot cancel. Only NDA upgrade allowed (US only).</div></div>
+            <div class="policy-row"><div class="policy-row-key">No Proof, Sent to Prod</div><div class="policy-row-val">24 pcs below, no proof — order can proceed directly to production. Still editable/cancelable.</div></div>
+            <div class="policy-row"><div class="policy-row-key">Customer Action Needed</div><div class="policy-row-val">Order on hold — customer needs to confirm change, send new design, or update payment.</div></div>
           </div>
         </div>
         <div class="policy-item">
           <div class="policy-header" onclick="togglePolicy(this)">
             <div class="policy-header-left">
-              <div class="policy-icon" style="background:#4caf7d18;color:var(--accent2)"><i class="fas fa-edit"></i></div>
-              <div class="policy-name">Order Modification Policy</div>
+              <div class="policy-icon" style="background:#4caf7d18;color:#4caf7d"><i class="fas fa-truck"></i></div>
+              <div class="policy-name">Proof Timing & Policies</div>
             </div>
             <i class="fas fa-chevron-down policy-chevron"></i>
           </div>
           <div class="policy-body">
-            <div class="policy-row"><div class="policy-row-key">Pre-Production</div><div class="policy-row-val">Address, quantity (up to +10 units), and size changes permitted before production confirmation received from vendor</div></div>
-            <div class="policy-row"><div class="policy-row-key">Design Changes</div><div class="policy-row-val">Design modifications require new proof cycle. Additional $15 rush fee applies if production starts within 24 hrs</div></div>
-            <div class="policy-row"><div class="policy-row-key">In Production</div><div class="policy-row-val">No modifications once vendor confirms production has started. Only address changes may be attempted through vendor contact</div></div>
-            <div class="policy-row"><div class="policy-row-key">Quantity Increase</div><div class="policy-row-val">Increases over 25 units require vendor confirmation of capacity. Standard approval required for pricing adjustment</div></div>
+            <div class="policy-row"><div class="policy-row-key">Turnaround</div><div class="policy-row-val">Standard proof turnaround: 2–3 business days</div></div>
+            <div class="policy-row"><div class="policy-row-key">Free Proofs</div><div class="policy-row-val">Proofs are free on orders over $300. If customer with order over $300 opts out, remove and notify service channel.</div></div>
+            <div class="policy-row"><div class="policy-row-key">No Rush</div><div class="policy-row-val">Proofs cannot be rushed under any circumstances.</div></div>
+            <div class="policy-row"><div class="policy-row-key">Production Start</div><div class="policy-row-val">Production begins ONLY after proof is approved.</div></div>
+            <div class="policy-row"><div class="policy-row-key">Vendor Always Proofs</div><div class="policy-row-val">The vendor will always send a proof whether or not the customer purchased one.</div></div>
+            <div class="policy-row"><div class="policy-row-key">25 pcs+</div><div class="policy-row-val">Orders 25 pcs and above always go to "Waiting on Proof" status regardless of proof purchase.</div></div>
           </div>
         </div>
         <div class="policy-item">
           <div class="policy-header" onclick="togglePolicy(this)">
             <div class="policy-header-left">
-              <div class="policy-icon" style="background:#7c5ce818;color:var(--accent3)"><i class="fas fa-eye"></i></div>
-              <div class="policy-name">Proof Review Policy</div>
+              <div class="policy-icon" style="background:#7c5ce818;color:var(--accent3)"><i class="fas fa-bolt"></i></div>
+              <div class="policy-name">NinjaFast Policy</div>
             </div>
             <i class="fas fa-chevron-down policy-chevron"></i>
           </div>
           <div class="policy-body">
-            <div class="policy-row"><div class="policy-row-key">Turnaround</div><div class="policy-row-val">Customer must approve or reject proof within 48 hours. Auto-reminder sent at 24 hours</div></div>
-            <div class="policy-row"><div class="policy-row-key">Revisions</div><div class="policy-row-val">Up to 2 free revisions per order. Third revision requires $10 revision fee charged to customer</div></div>
-            <div class="policy-row"><div class="policy-row-key">Auto-Approve</div><div class="policy-row-val">If no response received within 72 hours after 2 follow-ups, proof is auto-approved and production begins</div></div>
-            <div class="policy-row"><div class="policy-row-key">Accountability</div><div class="policy-row-val">Once customer approves proof, Ninja Patches is not liable for design errors that were present in the approved proof</div></div>
+            <div class="policy-row"><div class="policy-row-key">Definition</div><div class="policy-row-val">Rush production program for accelerated turnaround. Rush fee calculated at checkout.</div></div>
+            <div class="policy-row"><div class="policy-row-key">Timeline</div><div class="policy-row-val">5 business days after proof approval. Typically 6-10 business days total delivery after proof approval.</div></div>
+            <div class="policy-row"><div class="policy-row-key">No proof countdown</div><div class="policy-row-val">Starts the day AFTER order is placed.</div></div>
+            <div class="policy-row"><div class="policy-row-key">With proof countdown</div><div class="policy-row-val">Starts the day AFTER proof approval.</div></div>
+            <div class="policy-row"><div class="policy-row-key">NDA Not Allowed</div><div class="policy-row-val">Shipping upgrades to Next Day Air are NOT allowed on NinjaFast orders.</div></div>
+            <div class="policy-row"><div class="policy-row-key">Vendor Confirmation</div><div class="policy-row-val">Must confirm vendor can meet timeline: "This is a Ninja Fast order that needs to go right to production and ship within 5 business days. Can you meet this timeline?"</div></div>
+            <div class="policy-row"><div class="policy-row-key">Upgrade Approval</div><div class="policy-row-val">Do NOT offer NinjaFast upgrades without approval from Mercedes, Michel, or Gabriel.</div></div>
           </div>
         </div>
         <div class="policy-item">
           <div class="policy-header" onclick="togglePolicy(this)">
             <div class="policy-header-left">
-              <div class="policy-icon" style="background:#3498db18;color:#74b9ff"><i class="fas fa-clock"></i></div>
-              <div class="policy-name">Production Delay Policy</div>
+              <div class="policy-icon" style="background:#378add18;color:#74b9ff"><i class="fas fa-plane"></i></div>
+              <div class="policy-name">NDA (Next Day Air) Shipping Policy</div>
             </div>
             <i class="fas fa-chevron-down policy-chevron"></i>
           </div>
           <div class="policy-body">
-            <div class="policy-row"><div class="policy-row-key">Notification</div><div class="policy-row-val">Customer must be notified within 24 hours of confirmed delay, regardless of delay length</div></div>
-            <div class="policy-row"><div class="policy-row-key">Minor Delay</div><div class="policy-row-val">1–3 business days: standard apology template, update ETA in Shopify</div></div>
-            <div class="policy-row"><div class="policy-row-key">Major Delay</div><div class="policy-row-val">4+ business days: escalate to supervisor, offer $10 store credit or priority reshipment</div></div>
-            <div class="policy-row"><div class="policy-row-key">Vendor Caused</div><div class="policy-row-val">Document vendor confirmation of delay. Supervisor decides on escalation to vendor account manager</div></div>
-            <div class="policy-row"><div class="policy-row-key">Compensation</div><div class="policy-row-val">Agents cannot offer refunds for delays without supervisor approval. Store credit up to $25 is agent-level discretion</div></div>
+            <div class="policy-row"><div class="policy-row-key">Eligibility</div><div class="policy-row-val">All 4 must be true: (1) No tracking on order yet, (2) Not NinjaFast or Expedited, (3) Within Contiguous US, (4) Standard turnaround</div></div>
+            <div class="policy-row"><div class="policy-row-key">Exclusions</div><div class="policy-row-val">Canada, Alaska, Hawaii — NDA NOT available</div></div>
+            <div class="policy-row"><div class="policy-row-key">NinjaFast/Expedited</div><div class="policy-row-val">Cannot adjust shipping — already has the quickest shipping available</div></div>
+            <div class="policy-row"><div class="policy-row-key">Reason for Edit</div><div class="policy-row-val">Always enter "Cx upgrade to NDA" as the reason for edit in Shopify</div></div>
           </div>
         </div>
         <div class="policy-item">
           <div class="policy-header" onclick="togglePolicy(this)">
             <div class="policy-header-left">
-              <div class="policy-icon" style="background:#e74c3c18;color:#ff7675"><i class="fas fa-exclamation-triangle"></i></div>
+              <div class="policy-icon" style="background:#ff475718;color:#ff4757"><i class="fas fa-exclamation-triangle"></i></div>
               <div class="policy-name">Escalation Policy</div>
             </div>
             <i class="fas fa-chevron-down policy-chevron"></i>
           </div>
           <div class="policy-body">
-            <div class="policy-row"><div class="policy-row-key">Agent Level</div><div class="policy-row-val">Address changes, standard cancellations within policy, proof reminders, delay notifications under 3 days</div></div>
-            <div class="policy-row"><div class="policy-row-key">Supervisor</div><div class="policy-row-val">Refunds over $200, cancellations in production, delays over 4 days, disputes, threatening customers, vendor non-response</div></div>
-            <div class="policy-row"><div class="policy-row-key">Vendor AM</div><div class="policy-row-val">Vendor non-response over 72 hours, bulk order defects, repeated production failures on same vendor</div></div>
-            <div class="policy-row"><div class="policy-row-key">Legal/Finance</div><div class="policy-row-val">Chargebacks, fraud flags, orders over $1,000 with disputes, legal threats</div></div>
-            <div class="policy-row"><div class="policy-row-key">Response Time</div><div class="policy-row-val">Supervisor escalations must receive acknowledgment within 2 hours during business hours</div></div>
+            <div class="policy-row"><div class="policy-row-key">When to Escalate</div><div class="policy-row-val">ALL 3 must be true: (1) Customer requests Supervisor/Manager, (2) You have provided all available info, (3) You have consulted Team Leads</div></div>
+            <div class="policy-row"><div class="policy-row-key">Where</div><div class="policy-row-val">Post in the #ninja-transfers-service Slack channel</div></div>
+            <div class="policy-row"><div class="policy-row-key">Include</div><div class="policy-row-val">Customer account information + clear summary of the issue + reason for escalation</div></div>
+            <div class="policy-row"><div class="policy-row-key">Do NOT</div><div class="policy-row-val">Do not keep the customer waiting on the line for a Supervisor/Manager</div></div>
           </div>
         </div>
         <div class="policy-item">
           <div class="policy-header" onclick="togglePolicy(this)">
             <div class="policy-header-left">
-              <div class="policy-icon" style="background:#f39c1218;color:#ffeaa7"><i class="fas fa-industry"></i></div>
-              <div class="policy-name">Vendor Communication Policy</div>
+              <div class="policy-icon" style="background:#f5a62318;color:#f5a623"><i class="fas fa-search-location"></i></div>
+              <div class="policy-name">Lost in Transit Policy</div>
             </div>
             <i class="fas fa-chevron-down policy-chevron"></i>
           </div>
           <div class="policy-body">
-            <div class="policy-row"><div class="policy-row-key">Primary Channel</div><div class="policy-row-val">All vendor contact must go through the designated vendor portal or approved email thread — never personal messaging</div></div>
-            <div class="policy-row"><div class="policy-row-key">Response SLA</div><div class="policy-row-val">Vendors have a 24-hour response SLA. If not met, send one follow-up. After 48 hours without reply, escalate to supervisor</div></div>
-            <div class="policy-row"><div class="policy-row-key">Order Updates</div><div class="policy-row-val">Request production updates every 48 hours for orders past standard production time. Log all vendor responses</div></div>
-            <div class="policy-row"><div class="policy-row-key">Tone</div><div class="policy-row-val">Professional, concise, reference-based. Always include Ninja Patches order ID and vendor order ID in every communication</div></div>
+            <div class="policy-row"><div class="policy-row-key">Definition</div><div class="policy-row-val">No tracking update for 3-4 business days = potentially lost in transit</div></div>
+            <div class="policy-row"><div class="policy-row-key">Resolutions</div><div class="policy-row-val">Reprint order (same turnaround), Credit the order, or Refund the order</div></div>
+            <div class="policy-row"><div class="policy-row-key">$500+ Orders</div><div class="policy-row-val">Must obtain team lead approval BEFORE offering a refund as resolution</div></div>
+          </div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-header" onclick="togglePolicy(this)">
+            <div class="policy-header-left">
+              <div class="policy-icon" style="background:#4caf7d18;color:#4caf7d"><i class="fas fa-receipt"></i></div>
+              <div class="policy-name">Tax Exempt Policy</div>
+            </div>
+            <i class="fas fa-chevron-down policy-chevron"></i>
+          </div>
+          <div class="policy-body">
+            <div class="policy-row"><div class="policy-row-key">Submission</div><div class="policy-row-val">Customers upload tax-exempt forms directly on the website</div></div>
+            <div class="policy-row"><div class="policy-row-key">Review</div><div class="policy-row-val">Form sent to Accounting/Tax department for review — they email the customer with approval or rejection</div></div>
+            <div class="policy-row"><div class="policy-row-key">Until Approval</div><div class="policy-row-val">Customers continue to be charged tax on orders until they receive official approval email</div></div>
+          </div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-header" onclick="togglePolicy(this)">
+            <div class="policy-header-left">
+              <div class="policy-icon" style="background:#7c5ce818;color:var(--accent3)"><i class="fas fa-store"></i></div>
+              <div class="policy-name">Vendor Assignment Rules</div>
+            </div>
+            <i class="fas fa-chevron-down policy-chevron"></i>
+          </div>
+          <div class="policy-body">
+            <div class="policy-row"><div class="policy-row-key">First-Time Customer</div><div class="policy-row-val">Can be assigned to any preferred vendor based on the Vendor Chart for Patch Types</div></div>
+            <div class="policy-row"><div class="policy-row-key">Repeat Customer</div><div class="policy-row-val">MUST be assigned to the same vendor who handled the previous order — different vendors have slight differences in color tones, stitching style, border stitching, material texture, and print output</div></div>
+            <div class="policy-row"><div class="policy-row-key">Reorder Process</div><div class="policy-row-val">Check customer's previous order → identify original vendor → assign new order to same vendor</div></div>
+            <div class="policy-row"><div class="policy-row-key">Add Name to Tags</div><div class="policy-row-val">Immediately add your name in Shopify tags when opening an order to prevent duplicate handling</div></div>
           </div>
         </div>
       </div>
@@ -955,24 +1046,24 @@ const sopData = {
     category: 'Order Management',
     readTime: '4 min read',
     updated: 'Updated May 2025',
-    desc: 'This SOP defines the exact process for evaluating, approving, or denying a customer cancellation request. Follow every step in sequence before taking any action in Shopify or communicating with the customer.',
+    desc: 'When canceling an order for Ninja Patches, you may cancel it as long as it has not yet entered the production stage (W3os status: Unreviewed, Waiting on Proof, or Proof Sent to Customer). Once an order reaches Sent to Production it cannot be canceled.',
     steps: [
-      { num: '01', color: '', title: 'Locate the Order in Shopify', body: 'Open Shopify and search for the order by order number or customer email. Confirm the order exists and note the order date, time, and current status.', note: null, warn: null },
-      { num: '02', color: '', title: 'Check the 2-Hour Cancellation Window', body: 'Calculate the time elapsed since the order was placed. If less than 2 hours and status is "Pending" — the order qualifies for cancellation.', note: 'Tip: Always use Shopify timestamp as the source of truth — not the customer\'s stated time.', warn: null },
-      { num: '03', color: 'teal', title: 'Verify Production Status', body: 'Check the vendor portal or internal production tracker for the order\'s current production stage. If any production stage has begun, proceed to Step 5 (Denial flow).', note: null, warn: 'Do not cancel in Shopify until production status is confirmed. An incorrect cancellation during production causes vendor relationship issues.' },
-      { num: '04', color: 'teal', title: 'Approve & Process the Cancellation', body: 'If the order qualifies: cancel in Shopify, trigger the refund, and send the approved "Cancel Within Policy" template to the customer. Log the cancellation reason.', note: null, warn: null },
-      { num: '05', color: 'purple', title: 'Denial: In-Production Orders', body: 'If the order is in production: send the "Cancel Denied — In Production" template. Do not offer a refund without supervisor approval. Offer the alternative of a store credit or priority shipping.', note: 'Always document the customer\'s request and your response in the order notes.', warn: null },
-      { num: '06', color: 'purple', title: 'Escalation Check', body: 'If the customer disputes your denial, threatens a chargeback, or the refund would exceed $200, immediately escalate to your supervisor using the internal escalation form. Do not continue without escalation.', note: null, warn: null }
+      { num: '01', color: '', title: 'Check the Order Status in Shopify', body: 'Open the order in Shopify. Check the W3os status tag. Orders can be canceled if status is: Unreviewed, Waiting on Proof, Proof Sent to Customer, Waiting on Revision, Customer Action Needed, or No Proof Sent to Prod.', note: null, warn: 'Orders with status "Sent to Production" or "Vendor Shipped" CANNOT be canceled.' },
+      { num: '02', color: '', title: 'Verify the Order Has Not Entered Production', body: 'Confirm with the vendor or check the admin website that production has not physically started. Even if the status says "Proof Approved" the order may still be cancellable — check directly before proceeding.', note: 'Check the Shopify timeline and admin website notes for any vendor confirmation of production start.', warn: null },
+      { num: '03', color: 'teal', title: 'Process the Cancellation in Shopify', body: 'If the order qualifies for cancellation: cancel it in Shopify, issue the appropriate refund or credit, and notify the customer. Log the cancellation reason in the order notes.', note: null, warn: null },
+      { num: '04', color: 'teal', title: 'Notify the Vendor if Already Assigned', body: 'If the order was already assigned to a vendor, notify the vendor representative immediately via the Shopify timeline or admin website to stop any work on the order.', note: 'Tag the vendor rep (e.g. @Jessie Ye for Desent) to ensure they see the cancellation notice.', warn: null },
+      { num: '05', color: 'purple', title: 'Handle In-Production Orders', body: 'If the order is in production (Sent to Production or Vendor Shipped), inform the customer it cannot be canceled. Do not offer a refund without team lead approval. Escalate to team leads if customer insists.', note: 'Offer alternative resolutions such as order modifications or courtesy proofs if applicable.', warn: null },
+      { num: '06', color: 'purple', title: 'Escalation', body: 'Escalate to team leads via the #ninja-transfers-service Slack channel if: the customer requests a supervisor, you have provided all available information, and you have consulted team leads for assistance. Include customer account info and a clear summary of the issue.', note: null, warn: null }
     ],
-    checklist: ['Order located and time confirmed','Production status verified with vendor','Cancellation window checked (2-hour rule)','Correct template sent to customer','Cancellation or denial logged in Shopify','Escalation initiated if required'],
-    escalate: ['Customer threatens chargeback','Refund amount exceeds $200','Order is bulk (25+ units)','Vendor cannot confirm production status','Customer becomes abusive or threatening']
+    checklist: ['W3os order status confirmed','Production stage verified','Order not yet in Sent to Production status','Cancellation processed in Shopify','Vendor notified if already assigned','Customer notified of outcome','Escalation initiated if required'],
+    escalate: ['Order already in Sent to Production status','Customer requests supervisor after all steps taken','Refund over $500 requires team lead approval','Vendor has already started production','Customer threatens chargeback or dispute']
   },
   orderchange: {
-    title: 'Order Changes Before Production SOP',
+    title: 'Adjusting Order Details (Before Production)',
     category: 'Order Management',
     readTime: '5 min read',
     updated: 'Updated May 2025',
-    desc: 'This SOP covers how to handle and process customer requests to modify an existing order — including address, size, quantity, and design changes — before production begins.',
+    desc: 'If a customer requests changes to their order before it enters production, you must contact the vendor (or the assigned vendor representative) immediately and communicate the requested updates to ensure the order is adjusted before processing begins.',
     steps: [
       { num: '01', color: '', title: 'Identify the Change Type', body: 'Confirm from the customer exactly what needs to change: shipping address, size, quantity, design file, or other. Each type has a different process and eligibility criteria.', note: null, warn: null },
       { num: '02', color: '', title: 'Check Order Status in Vendor Portal', body: 'Log into the vendor portal and confirm the exact production stage. Changes are only permitted before the vendor confirms "Production Started" status.', note: 'Tip: Order status in Shopify may lag behind actual vendor status. Always check the vendor portal directly.', warn: null },
@@ -989,7 +1080,7 @@ const sopData = {
     category: 'Design & Production',
     readTime: '5 min read',
     updated: 'Updated May 2025',
-    desc: 'This SOP governs the full proof review process — from initial proof delivery to customer approval or rejection, managing revision rounds, and escalating to vendors when needed.',
+    desc: 'After assigning to a vendor or placing a new order on the vendor site, orders move into Waiting on Proof status. When the proof is ready, the W3 status updates to Vendor Proof Ready, then Proof Sent to Customer once sent. Standard proof turnaround is 2-3 business days. Proofs cannot be rushed. Production begins only after the proof is approved.',
     steps: [
       { num: '01', color: '', title: 'Receive Proof from Vendor', body: 'When the vendor submits a proof, log it in the order record immediately. Note the timestamp. You have 4 hours to forward it to the customer during business hours.', note: null, warn: null },
       { num: '02', color: '', title: 'Send Proof to Customer', body: 'Use the "Proof Ready for Review" template. Attach the proof file clearly. Set an internal reminder for the 24-hour follow-up if no response is received.', note: 'Tip: Always send the proof with a numbered revision count (e.g., "Proof 1 of 2 free revisions").', warn: null },
@@ -1023,7 +1114,7 @@ const sopData = {
     category: 'Vendor Management',
     readTime: '6 min read',
     updated: 'Updated May 2025',
-    desc: 'All vendor communication must follow this SOP. This ensures consistency, traceability, and professional representation of Ninja Patches in every vendor interaction.',
+    desc: 'All vendor communication must follow this SOP. Vendor representatives are: Desent → @Jessie Ye (Shopify Timeline & Admin), Aspire → @Saba Azam (Shopify Timeline), Shingian → @Selina Lau (Shopify Timeline & Admin), Penn → @Alison Castillo & @Laura Estela Borjas (Admin), Versa → @Jessica Vanmeter (Admin).',
     steps: [
       { num: '01', color: '', title: 'Use Only Approved Channels', body: 'All vendor communication must go through the designated vendor portal or the approved email thread. Never contact vendor staff via personal messaging, social media, or phone without supervisor approval.', note: null, warn: 'Using unauthorized channels can void vendor agreements and create liability. Always use official channels.' },
       { num: '02', color: '', title: 'Include Required Reference IDs', body: 'Every message to a vendor must include both the Ninja Patches order ID and the vendor\'s own order ID. This eliminates confusion and speeds up responses.', note: 'Use format: NP-[ORDER_ID] | Vendor: [VENDOR_ID] at the start of every message.', warn: null },
@@ -1035,12 +1126,75 @@ const sopData = {
     checklist: ['Official channel used (portal or email)','NP order ID and Vendor order ID included','Professional tone maintained','Response SLA tracked (24 hours)','Follow-up sent if no response in 24 hours','All interactions logged in Shopify'],
     escalate: ['No vendor response after 48 hours','Vendor disputes order details','Vendor claims order was not received','Repeated quality issues from same vendor','Vendor requests information outside normal scope']
   },
+  vendorminimums: {
+    title: 'Vendor Chart & Minimums',
+    category: 'Vendor Management',
+    readTime: '5 min read',
+    updated: 'Updated May 2025',
+    desc: 'The Vendor Chart for Patch Types is the team guide for determining which vendor should handle each patch type. Use it to ensure orders are assigned to the correct vendor, production runs smoothly, and NinjaFast orders go to rush-capable vendors.',
+    steps: [
+      { num: '01', color: '', title: 'Check the Vendor Chart', body: 'Open the Vendor Chart for Patch Types (linked in your resources). Find the patch type from the Shopify order and identify which vendors can handle it. Green cells indicate preferred vendors. X means vendor cannot handle that type.', note: 'Preferred vendor for Embroidery: Desent. Full Printed: World or Desent. PVC: World (25+ pieces preferred). Silicone: World or Masters.', warn: null },
+      { num: '02', color: '', title: 'Check if First-Time or Repeat Customer', body: 'In Shopify, check the customer order history on the right side. "1 order" = first-time customer (can use any preferred vendor). "2+ orders" = repeat customer — must use the same vendor as the previous order to maintain consistency.', note: null, warn: 'Using a different vendor for repeat customers can result in color tone, stitching style, or texture differences that the customer will notice.' },
+      { num: '03', color: 'teal', title: 'Check MOQ Requirements', body: 'Every vendor has minimum order quantities (MOQ). Verify the order quantity meets the vendor MOQ. World: 10 MOQ standard, 25+ for manual placement. Quality Patches: 10 MOQ. Desent: 10 MOQ. Shingian: 25+ pieces for most types. Aspire: 10 MOQ. Masters: 10 MOQ. Penn: 10 MOQ. Versa: 25+ pieces for most types.', note: null, warn: null },
+      { num: '04', color: 'teal', title: 'NinjaFast Orders', body: 'For NinjaFast orders, only assign to vendors capable of rush production. Confirm with vendor: "This is a Ninja Fast order that needs to go right to production and ship within 5 business days. Can you meet this timeline?" NinjaFast production is 5 business days after proof approval.', note: 'No proof: countdown starts the day after order is placed. With proof: countdown starts the day after proof approval.', warn: 'Shipping upgrades to Next Day Air (NDA) are NOT allowed on NinjaFast orders.' },
+      { num: '05', color: 'purple', title: 'Assign the Vendor', body: 'Once the correct vendor is identified: (1) Add your name to Shopify tags immediately, (2) Add the vendor name as a tag, (3) Notify the vendor representative in the Shopify timeline or admin website, (4) Update the order status.', note: null, warn: null }
+    ],
+    checklist: ['Vendor Chart checked for patch type','First-time vs repeat customer verified','MOQ requirements confirmed','NinjaFast capability confirmed if applicable','Name added to Shopify tags','Vendor name added as tag','Vendor rep notified in timeline','Order status updated'],
+    escalate: ['No vendor can meet the MOQ','NinjaFast order but no vendor available for rush','Repeat customer vendor no longer available','Unusual patch type not on vendor chart']
+  },
+  unreviewed: {
+    title: 'Unreviewed Orders — Assignment Process',
+    category: 'Order Management',
+    readTime: '6 min read',
+    updated: 'Updated May 2025',
+    desc: 'The Unreviewed Orders dashboard in Periscope is where all new customer orders first appear before being assigned to a vendor. Orders should be assigned as soon as possible. The dashboard shows: Shopify Link (PATCH-XXXXXX), Vendor column, Time in Status, and Tags.',
+    steps: [
+      { num: '01', color: '', title: 'Open Unreviewed Orders in Periscope', body: 'Access the Unreviewed Orders dashboard in Periscope. Review all orders in the queue. Pay attention to the Time in Status column — orders should not sit unassigned for long as delays affect production timelines.', note: null, warn: null },
+      { num: '02', color: '', title: 'Add Your Name to Shopify Tags Immediately', body: 'As soon as you open a new order, immediately add your name in the Shopify tags. This allows other team members to see that the order is already being handled and prevents multiple CSRs from placing the same order with vendors.', note: 'This is especially critical when multiple CSRs are assigning orders at the same time.', warn: null },
+      { num: '03', color: 'teal', title: 'Review the Shopify Order', body: 'Click the PATCH-XXXXXX link to open the Shopify order. Review: patch type, size, shape, border, backing, quantity, uploaded artwork, customer notes, and shipping method. Check if the customer is first-time or repeat. Verify artwork feasibility before assigning.', note: null, warn: null },
+      { num: '04', color: 'teal', title: 'Check the Vendor Column', body: 'The Vendor column sometimes auto-populates (reorders or recognized patch types). If blank, use the Vendor Chart for Patch Types to determine the correct vendor based on patch type, complexity, and production capability.', note: null, warn: null },
+      { num: '05', color: 'purple', title: 'Assign and Notify Vendor', body: 'Add the vendor name as a Shopify tag. Notify the vendor representative in the Shopify timeline (or admin website for World). Use the correct message format: Standard: "@[Rep] We are assigning this order to you." NinjaFast: "@[Rep] This is a RUSH order. Please produce and ship within 5 days."', note: null, warn: null },
+      { num: '06', color: 'purple', title: 'Update Order Status', body: 'After assigning: 24 pcs below WITHOUT proof → "No Proof, Sent to Prod". 24 pcs below WITH proof → "Waiting on Proof". 25 pcs above (with or without proof) → always "Waiting on Proof".', note: 'Orders 25 pcs and above automatically require proof handling for CSR or customer approval.', warn: null }
+    ],
+    checklist: ['Name added to Shopify tags immediately','Order reviewed in Shopify (specs, artwork, customer type)','Vendor Chart consulted if vendor column blank','Artwork feasibility verified','Vendor name added as tag','Vendor rep notified in timeline','Order status updated correctly'],
+    escalate: ['Artwork not feasible for patch type requested','Customer is repeat but original vendor unavailable','Unusual order specifications outside standard workflow','Order has been unassigned for more than 1 business day']
+  },
+  nda: {
+    title: 'NDA (Next Day Air) Shipping Orders',
+    category: 'Shipping',
+    readTime: '3 min read',
+    updated: 'Updated May 2025',
+    desc: 'Next Day Air (NDA) upgrades are only available under specific conditions. NDA cannot be offered until all four criteria are confirmed. NinjaFast and Expedited orders cannot have NDA added. Do NOT offer NinjaFast upgrades without approval from Mercedes, Michel, or Gabriel.',
+    steps: [
+      { num: '01', color: '', title: 'Confirm NDA Eligibility (All 4 Must Be True)', body: '(1) Order did NOT ship from the facility — no tracking on the order yet. (2) It is NOT NinjaFast or Expedited. (3) Destination is within the Contiguous US (not Canada, Alaska, or Hawaii). (4) Order is Standard turnaround time. All four must be confirmed before proceeding.', note: null, warn: 'DO NOT offer NDA on NinjaFast or Expedited orders. Shipping is already at the fastest available for those order types.' },
+      { num: '02', color: 'teal', title: 'Edit the Shipping in Shopify', body: 'Go to Edit → Edit Shipping Fees. Remove the old shipment method. Click "Add Shipping Method". In the title input: "Next Day Delivery in 9-12 Business Days" or "Next Day delivery in 11-16 Business Days" depending on original turnaround. Find cost based on subtotal using the shipping fee chart.', note: null, warn: null },
+      { num: '03', color: 'teal', title: 'Complete the Edit', body: 'Select "Done". Fill in reason for edit: "Cx upgrade to NDA". Select "Update Order". Ensure the invoice is sent to the customer.', note: null, warn: null },
+      { num: '04', color: 'purple', title: 'NinjaFast Upgrade Requests', body: 'If a customer requests a NinjaFast upgrade, do NOT approve it independently. Notify team leads (Mercedes, Michel, or Gabriel) immediately. NinjaFast is not always available due to patch type, location, or order status. Wait for team lead approval before communicating anything to the customer.', note: null, warn: null }
+    ],
+    checklist: ['All 4 NDA eligibility criteria confirmed','Order is Standard turnaround (not NinjaFast/Expedited)','No tracking on order yet','Within Contiguous US','Edit Shipping Fees updated in Shopify','Reason for edit entered','Invoice sent to customer'],
+    escalate: ['Customer requests NinjaFast upgrade — notify Mercedes, Michel, or Gabriel','Shipping destination is Canada, Alaska, or Hawaii','Order already has tracking number']
+  },
+  lostandtransit: {
+    title: 'Lost in Transit Orders',
+    category: 'Shipping',
+    readTime: '3 min read',
+    updated: 'Updated May 2025',
+    desc: 'An order can be assumed potentially lost in transit when there has been no tracking update for 3-4 business days. If confirmed or reasonably determined to be lost, walk the customer through the available resolution options.',
+    steps: [
+      { num: '01', color: '', title: 'Confirm Lost in Transit Status', body: 'Verify there has been no tracking update for 3-4 business days. Distinguish between a shipping delay vs. true lost-in-transit situation before communicating with customers. Use the Patch Calculator to verify the production and shipping timeline first.', note: null, warn: null },
+      { num: '02', color: 'teal', title: 'Present Resolution Options to Customer', body: 'Walk the customer through the three available resolutions: (1) Reprint order — same turnaround time applies, (2) Credit the order, (3) Refund the order. Let the customer choose their preferred resolution.', note: null, warn: 'For any order over $500, obtain team lead approval BEFORE offering a refund as a resolution.' },
+      { num: '03', color: 'teal', title: 'Process the Chosen Resolution', body: 'Process whichever resolution the customer selects. For reprints: create a new order following standard assignment procedures. For credits or refunds: process in Shopify and notify the customer of the timeline.', note: null, warn: null },
+      { num: '04', color: 'purple', title: 'Escalate High-Value Orders', body: 'Orders over $500 require team lead approval before offering a refund. Post in the #ninja-transfers-service Slack channel with the customer account info and a clear summary before committing to any resolution.', note: null, warn: null }
+    ],
+    checklist: ['No tracking update for 3-4 business days confirmed','Shipping delay vs. lost-in-transit verified','Patch Calculator used to check expected window','Resolution options presented to customer','For $500+ orders: team lead approval obtained','Chosen resolution processed in Shopify','Customer notified of resolution and timeline'],
+    escalate: ['Order value over $500 — requires team lead approval for refund','Customer disputes resolution options','Multiple lost orders from same shipping carrier','International orders with no update']
+  },
   escalation: {
     title: 'Escalation Rules & Decision Tree',
     category: 'Escalation',
     readTime: '4 min read',
     updated: 'Updated May 2025',
-    desc: 'This SOP defines the exact decision path for knowing when to handle a situation independently, when to escalate to a supervisor, and when to involve vendor account managers or leadership.',
+    desc: 'Escalate when ALL of the following are true: (1) The customer requests a Supervisor or Manager, (2) You have already provided all available information and verbiage, (3) You have already consulted Team Leads for assistance. Post escalations in the #ninja-transfers-service Slack channel with customer account info and a clear summary of the issue.',
     steps: [
       { num: '01', color: '', title: 'Assess Agent-Level Authority', body: 'Agents can independently handle: standard cancellations within policy, pre-production order changes, proof reminders, delay notifications under 3 days, and routine vendor follow-ups.', note: null, warn: null },
       { num: '02', color: '', title: 'Identify Supervisor-Required Situations', body: 'Escalate to supervisor when: refund exceeds $200, cancellation is in production, delay exceeds 4 days, customer files dispute or chargeback, vendor is non-responsive over 48 hours.', note: 'When in doubt, escalate. It is never wrong to check in. It is wrong to act beyond your authority.', warn: null },
@@ -1233,6 +1387,18 @@ let currentStep = 0;
 let stepAnswered = false;
 
 const refItems = [
+  { title: 'Vendor Chart for Patch Types', desc: 'Google Sheets chart showing which vendor handles each patch type, MOQs, and NinjaFast capability', icon: 'fas fa-table', iconBg: '#4caf7d18', iconColor: '#4caf7d', tags: ['vendor'], tagStyle: 'background:#4caf7d15;color:#4caf7d' },
+  { title: 'Periscope — Unreviewed Orders Dashboard', desc: 'How to access and work the Unreviewed Orders queue in Periscope/W3os', icon: 'fas fa-inbox', iconBg: '#4caf7d18', iconColor: '#4caf7d', tags: ['orders'], tagStyle: 'background:#4caf7d15;color:#4caf7d' },
+  { title: 'Shopify Order Review Guide', desc: 'How to review patch type, specs, customer info, and artwork in Shopify before assigning', icon: 'fab fa-shopify', iconBg: '#4caf7d18', iconColor: '#4caf7d', tags: ['orders','shopify'], tagStyle: 'background:#4caf7d15;color:#4caf7d' },
+  { title: 'W3os Order Status Reference', desc: 'Full list of all W3os order statuses and what each means — from Unreviewed to Vendor Shipped', icon: 'fas fa-list-ol', iconBg: '#7c5ce818', iconColor: 'var(--accent3)', tags: ['orders','production'], tagStyle: 'background:#7c5ce815;color:var(--accent3)' },
+  { title: 'Vendor Representatives Directory', desc: 'Desent: Jessie Ye | Aspire: Saba Azam | Shingian: Selina Lau | Penn: Alison Castillo & Laura Borjas | Versa: Jessica Vanmeter', icon: 'fas fa-address-book', iconBg: '#f5a62318', iconColor: '#f5a623', tags: ['vendor'], tagStyle: 'background:#f5a62315;color:#f5a623' },
+  { title: 'Slack Channels Reference', desc: '#np_sf | #np_qualitypatches | #np_penn | #np_desent | #np_aspire | #np_shingian | #worldemblem_nt | #ninja-transfers-service', icon: 'fab fa-slack', iconBg: '#7c5ce818', iconColor: 'var(--accent3)', tags: ['escalation'], tagStyle: 'background:#7c5ce815;color:var(--accent3)' },
+  { title: 'World Vendor — 25 pcs Above Placement', desc: 'Step-by-step guide for placing orders manually on the World vendor website for orders 25 pcs and above', icon: 'fas fa-globe', iconBg: '#378add18', iconColor: '#74b9ff', tags: ['vendor','orders'], tagStyle: 'background:#378add15;color:#74b9ff' },
+  { title: 'Patch Calculator (One Source Beacon)', desc: 'Use the OS Patch Calculator to verify production timelines. With proof: enter proof approval date. No proof: enter order placed date.', icon: 'fas fa-calculator', iconBg: '#4caf7d18', iconColor: '#4caf7d', tags: ['production'], tagStyle: 'background:#4caf7d15;color:#4caf7d' },
+  { title: 'NinjaFast Production Timeline', desc: '5 business days after proof approval. No proof: starts day after order placed. With proof: starts day after proof approval. NDA NOT allowed.', icon: 'fas fa-bolt', iconBg: '#7c5ce818', iconColor: 'var(--accent3)', tags: ['production','orders'], tagStyle: 'background:#7c5ce815;color:var(--accent3)' },
+  { title: 'Proof Template (Google Drive)', desc: 'Official proof template for sending proofs to customers. Link: drive.google.com/file/d/1iyOjzWgNtYJClc4kMbY6bdBcmfDwy9WF', icon: 'fas fa-file-image', iconBg: '#378add18', iconColor: '#74b9ff', tags: ['production'], tagStyle: 'background:#378add15;color:#74b9ff' },
+  { title: 'Quality Control Standards', desc: 'Size tolerances, centering requirements, and defect definitions for Embroidery, PVC, Woven, Leather, Chenille, and Printed patches', icon: 'fas fa-check-double', iconBg: '#4caf7d18', iconColor: '#4caf7d', tags: ['production','policy'], tagStyle: 'background:#4caf7d15;color:#4caf7d' },
+  { title: 'Patch Order Issue Form', desc: 'Required form for customers with order issues/defects. Team reviews within 24 hours. Must be filled before escalating to supervisor.', icon: 'fas fa-clipboard-list', iconBg: '#ff475718', iconColor: '#ff4757', tags: ['escalation','orders'], tagStyle: 'background:#ff475715;color:#ff4757' },
   { title: 'Shopify Order Management Guide', desc: 'How to locate, edit, and update orders in the Ninja Patches Shopify backend', icon: 'fab fa-shopify', iconBg: '#4caf7d20', iconColor: 'var(--accent2)', tags: ['orders','shopify'], tagStyle: 'background:#4caf7d15;color:var(--accent2)' },
   { title: 'Vendor Portal Login & Navigation', desc: 'Step-by-step guide to accessing and using the vendor production portal', icon: 'fas fa-industry', iconBg: '#f39c1220', iconColor: '#ffeaa7', tags: ['vendor'], tagStyle: 'background:#f39c1215;color:#ffeaa7' },
   { title: 'Cancellation Decision Tree', desc: 'Visual decision guide for whether a cancellation is approvable at agent level', icon: 'fas fa-project-diagram', iconBg: '#4caf7d20', iconColor: 'var(--accent)', tags: ['orders','escalation'], tagStyle: 'background:#4caf7d15;color:var(--accent)' },
