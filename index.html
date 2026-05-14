@@ -336,6 +336,9 @@
   .step-content h4{color:var(--text,#e8eaf0) !important}
   #sop-desc{color:var(--soft,#b0bbcc) !important}
   [contenteditable] *{color:inherit}
+  .admin-dd-btn{display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;background:none;border:none;border-radius:6px;color:var(--text);font-size:12px;cursor:pointer;text-align:left;transition:background .15s}
+  .admin-dd-btn:hover{background:#4caf7d15}
+  .admin-dd-btn i{width:14px;text-align:center;color:#4caf7d}
   ::-webkit-scrollbar{width:5px;height:5px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
@@ -415,7 +418,20 @@
       <div class="user-dot" id="topbar-avatar">A</div>
       <span style="font-size:12px;color:var(--soft)" id="topbar-username">Admin</span>
     </div>
-    <span id="autosave-indicator" style="font-size:11px;color:var(--accent);opacity:0;transition:opacity .5s;margin-right:12px"><i class="fas fa-check" style="margin-right:3px"></i>Saved</span><button class="logout-btn" onclick="doLogout()"><i class="fas fa-sign-out-alt" style="font-size:11px;margin-right:4px"></i>Logout</button>
+    <div class="admin-only" id="admin-tools-menu" style="display:none;position:relative;margin-right:8px">
+    <button onclick="toggleAdminMenu()" style="padding:6px 12px;background:#4caf7d20;border:1px solid #4caf7d50;border-radius:7px;color:#4caf7d;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px">
+      <i class="fas fa-tools"></i> Admin Tools <i class="fas fa-chevron-down" style="font-size:9px"></i>
+    </button>
+    <div id="admin-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:#111318;border:1px solid #1e2535;border-radius:10px;padding:6px;min-width:200px;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,.4)">
+      <button onclick="enableEditMode();toggleAdminMenu()" class="admin-dd-btn"><i class="fas fa-edit"></i> Edit Page Content</button>
+      <button onclick="openAddSOPModal();toggleAdminMenu()" class="admin-dd-btn"><i class="fas fa-plus"></i> Add SOP</button>
+      <button onclick="openAddTemplateModal();toggleAdminMenu()" class="admin-dd-btn"><i class="fas fa-plus"></i> Add Template</button>
+      <button onclick="openAddPolicyModal();toggleAdminMenu()" class="admin-dd-btn"><i class="fas fa-plus"></i> Add Policy</button>
+      <button onclick="showPage('adminpanel');toggleAdminMenu()" class="admin-dd-btn"><i class="fas fa-shield-alt"></i> Admin Panel</button>
+      <button onclick="openEditTipsModal();toggleAdminMenu()" class="admin-dd-btn"><i class="fas fa-lightbulb"></i> Edit Tips</button>
+    </div>
+  </div>
+  <span id="autosave-indicator"  style="font-size:11px;color:var(--accent);opacity:0;transition:opacity .5s;margin-right:12px"><i class="fas fa-check" style="margin-right:3px"></i>Saved</span><button class="logout-btn" onclick="doLogout()"><i class="fas fa-sign-out-alt" style="font-size:11px;margin-right:4px"></i>Logout</button>
   </div>
 </div>
 
@@ -472,17 +488,7 @@
     <!-- Agent locked notice (shown to agents at top of all pages) -->
     <div class="locked-notice"><i class="fas fa-lock" style="color:var(--accent3)"></i> <strong>Agent View</strong> — Read-only access. Training, phone simulator, and scenario practice are available. Contact an admin to request content changes.</div>
 
-    <!-- Admin edit toolbar (shown to admins) -->
-    <div class="edit-toolbar">
-      <span class="edit-toolbar-label"><i class="fas fa-pen" style="margin-right:4px"></i>Admin Mode</span>
-      <button class="edit-btn" onclick="enableEditMode()"><i class="fas fa-edit"></i> Edit Page Content</button>
-      <button class="edit-btn save" id="save-edits-btn" style="display:none" onclick="saveEdits()"><i class="fas fa-save"></i> Save Changes</button>
-      <button class="edit-btn" style="display:none" id="cancel-edits-btn" onclick="cancelEdits()"><i class="fas fa-times"></i> Cancel</button>
-      <button class="edit-btn admin-only-inline" onclick="openAddSOPModal()"><i class="fas fa-plus"></i> Add SOP</button>
-      <button class="edit-btn admin-only-inline" onclick="openAddTemplateModal()"><i class="fas fa-plus"></i> Add Template</button>
-      <button class="edit-btn admin-only-inline" onclick="showPage('adminpanel')"><i class="fas fa-shield-alt"></i> Admin Panel</button>
-      <button class="edit-btn admin-only-inline" onclick="openEditTipsModal()"><i class="fas fa-lightbulb"></i> Edit Tips</button>
-    </div>
+    
 
     <!-- HOME PAGE -->
     <div id="page-home" class="page active">
@@ -618,6 +624,7 @@
           <button onclick="openSOPEditModal(window._currentSOPKey)" style="padding:7px 16px;background:#4caf7d20;border:1px solid #4caf7d50;border-radius:7px;color:#4caf7d;font-size:12px;font-weight:600;cursor:pointer"><i class="fas fa-edit" style="margin-right:6px"></i>Edit SOP</button>
           <button onclick="confirmDeleteSOP(window._currentSOPKey)" style="padding:7px 16px;background:#ff475715;border:1px solid #ff475730;border-radius:7px;color:#ff4757;font-size:12px;font-weight:600;cursor:pointer"><i class="fas fa-trash" style="margin-right:6px"></i>Delete SOP</button>
           <button onclick="toggleStepsSection()" style="padding:7px 16px;background:var(--card);border:1px solid var(--border);border-radius:7px;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer" id="toggle-steps-header-btn"><i class="fas fa-eye-slash" style="margin-right:6px"></i>Hide Steps</button>
+          <button onclick="toggleFreeTextMode(window._currentSOPKey)" style="padding:7px 16px;background:var(--card);border:1px solid var(--border);border-radius:7px;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer" title="Switch between step-by-step and free text"><i class="fas fa-align-left" style="margin-right:6px"></i>Free Text Mode</button>
         </div>
         <div id="sop-title" class="detail-title">SOP Title</div>
         <div class="detail-meta">
@@ -629,7 +636,8 @@
       <div class="detail-body">
         <div class="detail-main">
           <p id="sop-desc" style="font-size:13px;color:var(--soft);line-height:1.7;margin-bottom:20px"></p>
-          <div id="sop-steps-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div id="sop-free-text-box" style="display:none;min-height:120px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:13px;color:var(--soft);line-height:1.7;margin-bottom:16px;white-space:pre-wrap;outline:none"></div>
+          <div id="sop-steps-header"  style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
             <div id="sop-steps-label" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">STEP-BY-STEP PROCESS</div>
             <div class="admin-only" style="display:none;gap:6px;align-items:center" id="sop-step-controls">
               <button onclick="toggleStepsSection()" id="toggle-steps-btn" style="padding:3px 9px;background:var(--card);border:1px solid var(--border);border-radius:5px;font-size:10px;color:var(--muted);cursor:pointer" title="Hide/show steps section"><i class="fas fa-eye-slash"></i></button>
@@ -638,10 +646,13 @@
           <ul class="step-list" id="sop-steps"></ul>
         </div>
         <div class="detail-aside">
-          <div class="aside-card" style="border-color:#f5a62320">
+          <div class="aside-card" style="border-color:#f5a62320" id="tip-card">
             <h5 style="display:flex;align-items:center;justify-content:space-between">
               <span><i class="fas fa-lightbulb" style="color:#f5a623;margin-right:6px"></i>Training Tip</span>
-              <button id="edit-tips-btn" class="admin-only" onclick="openEditTipsModal()" style="display:none;padding:2px 8px;background:none;border:1px solid #f5a62340;border-radius:4px;font-size:10px;color:#f5a623;cursor:pointer">Edit</button>
+              <div style="display:flex;gap:4px">
+                <button id="edit-tips-btn" class="admin-only" onclick="openEditTipsModal()" style="display:none;padding:2px 8px;background:none;border:1px solid #f5a62340;border-radius:4px;font-size:10px;color:#f5a623;cursor:pointer">Edit</button>
+                <button class="admin-only" onclick="toggleAsideCard('tip-card',this)" style="display:none;padding:2px 7px;background:none;border:1px solid #ffffff15;border-radius:4px;font-size:10px;color:var(--muted);cursor:pointer" title="Hide/show"><i class="fas fa-eye-slash"></i></button>
+              </div>
             </h5>
             <div id="sop-tip-text" style="font-size:12px;color:var(--soft);line-height:1.65"></div>
           </div>
@@ -857,7 +868,7 @@
     <!-- POLICIES PAGE -->
     <div id="page-policies" class="page">
       <div style="padding:20px 36px 0">
-        <div style="font-family:var(--font-head);font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px">Policies & Rules</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div style="font-family:var(--font-head);font-size:20px;font-weight:800;letter-spacing:-0.5px">Policies & Rules</div><button class="admin-only" onclick="openAddPolicyModal()" style="display:none;padding:8px 16px;background:var(--accent);border:none;border-radius:7px;color:#fff;font-size:12px;font-weight:600;cursor:pointer"><i class="fas fa-plus" style="margin-right:5px"></i>Add Policy</button></div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Official Ninja Patches operational policies. These are the rules agents must follow.</div>
       </div>
       <div class="policy-list">
@@ -1732,7 +1743,7 @@ function renderRefListItems(items) {
   items.forEach(function(r) {
     var div = document.createElement('div');
     div.className = 'ref-item';
-    div.onclick = function() { sendPrompt('Tell me about: ' + r.title); };
+    div.onclick = function() { openRefDetail(r); };
     var iconDiv = document.createElement('div');
     iconDiv.className = 'ref-icon';
     iconDiv.style.background = r.iconBg;
@@ -1745,7 +1756,9 @@ function renderRefListItems(items) {
       + '<div class="ref-tags">' + r.tags.map(function(t){ return '<span class="ref-tag" style="' + r.tagStyle + '">' + t + '</span>'; }).join('') + '</div>';
     var icon = document.createElement('i');
     icon.className = 'fas fa-external-link-alt';
-    icon.style.cssText = 'font-size:12px;color:var(--muted);margin-top:4px';
+    icon.style.cssText = 'font-size:12px;color:var(--accent);margin-top:4px;cursor:pointer';
+    icon.title = 'View full breakdown';
+    (function(ri){ icon.onclick = function(e){ e.stopPropagation(); openRefDetail(ri); }; })(r);
     div.appendChild(iconDiv);
     div.appendChild(bodyDiv);
     div.appendChild(icon);
@@ -2663,6 +2676,108 @@ function confirmDeleteSOP(key) {
   document.getElementById('modal-overlay').classList.add('open');
 }
 
+function openRefDetail(item) {
+  // If item maps to a SOP, show that SOP
+  var sopMap = {
+    'Vendor Chart for Patch Types': 'vendorminimums',
+    'Periscope — Unreviewed Orders Dashboard': 'unreviewed',
+    'Shopify Order Review Guide': 'orderchange',
+    'W3os Order Status Reference': 'cancel',
+    'Vendor Representatives Directory': 'vendor',
+    'Slack Channels Reference': 'vendor',
+    'World Vendor — 25 pcs Above Placement': 'vendorminimums',
+    'Patch Calculator (One Source Beacon)': 'nda',
+    'NinjaFast Production Timeline': 'nda',
+    'NinjaFast Policy': 'nda',
+    'Lost in Transit': 'lostandtransit',
+    'Quality Control Standards': 'escalation',
+    'Patch Order Issue Form': 'escalation',
+  };
+  var sopKey = sopMap[item.title];
+  if (sopKey && sopData[sopKey]) {
+    showSOP(sopKey);
+    return;
+  }
+  // Otherwise open a detail modal with the description
+  var box = document.getElementById('modal-box');
+  box.innerHTML = '';
+  var iconDiv = document.createElement('div');
+  iconDiv.style.cssText = 'width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;background:'+item.iconBg+';color:'+item.iconColor;
+  iconDiv.innerHTML = '<i class="'+item.icon+'" style="font-size:18px"></i>';
+  var h3 = document.createElement('h3');
+  h3.textContent = item.title;
+  var p = document.createElement('p');
+  p.style.cssText = 'font-size:13px;color:var(--soft);line-height:1.7;margin:10px 0';
+  p.textContent = item.desc;
+  var tagsDiv = document.createElement('div');
+  tagsDiv.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-top:8px';
+  item.tags.forEach(function(t){
+    var tag=document.createElement('span');
+    tag.style.cssText='padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;'+item.tagStyle;
+    tag.textContent=t.toUpperCase();
+    tagsDiv.appendChild(tag);
+  });
+  var footer = document.createElement('div'); footer.className='modal-footer';
+  var closeBtn = document.createElement('button'); closeBtn.className='modal-btn primary';
+  closeBtn.textContent='Close'; closeBtn.onclick=closeModal;
+  footer.appendChild(closeBtn);
+  box.appendChild(iconDiv); box.appendChild(h3); box.appendChild(p); box.appendChild(tagsDiv); box.appendChild(footer);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function toggleFreeTextMode(key) {
+  var d = sopData[key];
+  if (!d) return;
+  if (d.freeText !== undefined) {
+    // Switch back to steps mode
+    delete d.freeText;
+    autoSave('sopData_'+key, d);
+    showSOP(key);
+    showToast('Switched to step-by-step mode.', 'info');
+  } else {
+    // Switch to free text mode - combine all step text into one block
+    var combined = d.steps.map(function(s,i){ return (i+1)+'. '+s.title+'\n'+s.body; }).join('\n\n');
+    d.freeText = combined;
+    autoSave('sopData_'+key, d);
+    showSOP(key);
+    showToast('Switched to free text mode. Edit the text directly.', 'info');
+  }
+}
+
+function toggleAsideCard(cardId, btn) {
+  var card = document.getElementById(cardId);
+  if (!card) return;
+  var content = card.querySelector('[id]') || card.querySelector('ul') || card.querySelector('div:last-child');
+  var h5 = card.querySelector('h5');
+  var isHidden = card.getAttribute('data-collapsed') === 'true';
+  if (isHidden) {
+    // Show
+    card.querySelectorAll(':scope > *:not(h5)').forEach(function(el){ el.style.display=''; });
+    card.setAttribute('data-collapsed','false');
+    if (btn) btn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+    card.style.opacity = '1';
+  } else {
+    // Hide content, keep header
+    card.querySelectorAll(':scope > *:not(h5)').forEach(function(el){ el.style.display='none'; });
+    card.setAttribute('data-collapsed','true');
+    if (btn) btn.innerHTML = '<i class="fas fa-eye"></i>';
+    card.style.opacity = '0.6';
+  }
+}
+
+function toggleAdminMenu() {
+  var dd = document.getElementById('admin-dropdown');
+  if (dd) dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+}
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  var menu = document.getElementById('admin-tools-menu');
+  if (menu && !menu.contains(e.target)) {
+    var dd = document.getElementById('admin-dropdown');
+    if (dd) dd.style.display = 'none';
+  }
+});
+
 function openImageLightbox(src, title, caption) {
   var overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:zoom-out';
@@ -2718,6 +2833,69 @@ loadSavedImages();
 /* ═══════════════════════════════════════
    ADD SCENARIO (custom training)
 ═══════════════════════════════════════ */
+function openAddPolicyModal() {
+  var box = document.getElementById('modal-box');
+  box.innerHTML = '';
+  var h3 = document.createElement('h3');
+  h3.innerHTML = '<i class="fas fa-shield-alt" style="color:var(--accent);margin-right:8px"></i>Add Policy';
+  box.appendChild(h3);
+  var fields = [
+    {id:'pol-title', label:'Policy Title', type:'input', placeholder:'e.g. Return Window Policy'},
+    {id:'pol-body', label:'Policy Content', type:'textarea', placeholder:'Write the full policy text here...'},
+  ];
+  fields.forEach(function(f) {
+    var wrap = document.createElement('div'); wrap.className='modal-field';
+    var lbl = document.createElement('label'); lbl.textContent=f.label;
+    var el;
+    if (f.type==='textarea') { el=document.createElement('textarea'); el.className='modal-textarea'; el.style.minHeight='100px'; el.placeholder=f.placeholder; }
+    else { el=document.createElement('input'); el.type='text'; el.className='modal-input'; el.placeholder=f.placeholder; }
+    el.id=f.id; wrap.appendChild(lbl); wrap.appendChild(el); box.appendChild(wrap);
+  });
+  var footer=document.createElement('div'); footer.className='modal-footer';
+  var cancelBtn=document.createElement('button'); cancelBtn.className='modal-btn secondary'; cancelBtn.textContent='Cancel'; cancelBtn.onclick=closeModal;
+  var addBtn=document.createElement('button'); addBtn.className='modal-btn primary'; addBtn.textContent='Add Policy';
+  addBtn.onclick=function(){
+    var title=document.getElementById('pol-title').value.trim();
+    var body=document.getElementById('pol-body').value.trim();
+    if(!title){showToast('Title required.','warn');return;}
+    addPolicyToPage(title,body);
+    closeModal();
+  };
+  footer.appendChild(cancelBtn); footer.appendChild(addBtn);
+  box.appendChild(footer);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function addPolicyToPage(title, body) {
+  var list = document.querySelector('.policy-list');
+  if (!list) return;
+  var item = document.createElement('div');
+  item.className = 'policy-item';
+  var header = document.createElement('div');
+  header.className = 'policy-header';
+  header.onclick = function(){ togglePolicy(header); };
+  var left = document.createElement('div'); left.className='policy-header-left';
+  var icon = document.createElement('div'); icon.className='policy-icon'; icon.style.cssText='background:#4caf7d18;color:#4caf7d';
+  icon.innerHTML='<i class="fas fa-shield-alt"></i>';
+  var name = document.createElement('div'); name.className='policy-name'; name.textContent=title;
+  left.appendChild(icon); left.appendChild(name);
+  var chev = document.createElement('i'); chev.className='fas fa-chevron-down policy-chevron';
+  header.appendChild(left); header.appendChild(chev);
+  var bodyDiv = document.createElement('div'); bodyDiv.className='policy-body';
+  var row = document.createElement('div'); row.className='policy-row';
+  var val = document.createElement('div'); val.className='policy-row-val';
+  val.style.cssText='white-space:pre-wrap';
+  val.textContent=body;
+  if (currentRole==='admin'){
+    val.contentEditable='true';
+    val.title='Click to edit';
+  }
+  row.appendChild(val); bodyDiv.appendChild(row);
+  item.appendChild(header); item.appendChild(bodyDiv);
+  list.appendChild(item);
+  showToast('"'+title+'" policy added!','success');
+  autoSave('custom_policies', document.querySelector('.policy-list').innerHTML);
+}
+
 function openAddScenarioModal() {
   var box = document.getElementById('modal-box');
   box.innerHTML = '';
@@ -2858,8 +3036,30 @@ function renderSOPContent(key) {
       (function(k,idx){ p.oninput = function(){ if(sopData[k] && sopData[k].steps[idx]) { sopData[k].steps[idx].body = p.textContent; autoSave('sopData_'+k, sopData[k]); showAutoSaveIndicator(); } }; })(key, i);
     }
     content.appendChild(p);
-    if (s.note) { var tip = document.createElement('div'); tip.className = 'tip'; tip.innerHTML = '<i class="fas fa-lightbulb" style="color:var(--accent3);margin-right:5px"></i>' + s.note; content.appendChild(tip); }
-    if (s.warn) { var warn = document.createElement('div'); warn.className = 'warn'; warn.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:5px"></i>' + s.warn; content.appendChild(warn); }
+    if (s.note) {
+      var tip = document.createElement('div'); tip.className = 'tip';
+      tip.style.display='flex'; tip.style.alignItems='flex-start'; tip.style.gap='6px';
+      var tipIcon = document.createElement('i'); tipIcon.className='fas fa-lightbulb'; tipIcon.style.cssText='color:var(--accent3);flex-shrink:0;margin-top:2px';
+      var tipText = document.createElement('span'); tipText.innerHTML = s.note;
+      if (currentRole==='admin') {
+        tipText.contentEditable='true'; tipText.style.outline='none'; tipText.style.cursor='text';
+        tipText.onfocus=function(){tipText.style.background='#a29bfe15';tipText.style.borderRadius='3px';};
+        tipText.onblur=function(){tipText.style.background=''; s.note=tipText.innerHTML; autoSave('sopData_'+key,sopData[key]); showAutoSaveIndicator();};
+      }
+      tip.appendChild(tipIcon); tip.appendChild(tipText); content.appendChild(tip);
+    }
+    if (s.warn) {
+      var warn = document.createElement('div'); warn.className = 'warn';
+      warn.style.display='flex'; warn.style.alignItems='flex-start'; warn.style.gap='6px';
+      var warnIcon = document.createElement('i'); warnIcon.className='fas fa-exclamation-triangle'; warnIcon.style.cssText='color:var(--accent);flex-shrink:0;margin-top:2px';
+      var warnText = document.createElement('span'); warnText.innerHTML = s.warn;
+      if (currentRole==='admin') {
+        warnText.contentEditable='true'; warnText.style.outline='none'; warnText.style.cursor='text';
+        warnText.onfocus=function(){warnText.style.background='#ff475715';warnText.style.borderRadius='3px';};
+        warnText.onblur=function(){warnText.style.background=''; s.warn=warnText.innerHTML; autoSave('sopData_'+key,sopData[key]); showAutoSaveIndicator();};
+      }
+      warn.appendChild(warnIcon); warn.appendChild(warnText); content.appendChild(warn);
+    }
     li.appendChild(numDiv); li.appendChild(content);
     stepsList.appendChild(li);
   });
@@ -2907,6 +3107,19 @@ function renderSOPContent(key) {
   var tipEl = document.getElementById('sop-tip-text');
   if (tipEl) tipEl.textContent = tips[key] || defaultTips[key] || '';
   // Restore steps hidden state
+  // Free text mode
+  var freeTextBox = document.getElementById('sop-free-text-box');
+  var stepsSection = document.getElementById('sop-steps-header');
+  var stepsList2 = document.getElementById('sop-steps');
+  if (d.freeText !== undefined) {
+    if (freeTextBox) { freeTextBox.style.display='block'; freeTextBox.innerHTML=d.freeText||''; if(currentRole==='admin'){freeTextBox.contentEditable='true';freeTextBox.oninput=function(){sopData[key].freeText=freeTextBox.innerHTML;autoSave('sopData_'+key,sopData[key]);showAutoSaveIndicator();};}else{freeTextBox.contentEditable='false';} }
+    if (stepsSection) stepsSection.style.display='none';
+    if (stepsList2) stepsList2.style.display='none';
+  } else {
+    if (freeTextBox) freeTextBox.style.display='none';
+    if (stepsSection) stepsSection.style.display='';
+    if (stepsList2) stepsList2.style.display='';
+  }
   var stepsHiddenSaved = autoLoad('steps_hidden_'+key);
   _stepsHidden[key] = !!stepsHiddenSaved;
   var list = document.getElementById('sop-steps');
