@@ -55,6 +55,8 @@
 
   /* ── ADMIN-ONLY ELEMENTS ── */
   .admin-only{display:none}
+  [contenteditable="true"]:hover{outline:1px dashed #4caf7d60 !important;cursor:text}
+  [contenteditable="true"]:focus{outline:2px solid #4caf7d80 !important;background:#4caf7d08;border-radius:4px}
   body.role-admin .admin-only{display:block}
   body.role-admin .admin-only-flex{display:flex}
   body.role-admin .admin-only-inline{display:inline-flex}
@@ -1477,15 +1479,43 @@ function showPage(name) {
 function showSOP(key) {
   var d = sopData[key];
   if (!d) return;
-  document.getElementById('sop-title').textContent = d.title;
+  window._currentSOPKey = key;
+
+  // Title
+  var titleEl = document.getElementById('sop-title');
+  titleEl.textContent = d.title;
+  titleEl.contentEditable = currentRole === 'admin' ? 'true' : 'false';
+  titleEl.style.outline = currentRole === 'admin' ? '1px dashed #4caf7d30' : 'none';
+  titleEl.style.borderRadius = '4px';
+  titleEl.style.padding = currentRole === 'admin' ? '2px 4px' : '0';
+  titleEl.oninput = function() {
+    sopData[key].title = titleEl.textContent;
+    autoSave('sopData_'+key, sopData[key]);
+    showAutoSaveIndicator();
+  };
+
+  // Description
+  var descEl = document.getElementById('sop-desc');
+  descEl.textContent = d.desc;
+  descEl.contentEditable = currentRole === 'admin' ? 'true' : 'false';
+  descEl.style.outline = currentRole === 'admin' ? '1px dashed #4caf7d30' : 'none';
+  descEl.style.borderRadius = '4px';
+  descEl.style.padding = currentRole === 'admin' ? '4px 6px' : '0';
+  descEl.oninput = function() {
+    sopData[key].desc = descEl.textContent;
+    autoSave('sopData_'+key, sopData[key]);
+    showAutoSaveIndicator();
+  };
+
   document.getElementById('sop-category').textContent = d.category;
   document.getElementById('sop-read-time').textContent = d.readTime;
   document.getElementById('sop-updated').textContent = d.updated;
-  document.getElementById('sop-desc').textContent = d.desc;
+
   var cl = document.getElementById('sop-checklist');
   if (cl) cl.innerHTML = d.checklist.map(function(c){ return '<li><i class="fas fa-check-circle"></i>'+c+'</li>'; }).join('');
   var esc = document.getElementById('sop-escalate');
   if (esc) esc.innerHTML = d.escalate.map(function(e){ return '<div class="escalate-item"><i class="fas fa-arrow-right"></i><span>'+e+'</span></div>'; }).join('');
+
   document.querySelectorAll('.sidebar-item').forEach(function(el){ el.classList.remove('active'); });
   var activeItem = document.querySelector('[data-sop="'+key+'"]');
   if (activeItem) activeItem.classList.add('active');
@@ -1688,6 +1718,7 @@ function loginSuccess(role, name) {
   document.getElementById('auth-screen').classList.add('hidden');
   document.body.classList.add('role-' + role);
   document.querySelectorAll('.admin-only').forEach(function(el){ el.style.display = role==='admin' ? '' : 'none'; });
+  loadSavedSOPEdits();
   renderCustomScenarios();
 
   // Update topbar
@@ -2305,6 +2336,17 @@ function addImageToSOP(key, dataUrl, caption) {
   showSOP(key);
   showToast('Screenshot added!', 'success');
 }
+function loadSavedSOPEdits() {
+  Object.keys(sopData).forEach(function(key) {
+    var saved = autoLoad('sopData_' + key);
+    if (saved) {
+      if (saved.title) sopData[key].title = saved.title;
+      if (saved.desc) sopData[key].desc = saved.desc;
+      if (saved.steps) sopData[key].steps = saved.steps;
+    }
+  });
+}
+
 function loadSavedImages() {
   var saved = autoLoad('sop_images');
   if (saved) sopImages = saved;
@@ -2423,6 +2465,13 @@ function renderSOPContent(key) {
     row.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px';
     var h4 = document.createElement('h4');
     h4.textContent = s.title;
+    if (currentRole === 'admin') {
+      h4.contentEditable = 'true';
+      h4.style.outline = '1px dashed #4caf7d30';
+      h4.style.borderRadius = '3px';
+      h4.style.padding = '1px 4px';
+      (function(k,idx){ h4.oninput = function(){ if(sopData[k] && sopData[k].steps[idx]) { sopData[k].steps[idx].title = h4.textContent; autoSave('sopData_'+k, sopData[k]); showAutoSaveIndicator(); } }; })(key, i);
+    }
     row.appendChild(h4);
     if (currentRole === 'admin') {
       var delBtn = document.createElement('button');
@@ -2435,7 +2484,16 @@ function renderSOPContent(key) {
       row.appendChild(delBtn);
     }
     content.appendChild(row);
-    var p = document.createElement('p'); p.textContent = s.body; content.appendChild(p);
+    var p = document.createElement('p');
+    p.textContent = s.body;
+    if (currentRole === 'admin') {
+      p.contentEditable = 'true';
+      p.style.outline = '1px dashed #4caf7d30';
+      p.style.borderRadius = '3px';
+      p.style.padding = '2px 4px';
+      (function(k,idx){ p.oninput = function(){ if(sopData[k] && sopData[k].steps[idx]) { sopData[k].steps[idx].body = p.textContent; autoSave('sopData_'+k, sopData[k]); showAutoSaveIndicator(); } }; })(key, i);
+    }
+    content.appendChild(p);
     if (s.note) { var tip = document.createElement('div'); tip.className = 'tip'; tip.innerHTML = '<i class="fas fa-lightbulb" style="color:var(--accent3);margin-right:5px"></i>' + s.note; content.appendChild(tip); }
     if (s.warn) { var warn = document.createElement('div'); warn.className = 'warn'; warn.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:5px"></i>' + s.warn; content.appendChild(warn); }
     li.appendChild(numDiv); li.appendChild(content);
