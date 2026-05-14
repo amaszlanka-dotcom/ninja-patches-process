@@ -56,6 +56,8 @@
   /* ── ADMIN-ONLY ELEMENTS ── */
   .admin-only{display:none}
   [contenteditable="true"]:hover{outline:1px dashed #4caf7d60 !important;cursor:text}
+  body.role-admin #sidebar span[id^="sidebar-label-"]{cursor:pointer;border-bottom:1px dashed transparent;transition:border .15s}
+  body.role-admin #sidebar span[id^="sidebar-label-"]:hover{border-bottom:1px dashed #4caf7d60}
   [contenteditable="true"]:focus{outline:2px solid #4caf7d80 !important;background:#4caf7d08;border-radius:4px}
   body.role-admin .admin-only{display:block}
   body.role-admin .admin-only-flex{display:flex}
@@ -412,19 +414,19 @@
 <div class="layout">
 
   <!-- SIDEBAR -->
-  <div class="sidebar">
+  <div class="sidebar" id="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-label">Quick Access</div>
-      <div class="sidebar-item active" onclick="showSOP('cancel')" data-sop="cancel"><i class="fas fa-ban"></i> Cancellations <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item" onclick="showSOP('unreviewed')" data-sop="unreviewed"><i class="fas fa-inbox"></i> Unreviewed Orders <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item" onclick="showSOP('vendorminimums')" data-sop="vendorminimums"><i class="fas fa-chart-bar"></i> Vendor Chart <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item" onclick="showSOP('orderchange')" data-sop="orderchange"><i class="fas fa-edit"></i> Order Changes <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item" onclick="showSOP('proof')" data-sop="proof"><i class="fas fa-eye"></i> Proof Review <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item" onclick="showSOP('delay')" data-sop="delay"><i class="fas fa-clock"></i> Production Delays <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item" onclick="showSOP('vendor')" data-sop="vendor"><i class="fas fa-industry"></i> Vendor Comms <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item" onclick="showSOP('nda')" data-sop="nda"><i class="fas fa-shipping-fast"></i> NDA Shipping <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item" onclick="showSOP('lostandtransit')" data-sop="lostandtransit"><i class="fas fa-search-location"></i> Lost in Transit <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item" onclick="showSOP('escalation')" data-sop="escalation"><i class="fas fa-exclamation-triangle"></i> Escalation Rules <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item active" onclick="showSOP('cancel')" data-sop="cancel"><i class="fas fa-ban"></i> <span id="sidebar-label-cancel">Cancellations</span> <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('unreviewed')" data-sop="unreviewed"><i class="fas fa-inbox"></i> <span id="sidebar-label-unreviewed">Unreviewed Orders</span> <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('vendorminimums')" data-sop="vendorminimums"><i class="fas fa-chart-bar"></i> <span id="sidebar-label-vendorminimums">Vendor Chart</span> <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('orderchange')" data-sop="orderchange"><i class="fas fa-edit"></i> <span id="sidebar-label-orderchange">Order Changes</span> <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('proof')" data-sop="proof"><i class="fas fa-eye"></i> <span id="sidebar-label-proof">Proof Review</span> <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('delay')" data-sop="delay"><i class="fas fa-clock"></i> <span id="sidebar-label-delay">Production Delays</span> <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('vendor')" data-sop="vendor"><i class="fas fa-industry"></i> <span id="sidebar-label-vendor">Vendor Comms</span> <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('nda')" data-sop="nda"><i class="fas fa-shipping-fast"></i> <span id="sidebar-label-nda">NDA Shipping</span> <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('lostandtransit')" data-sop="lostandtransit"><i class="fas fa-search-location"></i> <span id="sidebar-label-lostandtransit">Lost in Transit</span> <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('escalation')" data-sop="escalation"><i class="fas fa-exclamation-triangle"></i> <span id="sidebar-label-escalation">Escalation Rules</span> <span class="sidebar-badge">SOP</span></div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Training Scenarios</div>
@@ -1686,7 +1688,7 @@ function copyTemplate(btn, text) {
   });
 }
 
-renderRefList('all');
+/* renderRefList called by showPage */
 
 /* ═══════════════════════════════════════════════
    AUTH & ROLE SYSTEM
@@ -1736,6 +1738,7 @@ function loginSuccess(role, name) {
   document.body.classList.add('role-' + role);
   document.querySelectorAll('.admin-only').forEach(function(el){ el.style.display = role==='admin' ? '' : 'none'; });
   loadSavedSOPEdits();
+  loadSavedSidebarLabels();
   renderCustomScenarios();
 
   // Update topbar
@@ -2428,6 +2431,45 @@ function saveSOPEdits(key, stepCount) {
   closeModal();
   showSOP(key);
   showToast('SOP updated!', 'success');
+}
+
+function editSidebarLabel(key) {
+  if (currentRole !== 'admin') return;
+  var span = document.getElementById('sidebar-label-' + key);
+  if (!span) return;
+  var current = span.textContent;
+  var input = document.createElement('input');
+  input.type = 'text';
+  input.value = current;
+  input.style.cssText = 'background:var(--input-bg,#161b24);border:1px solid #4caf7d50;border-radius:4px;color:var(--text);font-size:13px;padding:1px 5px;width:120px;outline:none';
+  input.onclick = function(e) { e.stopPropagation(); };
+  function save() {
+    var val = input.value.trim() || current;
+    span.textContent = val;
+    autoSave('sidebar_label_' + key, val);
+    showAutoSaveIndicator();
+  }
+  input.onblur = save;
+  input.onkeydown = function(e) {
+    if (e.key === 'Enter') { save(); input.blur(); }
+    if (e.key === 'Escape') { span.textContent = current; }
+  };
+  span.textContent = '';
+  span.appendChild(input);
+  input.focus();
+  input.select();
+}
+function loadSavedSidebarLabels() {
+  var keys = ['cancel','unreviewed','vendorminimums','orderchange','proof','delay','vendor','nda','lostandtransit','escalation'];
+  keys.forEach(function(key) {
+    var saved = autoLoad('sidebar_label_' + key);
+    var span = document.getElementById('sidebar-label-' + key);
+    if (span) {
+      if (saved) span.textContent = saved;
+      span.ondblclick = function(e) { e.stopPropagation(); editSidebarLabel(key); };
+      if (currentRole === 'admin') span.title = 'Double-click to rename';
+    }
+  });
 }
 
 function loadSavedSOPEdits() {
