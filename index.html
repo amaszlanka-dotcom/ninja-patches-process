@@ -320,6 +320,9 @@
   .policy-chevron.open{transform:rotate(180deg)}
 
   /* SCROLLBAR */
+  .admin-only{display:none}
+  body.role-admin .admin-only{display:block}
+  body.role-admin .admin-only-inline{display:inline-flex}
   ::-webkit-scrollbar{width:5px;height:5px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
@@ -399,7 +402,7 @@
       <div class="user-dot" id="topbar-avatar">A</div>
       <span style="font-size:12px;color:var(--soft)" id="topbar-username">Admin</span>
     </div>
-    <button class="logout-btn" onclick="doLogout()"><i class="fas fa-sign-out-alt" style="font-size:11px;margin-right:4px"></i>Logout</button>
+    <span id="autosave-indicator" style="font-size:11px;color:var(--accent);opacity:0;transition:opacity .5s;margin-right:12px"><i class="fas fa-check" style="margin-right:3px"></i>Saved</span><button class="logout-btn" onclick="doLogout()"><i class="fas fa-sign-out-alt" style="font-size:11px;margin-right:4px"></i>Logout</button>
   </div>
 </div>
 
@@ -410,12 +413,16 @@
   <div class="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-label">Quick Access</div>
-      <div class="sidebar-item admin-only active" onclick="showSOP('cancel')"><i class="fas fa-ban"></i> Cancellations <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('orderchange')"><i class="fas fa-edit"></i> Order Changes <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('proof')"><i class="fas fa-eye"></i> Proof Review <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('delay')"><i class="fas fa-clock"></i> Production Delays <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('vendor')"><i class="fas fa-industry"></i> Vendor Comms <span class="sidebar-badge">SOP</span></div>
-      <div class="sidebar-item admin-only" onclick="showSOP('escalation')"><i class="fas fa-exclamation-triangle"></i> Escalation Rules <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item active" onclick="showSOP('cancel')" data-sop="cancel"><i class="fas fa-ban"></i> Cancellations <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('unreviewed')" data-sop="unreviewed"><i class="fas fa-inbox"></i> Unreviewed Orders <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('vendorminimums')" data-sop="vendorminimums"><i class="fas fa-chart-bar"></i> Vendor Chart <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('orderchange')" data-sop="orderchange"><i class="fas fa-edit"></i> Order Changes <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('proof')" data-sop="proof"><i class="fas fa-eye"></i> Proof Review <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('delay')" data-sop="delay"><i class="fas fa-clock"></i> Production Delays <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('vendor')" data-sop="vendor"><i class="fas fa-industry"></i> Vendor Comms <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('nda')" data-sop="nda"><i class="fas fa-shipping-fast"></i> NDA Shipping <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('lostandtransit')" data-sop="lostandtransit"><i class="fas fa-search-location"></i> Lost in Transit <span class="sidebar-badge">SOP</span></div>
+      <div class="sidebar-item" onclick="showSOP('escalation')" data-sop="escalation"><i class="fas fa-exclamation-triangle"></i> Escalation Rules <span class="sidebar-badge">SOP</span></div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Training Scenarios</div>
@@ -427,9 +434,9 @@
     <div class="sidebar-section">
       <div class="sidebar-label">Phone Simulator</div>
       <div class="sidebar-item" onclick="showPage('phonesim')" style="color:var(--accent2);background:#4caf7d12;border:1px solid #4caf7d25"><i class="fas fa-phone"></i> Call Simulator <span class="sidebar-badge green">Live</span></div>
-      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('cancel-simple'),100)"><i class="fas fa-bolt"></i> Simple Cancel</div>
-      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('delay-angry'),100)"><i class="fas fa-bolt"></i> Angry Delay</div>
-      <div class="sidebar-item" onclick="showPage('phonesim');setTimeout(()=>launchCallScenario('chargeback-threat'),100)"><i class="fas fa-bolt"></i> Chargeback Threat</div>
+      <div class="sidebar-item" onclick="showPhoneSimScenario('cancel-simple')"><i class="fas fa-bolt"></i> Simple Cancel</div>
+      <div class="sidebar-item" onclick="showPhoneSimScenario('delay-angry')"><i class="fas fa-bolt"></i> Angry Delay</div>
+      <div class="sidebar-item" onclick="showPhoneSimScenario('chargeback-threat')"><i class="fas fa-bolt"></i> Chargeback Threat</div>
     </div>
     <div class="sidebar-section admin-only">
       <div class="sidebar-label">Reference</div>
@@ -461,6 +468,7 @@
       <button class="edit-btn admin-only-inline" onclick="openAddSOPModal()"><i class="fas fa-plus"></i> Add SOP</button>
       <button class="edit-btn admin-only-inline" onclick="openAddTemplateModal()"><i class="fas fa-plus"></i> Add Template</button>
       <button class="edit-btn admin-only-inline" onclick="showPage('adminpanel')"><i class="fas fa-shield-alt"></i> Admin Panel</button>
+      <button class="edit-btn admin-only-inline" onclick="openEditTipsModal()"><i class="fas fa-lightbulb"></i> Edit Tips</button>
     </div>
 
     <!-- HOME PAGE -->
@@ -496,56 +504,56 @@
       <div class="section-pad">
         <div class="section-title"><i class="fas fa-layer-group" style="font-size:13px;color:var(--accent)"></i> Core SOPs</div>
         <div class="card-grid">
-          <div class="card" onclick="showSOP('unreviewed')">
+          <div class="card" onclick="showSOP('unreviewed')" data-sop="unreviewed">
             <div class="card-icon teal"><i class="fas fa-inbox"></i></div>
             <h3>Unreviewed Orders</h3>
             <p>How to access, review, and assign new orders from the Periscope dashboard.</p>
             <span class="card-tag sop">SOP</span>
             <i class="fas fa-arrow-right card-arrow"></i>
           </div>
-          <div class="card" onclick="showSOP('vendorminimums')">
+          <div class="card" onclick="showSOP('vendorminimums')" data-sop="vendorminimums">
             <div class="card-icon orange"><i class="fas fa-chart-bar"></i></div>
             <h3>Vendor Chart & MOQs</h3>
             <p>Which vendor handles which patch type, minimum order quantities, and NinjaFast vendors.</p>
             <span class="card-tag sop">SOP</span>
             <i class="fas fa-arrow-right card-arrow"></i>
           </div>
-          <div class="card" onclick="showSOP('cancel')">
+          <div class="card" onclick="showSOP('cancel')" data-sop="cancel">
             <div class="card-icon red"><i class="fas fa-ban"></i></div>
             <h3>Order Cancellations</h3>
             <p>When and how to cancel orders based on W3os status. Cannot cancel once Sent to Production.</p>
             <span class="card-tag sop">SOP</span>
             <i class="fas fa-arrow-right card-arrow"></i>
           </div>
-          <div class="card" onclick="showSOP('proof')">
+          <div class="card" onclick="showSOP('proof')" data-sop="proof">
             <div class="card-icon purple"><i class="fas fa-eye"></i></div>
             <h3>Proof Review Cycle</h3>
             <p>Managing proof submissions, customer approvals, rejections, and revision cycles.</p>
             <span class="card-tag sop">SOP</span>
             <i class="fas fa-arrow-right card-arrow"></i>
           </div>
-          <div class="card" onclick="showSOP('vendor')">
+          <div class="card" onclick="showSOP('vendor')" data-sop="vendor">
             <div class="card-icon yellow"><i class="fas fa-industry"></i></div>
             <h3>Vendor Communication</h3>
             <p>Vendor reps, approved channels, and how to tag and notify each vendor correctly.</p>
             <span class="card-tag sop">SOP</span>
             <i class="fas fa-arrow-right card-arrow"></i>
           </div>
-          <div class="card" onclick="showSOP('nda')">
+          <div class="card" onclick="showSOP('nda')" data-sop="nda">
             <div class="card-icon blue"><i class="fas fa-shipping-fast"></i></div>
             <h3>NDA Shipping</h3>
             <p>Next Day Air eligibility, upgrade process, and NinjaFast shipping rules.</p>
             <span class="card-tag sop">SOP</span>
             <i class="fas fa-arrow-right card-arrow"></i>
           </div>
-          <div class="card" onclick="showSOP('lostandtransit')">
+          <div class="card" onclick="showSOP('lostandtransit')" data-sop="lostandtransit">
             <div class="card-icon orange"><i class="fas fa-search-location"></i></div>
             <h3>Lost in Transit</h3>
             <p>How to identify and resolve orders lost in transit. Resolution options and $500 escalation rule.</p>
             <span class="card-tag sop">SOP</span>
             <i class="fas fa-arrow-right card-arrow"></i>
           </div>
-          <div class="card" onclick="showSOP('escalation')">
+          <div class="card" onclick="showSOP('escalation')" data-sop="escalation">
             <div class="card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
             <h3>Escalation Rules</h3>
             <p>When to escalate, what to include, and how to handle customers requesting supervisors.</p>
@@ -607,9 +615,22 @@
           <ul class="step-list" id="sop-steps"></ul>
         </div>
         <div class="detail-aside">
+          <div class="aside-card" style="border-color:#f5a62320">
+            <h5 style="display:flex;align-items:center;justify-content:space-between">
+              <span><i class="fas fa-lightbulb" style="color:#f5a623;margin-right:6px"></i>Training Tip</span>
+              <button id="edit-tips-btn" class="admin-only" onclick="openEditTipsModal()" style="display:none;padding:2px 8px;background:none;border:1px solid #f5a62340;border-radius:4px;font-size:10px;color:#f5a623;cursor:pointer">Edit</button>
+            </h5>
+            <div id="sop-tip-text" style="font-size:12px;color:var(--soft);line-height:1.65"></div>
+          </div>
           <div class="aside-card">
-            <h5><i class="fas fa-check-circle"></i> Quick Checklist</h5>
+            <h5 style="display:flex;align-items:center;justify-content:space-between">
+              <span><i class="fas fa-check-circle"></i> Quick Checklist</span>
+            </h5>
             <ul class="check-list" id="sop-checklist"></ul>
+          </div>
+          <div id="sop-screenshots" style="margin-top:12px"></div>
+          <div class="admin-only" id="add-screenshot-btn-wrap" style="display:none;margin-top:8px">
+            <button onclick="openImageUploadModal(window._currentSOPKey)" style="width:100%;padding:8px;background:var(--card);border:1px dashed var(--border);border-radius:7px;color:var(--muted);font-size:12px;cursor:pointer"><i class="fas fa-image" style="margin-right:6px"></i>Add Screenshot</button>
           </div>
           <div class="aside-card">
             <h5><i class="fas fa-exclamation-triangle"></i> When to Escalate</h5>
@@ -681,6 +702,7 @@
           <div class="scenario-footer"><span class="scenario-tag"><i class="fas fa-tasks" style="font-size:11px"></i> 7 decisions</span><button class="scenario-btn teal" onclick="sendPrompt('Walk me through the bulk order production defect scenario for Ninja Patches')">Ask AI ↗</button></div>
         </div>
       </div>
+      <div id="custom-scenarios-grid" class="card-grid" style="display:none;padding:0 36px 24px"></div>
     </div>
 
     <!-- SCENARIO PLAYER -->
@@ -1453,27 +1475,21 @@ function showPage(name) {
 }
 
 function showSOP(key) {
-  const d = sopData[key];
+  var d = sopData[key];
+  if (!d) return;
   document.getElementById('sop-title').textContent = d.title;
   document.getElementById('sop-category').textContent = d.category;
   document.getElementById('sop-read-time').textContent = d.readTime;
   document.getElementById('sop-updated').textContent = d.updated;
   document.getElementById('sop-desc').textContent = d.desc;
-  const stepsList = document.getElementById('sop-steps');
-  stepsList.innerHTML = d.steps.map(s => `
-    <li class="step-item">
-      <div class="step-num ${s.color}">${s.num}</div>
-      <div class="step-content">
-        <h4>${s.title}</h4>
-        <p>${s.body}</p>
-        ${s.note ? `<div class="tip"><i class="fas fa-lightbulb" style="color:var(--accent3);margin-right:5px"></i>${s.note}</div>` : ''}
-        ${s.warn ? `<div class="warn"><i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:5px"></i>${s.warn}</div>` : ''}
-      </div>
-    </li>`).join('');
-  const cl = document.getElementById('sop-checklist');
-  cl.innerHTML = d.checklist.map(c => `<li><i class="fas fa-check-circle"></i>${c}</li>`).join('');
-  const esc = document.getElementById('sop-escalate');
-  esc.innerHTML = d.escalate.map(e => `<div class="escalate-item"><i class="fas fa-arrow-right"></i><span>${e}</span></div>`).join('');
+  var cl = document.getElementById('sop-checklist');
+  if (cl) cl.innerHTML = d.checklist.map(function(c){ return '<li><i class="fas fa-check-circle"></i>'+c+'</li>'; }).join('');
+  var esc = document.getElementById('sop-escalate');
+  if (esc) esc.innerHTML = d.escalate.map(function(e){ return '<div class="escalate-item"><i class="fas fa-arrow-right"></i><span>'+e+'</span></div>'; }).join('');
+  document.querySelectorAll('.sidebar-item').forEach(function(el){ el.classList.remove('active'); });
+  var activeItem = document.querySelector('[data-sop="'+key+'"]');
+  if (activeItem) activeItem.classList.add('active');
+  renderSOPContent(key);
   showPage('sop');
 }
 
@@ -1550,7 +1566,7 @@ function nextScenarioStep() {
         <div style="font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.65">You completed all ${total} decision points in the "${sc.title}" training scenario. Review the SOPs below to reinforce what you've learned.</div>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
           <button style="padding:10px 20px;background:var(--accent2);border:none;border-radius:8px;color:#0a0b0d;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body)" onclick="showPage('training')">More Scenarios</button>
-          <button style="padding:10px 20px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--soft);font-size:13px;cursor:pointer;font-family:var(--font-body)" onclick="showSOP('cancel')">Review SOPs</button>
+          <button style="padding:10px 20px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--soft);font-size:13px;cursor:pointer;font-family:var(--font-body)" onclick="showSOP('cancel')" data-sop="cancel">Review SOPs</button>
         </div>
       </div>`;
     return;
@@ -1671,6 +1687,8 @@ function loginSuccess(role, name) {
   currentUser = name;
   document.getElementById('auth-screen').classList.add('hidden');
   document.body.classList.add('role-' + role);
+  document.querySelectorAll('.admin-only').forEach(function(el){ el.style.display = role==='admin' ? '' : 'none'; });
+  renderCustomScenarios();
 
   // Update topbar
   const badge = document.getElementById('topbar-role-badge');
@@ -2074,6 +2092,382 @@ function showToast(msg, type = 'info') {
   t.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':type==='warn'?'exclamation-triangle':type==='error'?'times-circle':'info-circle'}" style="color:${colors[type]};font-size:14px"></i>${msg}`;
   document.body.appendChild(t);
   setTimeout(() => { if (t.parentNode) t.remove(); }, 3500);
+}
+
+
+/* ═══════════════════════════════════════
+   TIPS SYSTEM
+═══════════════════════════════════════ */
+var defaultTips = {
+  cancel: "Check W3os status first — if it says Sent to Production, it cannot be canceled. No exceptions.",
+  orderchange: "Contact the vendor rep immediately — changes must be made before production starts.",
+  proof: "Proofs cannot be rushed. Standard turnaround is 2-3 business days. Always set this expectation upfront.",
+  delay: "Use the Patch Calculator to verify the timeline before communicating with the customer.",
+  vendor: "Always tag yourself in Shopify immediately when opening an order so no one else picks it up.",
+  escalation: "All 3 criteria must be met before escalating: customer requests supervisor, you gave all info, you consulted team leads.",
+  vendorminimums: "Check the Vendor Chart before assigning. Repeat customers MUST go to their original vendor.",
+  unreviewed: "Add your name to Shopify tags the moment you open an order — prevents duplicate handling.",
+  nda: "All 4 criteria must be confirmed before offering NDA. Never offer NDA on NinjaFast or Expedited orders.",
+  lostandtransit: "No tracking update for 3-4 business days = potentially lost. Present 3 resolution options to customer."
+};
+function getSavedTips() {
+  try { var t = JSON.parse(localStorage.getItem('np_tips_v2')); return t || Object.assign({}, defaultTips); }
+  catch(e) { return Object.assign({}, defaultTips); }
+}
+function openEditTipsModal() {
+  var tips = getSavedTips();
+  var keys = Object.keys(defaultTips);
+  var labels = {cancel:'Cancellation SOP',orderchange:'Order Changes',proof:'Proof Review',
+    delay:'Production Delays',vendor:'Vendor Comms',escalation:'Escalation Rules',
+    vendorminimums:'Vendor Chart & MOQs',unreviewed:'Unreviewed Orders',
+    nda:'NDA Shipping',lostandtransit:'Lost in Transit'};
+  var box = document.getElementById('modal-box');
+  box.innerHTML = '';
+  var h3 = document.createElement('h3');
+  h3.innerHTML = '<i class="fas fa-lightbulb" style="color:#f5a623;margin-right:8px"></i>Edit Training Tips';
+  var p = document.createElement('p');
+  p.style.cssText = 'font-size:12px;color:var(--muted);margin-bottom:16px';
+  p.textContent = 'Tips appear at the bottom of each SOP page to guide agents.';
+  box.appendChild(h3); box.appendChild(p);
+  keys.forEach(function(k) {
+    var wrap = document.createElement('div');
+    wrap.className = 'modal-field';
+    var lbl = document.createElement('label');
+    lbl.textContent = labels[k] || k;
+    lbl.style.cssText = 'font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;display:block';
+    var ta = document.createElement('textarea');
+    ta.className = 'modal-textarea';
+    ta.id = 'tip-' + k;
+    ta.style.minHeight = '55px';
+    ta.value = tips[k] || defaultTips[k] || '';
+    wrap.appendChild(lbl); wrap.appendChild(ta);
+    box.appendChild(wrap);
+  });
+  var footer = document.createElement('div');
+  footer.className = 'modal-footer';
+  var resetBtn = document.createElement('button');
+  resetBtn.className = 'modal-btn secondary';
+  resetBtn.textContent = 'Reset Defaults';
+  resetBtn.onclick = function() { localStorage.removeItem('np_tips_v2'); closeModal(); showToast('Tips reset to defaults.','info'); };
+  var saveBtn = document.createElement('button');
+  saveBtn.className = 'modal-btn primary';
+  saveBtn.textContent = 'Save All Tips';
+  saveBtn.onclick = saveAllTips;
+  footer.appendChild(resetBtn); footer.appendChild(saveBtn);
+  box.appendChild(footer);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function saveAllTips() {
+  var tips = {};
+  Object.keys(defaultTips).forEach(function(k) {
+    var el = document.getElementById('tip-' + k);
+    if (el) tips[k] = el.value.trim() || defaultTips[k];
+  });
+  localStorage.setItem('np_tips_v2', JSON.stringify(tips));
+  var tipEl = document.getElementById('sop-tip-text');
+  if (tipEl && window._currentSOPKey) tipEl.textContent = tips[window._currentSOPKey] || '';
+  closeModal();
+  showToast('Tips saved!', 'success');
+}
+
+/* ═══════════════════════════════════════
+   AUTOSAVE
+═══════════════════════════════════════ */
+function autoSave(key, data) {
+  try { localStorage.setItem('np_autosave_' + key, JSON.stringify(data)); } catch(e) {}
+}
+function autoLoad(key) {
+  try { var d = localStorage.getItem('np_autosave_' + key); return d ? JSON.parse(d) : null; }
+  catch(e) { return null; }
+}
+function showAutoSaveIndicator() {
+  var el = document.getElementById('autosave-indicator');
+  if (!el) return;
+  el.textContent = 'Saved';
+  el.style.opacity = '1';
+  setTimeout(function() { el.style.opacity = '0'; }, 2000);
+}
+
+/* ═══════════════════════════════════════
+   PHONE SIM SCENARIO LAUNCHER
+═══════════════════════════════════════ */
+function showPhoneSimScenario(scenarioId) {
+  showPage('phonesim');
+  setTimeout(function() {
+    if (typeof launchCallScenario === 'function') launchCallScenario(scenarioId);
+  }, 150);
+}
+
+/* ═══════════════════════════════════════
+   DELETE BUTTONS (DOM-safe)
+═══════════════════════════════════════ */
+function deleteSidebarItem(btn) {
+  var item = btn.closest('.sidebar-item');
+  if (!item) return;
+  item.style.transition = 'opacity .2s';
+  item.style.opacity = '0';
+  setTimeout(function() { if (item.parentNode) item.parentNode.removeChild(item); }, 200);
+  showToast('Removed from sidebar.', 'success');
+}
+function deleteSOPStep(key, idx) {
+  if (!sopData[key] || !sopData[key].steps[idx]) return;
+  sopData[key].steps.splice(idx, 1);
+  showSOP(key);
+  showToast('Step removed.', 'success');
+}
+function confirmDeleteSOPStep(key, idx) {
+  var box = document.getElementById('modal-box');
+  box.innerHTML = '';
+  var h3 = document.createElement('h3');
+  h3.innerHTML = '<i class="fas fa-trash" style="color:#ff4757;margin-right:8px"></i>Remove Step?';
+  var p = document.createElement('p');
+  p.textContent = 'Remove "' + (sopData[key] && sopData[key].steps[idx] ? sopData[key].steps[idx].title : 'this step') + '"? This cannot be undone.';
+  var footer = document.createElement('div');
+  footer.className = 'modal-footer';
+  var cancelBtn = document.createElement('button');
+  cancelBtn.className = 'modal-btn secondary';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = closeModal;
+  var delBtn = document.createElement('button');
+  delBtn.className = 'modal-btn primary';
+  delBtn.style.background = '#ff4757';
+  delBtn.textContent = 'Remove';
+  delBtn.onclick = function() { closeModal(); deleteSOPStep(key, idx); };
+  footer.appendChild(cancelBtn); footer.appendChild(delBtn);
+  box.appendChild(h3); box.appendChild(p); box.appendChild(footer);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+/* ═══════════════════════════════════════
+   SCREENSHOT / IMAGE UPLOAD
+═══════════════════════════════════════ */
+function openImageUploadModal(sopKey) {
+  var box = document.getElementById('modal-box');
+  box.innerHTML = '';
+  var h3 = document.createElement('h3');
+  h3.innerHTML = '<i class="fas fa-image" style="color:var(--accent);margin-right:8px"></i>Add Screenshot';
+  var p = document.createElement('p');
+  p.style.cssText = 'font-size:12px;color:var(--muted);margin-bottom:16px';
+  p.textContent = 'Upload an image to display at the top of this SOP.';
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.style.cssText = 'width:100%;padding:10px;background:var(--input-bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:13px;margin-bottom:12px';
+  var capWrap = document.createElement('div');
+  capWrap.className = 'modal-field';
+  var capLbl = document.createElement('label');
+  capLbl.textContent = 'Caption (optional)';
+  var capInput = document.createElement('input');
+  capInput.type = 'text';
+  capInput.placeholder = 'Describe what this screenshot shows...';
+  capInput.className = 'modal-input';
+  capInput.id = 'img-caption-input';
+  capWrap.appendChild(capLbl); capWrap.appendChild(capInput);
+  var preview = document.createElement('div');
+  preview.id = 'img-preview';
+  preview.style.cssText = 'margin:10px 0;display:none';
+  input.onchange = function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      preview.innerHTML = '<img src="'+ev.target.result+'" style="width:100%;border-radius:6px;max-height:200px;object-fit:contain">';
+      preview.style.display = 'block';
+      preview._dataUrl = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+  var footer = document.createElement('div');
+  footer.className = 'modal-footer';
+  var cancelBtn = document.createElement('button');
+  cancelBtn.className = 'modal-btn secondary';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = closeModal;
+  var addBtn = document.createElement('button');
+  addBtn.className = 'modal-btn primary';
+  addBtn.textContent = 'Add to SOP';
+  addBtn.onclick = function() {
+    if (!preview._dataUrl) { showToast('Please select an image first.','warn'); return; }
+    var cap = document.getElementById('img-caption-input').value.trim();
+    addImageToSOP(sopKey, preview._dataUrl, cap);
+    closeModal();
+  };
+  footer.appendChild(cancelBtn); footer.appendChild(addBtn);
+  box.appendChild(h3); box.appendChild(p); box.appendChild(input);
+  box.appendChild(capWrap); box.appendChild(preview); box.appendChild(footer);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+var sopImages = {};
+function addImageToSOP(key, dataUrl, caption) {
+  if (!sopImages[key]) sopImages[key] = [];
+  sopImages[key].push({ src: dataUrl, caption: caption });
+  autoSave('sop_images', sopImages);
+  showSOP(key);
+  showToast('Screenshot added!', 'success');
+}
+function loadSavedImages() {
+  var saved = autoLoad('sop_images');
+  if (saved) sopImages = saved;
+}
+loadSavedImages();
+
+/* ═══════════════════════════════════════
+   ADD SCENARIO (custom training)
+═══════════════════════════════════════ */
+function openAddScenarioModal() {
+  var box = document.getElementById('modal-box');
+  box.innerHTML = '';
+  var h3 = document.createElement('h3');
+  h3.innerHTML = '<i class="fas fa-plus-circle" style="color:var(--accent);margin-right:8px"></i>Add Training Scenario';
+  var fields = [
+    {id:'sc-title', label:'Scenario Title', type:'input', placeholder:'e.g. Chargeback Dispute'},
+    {id:'sc-desc', label:'Scenario Description', type:'textarea', placeholder:'Brief description of what this scenario covers...'},
+    {id:'sc-icon', label:'Icon (Font Awesome class)', type:'input', placeholder:'e.g. fas fa-credit-card'},
+    {id:'sc-diff', label:'Difficulty', type:'select', options:['Beginner','Intermediate','Advanced']}
+  ];
+  fields.forEach(function(f) {
+    var wrap = document.createElement('div');
+    wrap.className = 'modal-field';
+    var lbl = document.createElement('label');
+    lbl.textContent = f.label;
+    wrap.appendChild(lbl);
+    var el;
+    if (f.type === 'textarea') {
+      el = document.createElement('textarea');
+      el.className = 'modal-textarea';
+      el.style.minHeight = '70px';
+      el.placeholder = f.placeholder || '';
+    } else if (f.type === 'select') {
+      el = document.createElement('select');
+      el.className = 'modal-input';
+      (f.options || []).forEach(function(o) { var opt = document.createElement('option'); opt.value = o; opt.textContent = o; el.appendChild(opt); });
+    } else {
+      el = document.createElement('input');
+      el.type = 'text';
+      el.className = 'modal-input';
+      el.placeholder = f.placeholder || '';
+    }
+    el.id = f.id;
+    wrap.appendChild(el);
+    box.appendChild(wrap);
+  });
+  var footer = document.createElement('div');
+  footer.className = 'modal-footer';
+  var cancelBtn = document.createElement('button');
+  cancelBtn.className = 'modal-btn secondary';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = closeModal;
+  var addBtn = document.createElement('button');
+  addBtn.className = 'modal-btn primary';
+  addBtn.textContent = 'Add Scenario';
+  addBtn.onclick = function() {
+    var title = document.getElementById('sc-title').value.trim();
+    if (!title) { showToast('Title is required.','warn'); return; }
+    var desc = document.getElementById('sc-desc').value.trim();
+    var icon = document.getElementById('sc-icon').value.trim() || 'fas fa-phone';
+    var diff = document.getElementById('sc-diff').value;
+    addCustomScenario(title, desc, icon, diff);
+    closeModal();
+  };
+  footer.appendChild(cancelBtn); footer.appendChild(addBtn);
+  box.appendChild(h3);
+  box.appendChild(footer);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+var customScenarios = autoLoad('custom_scenarios') || [];
+function addCustomScenario(title, desc, icon, diff) {
+  var sc = { title: title, desc: desc || 'Custom training scenario.', icon: icon, difficulty: diff, steps: [] };
+  customScenarios.push(sc);
+  autoSave('custom_scenarios', customScenarios);
+  renderCustomScenarios();
+  showToast('"' + title + '" added to Training!', 'success');
+}
+function renderCustomScenarios() {
+  var grid = document.getElementById('custom-scenarios-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  customScenarios.forEach(function(sc, i) {
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = '<div class="card-icon teal"><i class="' + sc.icon + '"></i></div>'
+      + '<h3>' + sc.title + '</h3>'
+      + '<p>' + sc.desc + '</p>'
+      + '<span class="card-tag training">Training</span>'
+      + '<i class="fas fa-arrow-right card-arrow"></i>';
+    grid.appendChild(card);
+  });
+  if (!customScenarios.length) grid.style.display = 'none';
+  else grid.style.display = '';
+}
+
+/* ═══════════════════════════════════════
+   RENDER SOP STEPS (with delete + images)
+═══════════════════════════════════════ */
+function renderSOPContent(key) {
+  window._currentSOPKey = key;
+  var d = sopData[key];
+  if (!d) return;
+  var stepsList = document.getElementById('sop-steps');
+  if (!stepsList) return;
+  stepsList.innerHTML = '';
+  d.steps.forEach(function(s, i) {
+    var li = document.createElement('li');
+    li.className = 'step-item';
+    var numDiv = document.createElement('div');
+    numDiv.className = 'step-num ' + (s.color || '');
+    numDiv.textContent = String(i+1).padStart(2,'0');
+    var content = document.createElement('div');
+    content.className = 'step-content';
+    content.style.flex = '1';
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px';
+    var h4 = document.createElement('h4');
+    h4.textContent = s.title;
+    row.appendChild(h4);
+    if (currentRole === 'admin') {
+      var delBtn = document.createElement('button');
+      delBtn.style.cssText = 'padding:3px 8px;background:#ff475715;border:1px solid #ff475730;border-radius:5px;color:#ff4757;font-size:10px;cursor:pointer;white-space:nowrap;flex-shrink:0;opacity:0;transition:opacity .15s';
+      delBtn.innerHTML = '<i class="fas fa-trash"></i>';
+      delBtn.title = 'Remove step';
+      li.addEventListener('mouseenter', function() { delBtn.style.opacity = '1'; });
+      li.addEventListener('mouseleave', function() { delBtn.style.opacity = '0'; });
+      (function(k, idx) { delBtn.onclick = function() { confirmDeleteSOPStep(k, idx); }; })(key, i);
+      row.appendChild(delBtn);
+    }
+    content.appendChild(row);
+    var p = document.createElement('p'); p.textContent = s.body; content.appendChild(p);
+    if (s.note) { var tip = document.createElement('div'); tip.className = 'tip'; tip.innerHTML = '<i class="fas fa-lightbulb" style="color:var(--accent3);margin-right:5px"></i>' + s.note; content.appendChild(tip); }
+    if (s.warn) { var warn = document.createElement('div'); warn.className = 'warn'; warn.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:5px"></i>' + s.warn; content.appendChild(warn); }
+    li.appendChild(numDiv); li.appendChild(content);
+    stepsList.appendChild(li);
+  });
+  // Render uploaded images
+  var ssBox = document.getElementById('sop-screenshots');
+  if (ssBox) {
+    ssBox.innerHTML = '';
+    var imgs = sopImages[key] || [];
+    imgs.forEach(function(img, ii) {
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'margin-bottom:14px;border:1px solid var(--border);border-radius:8px;overflow:hidden;position:relative';
+      var imgEl = document.createElement('img');
+      imgEl.src = img.src; imgEl.style.cssText = 'width:100%;display:block'; imgEl.alt = img.caption || '';
+      var cap = document.createElement('div');
+      cap.style.cssText = 'padding:6px 10px;font-size:11px;color:var(--muted);background:var(--card);border-top:1px solid var(--border)';
+      cap.textContent = img.caption || '';
+      if (currentRole === 'admin') {
+        var rmBtn = document.createElement('button');
+        rmBtn.style.cssText = 'position:absolute;top:6px;right:6px;padding:3px 7px;background:#ff4757;border:none;border-radius:4px;color:#fff;font-size:10px;cursor:pointer';
+        rmBtn.innerHTML = '<i class="fas fa-times"></i>';
+        (function(k, idx) { rmBtn.onclick = function() { sopImages[k].splice(idx,1); autoSave('sop_images',sopImages); showSOP(k); }; })(key, ii);
+        wrap.appendChild(rmBtn);
+      }
+      wrap.appendChild(imgEl); wrap.appendChild(cap); ssBox.appendChild(wrap);
+    });
+  }
+  // Apply tip
+  var tips = getSavedTips();
+  var tipEl = document.getElementById('sop-tip-text');
+  if (tipEl) tipEl.textContent = tips[key] || defaultTips[key] || '';
 }
 </script>
 
