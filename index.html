@@ -603,6 +603,8 @@
       <div class="detail-header">
         <div class="back-btn" onclick="showPage('home')"><i class="fas fa-arrow-left"></i> Back to Dashboard</div>
         <div id="sop-badge" class="detail-badge sop"><i class="fas fa-file-alt"></i> Standard Operating Procedure</div>
+        <div id="sop-edit-hint" class="admin-only" style="display:none;font-size:11px;color:#4caf7d;background:#4caf7d12;border:1px solid #4caf7d30;border-radius:5px;padding:4px 10px;margin-top:6px"><i class="fas fa-edit" style="margin-right:5px"></i>Click any text to edit it directly</div>
+        <button class="admin-only" id="sop-edit-btn" onclick="openSOPEditModal(window._currentSOPKey)" style="margin-top:10px;padding:7px 16px;background:#4caf7d20;border:1px solid #4caf7d50;border-radius:7px;color:#4caf7d;font-size:12px;font-weight:600;cursor:pointer"><i class="fas fa-edit" style="margin-right:6px"></i>Edit This SOP</button>
         <div id="sop-title" class="detail-title">SOP Title</div>
         <div class="detail-meta">
           <div class="meta-item"><i class="fas fa-clock"></i> <span id="sop-read-time">5 min read</span></div>
@@ -1481,31 +1483,46 @@ function showSOP(key) {
   if (!d) return;
   window._currentSOPKey = key;
 
-  // Title
+  // Title - always editable for admin
   var titleEl = document.getElementById('sop-title');
   titleEl.textContent = d.title;
-  titleEl.contentEditable = currentRole === 'admin' ? 'true' : 'false';
-  titleEl.style.outline = currentRole === 'admin' ? '1px dashed #4caf7d30' : 'none';
-  titleEl.style.borderRadius = '4px';
-  titleEl.style.padding = currentRole === 'admin' ? '2px 4px' : '0';
-  titleEl.oninput = function() {
-    sopData[key].title = titleEl.textContent;
-    autoSave('sopData_'+key, sopData[key]);
-    showAutoSaveIndicator();
-  };
+  titleEl.removeAttribute('contenteditable');
+  titleEl.style.outline = 'none';
+  titleEl.oninput = null;
+  if (currentRole === 'admin') {
+    titleEl.setAttribute('contenteditable', 'true');
+    titleEl.style.outline = '1px dashed #4caf7d50';
+    titleEl.style.borderRadius = '4px';
+    titleEl.style.padding = '2px 4px';
+    titleEl.style.cursor = 'text';
+    titleEl.title = 'Click to edit';
+    titleEl.oninput = function() {
+      sopData[key].title = titleEl.textContent;
+      autoSave('sopData_'+key, sopData[key]);
+      showAutoSaveIndicator();
+    };
+  }
 
-  // Description
+  // Description - always editable for admin
   var descEl = document.getElementById('sop-desc');
   descEl.textContent = d.desc;
-  descEl.contentEditable = currentRole === 'admin' ? 'true' : 'false';
-  descEl.style.outline = currentRole === 'admin' ? '1px dashed #4caf7d30' : 'none';
-  descEl.style.borderRadius = '4px';
-  descEl.style.padding = currentRole === 'admin' ? '4px 6px' : '0';
-  descEl.oninput = function() {
-    sopData[key].desc = descEl.textContent;
-    autoSave('sopData_'+key, sopData[key]);
-    showAutoSaveIndicator();
-  };
+  descEl.removeAttribute('contenteditable');
+  descEl.style.outline = 'none';
+  descEl.style.padding = '0';
+  descEl.oninput = null;
+  if (currentRole === 'admin') {
+    descEl.setAttribute('contenteditable', 'true');
+    descEl.style.outline = '1px dashed #4caf7d50';
+    descEl.style.borderRadius = '4px';
+    descEl.style.padding = '4px 6px';
+    descEl.style.cursor = 'text';
+    descEl.title = 'Click to edit';
+    descEl.oninput = function() {
+      sopData[key].desc = descEl.textContent;
+      autoSave('sopData_'+key, sopData[key]);
+      showAutoSaveIndicator();
+    };
+  }
 
   document.getElementById('sop-category').textContent = d.category;
   document.getElementById('sop-read-time').textContent = d.readTime;
@@ -2342,6 +2359,77 @@ function addImageToSOP(key, dataUrl, caption) {
   showSOP(key);
   showToast('Screenshot added!', 'success');
 }
+function openSOPEditModal(key) {
+  var d = sopData[key];
+  if (!d) return;
+  var box = document.getElementById('modal-box');
+  box.innerHTML = '';
+  // Header
+  var h3 = document.createElement('h3');
+  h3.innerHTML = '<i class="fas fa-edit" style="color:var(--accent);margin-right:8px"></i>Edit SOP: ' + d.title;
+  box.appendChild(h3);
+  // Title field
+  var f1 = document.createElement('div'); f1.className = 'modal-field';
+  var l1 = document.createElement('label'); l1.textContent = 'SOP Title';
+  var i1 = document.createElement('input'); i1.type = 'text'; i1.className = 'modal-input';
+  i1.id = 'edit-sop-title'; i1.value = d.title;
+  f1.appendChild(l1); f1.appendChild(i1); box.appendChild(f1);
+  // Description field
+  var f2 = document.createElement('div'); f2.className = 'modal-field';
+  var l2 = document.createElement('label'); l2.textContent = 'Description';
+  var t2 = document.createElement('textarea'); t2.className = 'modal-textarea';
+  t2.id = 'edit-sop-desc'; t2.style.minHeight = '80px'; t2.value = d.desc;
+  f2.appendChild(l2); f2.appendChild(t2); box.appendChild(f2);
+  // Steps
+  var stepsLabel = document.createElement('div');
+  stepsLabel.style.cssText = 'font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:14px 0 8px';
+  stepsLabel.textContent = 'Steps';
+  box.appendChild(stepsLabel);
+  d.steps.forEach(function(s, i) {
+    var sw = document.createElement('div');
+    sw.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px';
+    var sl = document.createElement('div');
+    sl.style.cssText = 'font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px';
+    sl.textContent = 'Step ' + (i+1);
+    var st = document.createElement('input'); st.type='text'; st.className='modal-input';
+    st.id = 'edit-step-title-'+i; st.value = s.title; st.placeholder = 'Step title';
+    st.style.marginBottom = '6px';
+    var sb = document.createElement('textarea'); sb.className='modal-textarea';
+    sb.id = 'edit-step-body-'+i; sb.value = s.body; sb.placeholder = 'Step description';
+    sb.style.minHeight = '55px';
+    sw.appendChild(sl); sw.appendChild(st); sw.appendChild(sb);
+    box.appendChild(sw);
+  });
+  // Footer
+  var footer = document.createElement('div'); footer.className = 'modal-footer';
+  var cancelBtn = document.createElement('button'); cancelBtn.className='modal-btn secondary';
+  cancelBtn.textContent = 'Cancel'; cancelBtn.onclick = closeModal;
+  var saveBtn = document.createElement('button'); saveBtn.className='modal-btn primary';
+  saveBtn.textContent = 'Save Changes';
+  saveBtn.onclick = function() { saveSOPEdits(key, d.steps.length); };
+  footer.appendChild(cancelBtn); footer.appendChild(saveBtn);
+  box.appendChild(footer);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function saveSOPEdits(key, stepCount) {
+  var titleEl = document.getElementById('edit-sop-title');
+  var descEl = document.getElementById('edit-sop-desc');
+  if (titleEl) sopData[key].title = titleEl.value.trim() || sopData[key].title;
+  if (descEl) sopData[key].desc = descEl.value.trim() || sopData[key].desc;
+  for (var i = 0; i < stepCount; i++) {
+    var st = document.getElementById('edit-step-title-'+i);
+    var sb = document.getElementById('edit-step-body-'+i);
+    if (st && sopData[key].steps[i]) sopData[key].steps[i].title = st.value.trim() || sopData[key].steps[i].title;
+    if (sb && sopData[key].steps[i]) sopData[key].steps[i].body = sb.value.trim() || sopData[key].steps[i].body;
+  }
+  autoSave('sopData_'+key, sopData[key]);
+  showAutoSaveIndicator();
+  closeModal();
+  showSOP(key);
+  showToast('SOP updated!', 'success');
+}
+
 function loadSavedSOPEdits() {
   Object.keys(sopData).forEach(function(key) {
     var saved = autoLoad('sopData_' + key);
