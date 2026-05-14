@@ -102,7 +102,7 @@
   .modal-box p{font-size:12px;color:var(--muted);margin-bottom:18px}
   .modal-field{margin-bottom:14px}
   .modal-field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;font-weight:600}
-  .modal-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none}
+  .modal-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:#e8eaf0;font-family:var(--font-body);font-size:13px;outline:none}
   .modal-input:focus{border-color:#7c5ce850}
   .modal-textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none;resize:vertical;min-height:80px;line-height:1.5}
   .modal-textarea:focus{border-color:#7c5ce850}
@@ -1073,7 +1073,7 @@ var currentUser = null;
 var selectedAuthRole = 'admin';
 
 
-const sopData = {
+var sopData = {
   cancel: {
     title: 'Order Cancellation SOP',
     category: 'Order Management',
@@ -1734,6 +1734,7 @@ function doLogin() {
 function loginSuccess(role, name) {
   currentRole = role;
   currentUser = name;
+  try { localStorage.setItem('np_session', JSON.stringify({role:role,name:name})); } catch(e){}
   document.getElementById('auth-screen').classList.add('hidden');
   document.body.classList.add('role-' + role);
   document.querySelectorAll('.admin-only').forEach(function(el){ el.style.display = role==='admin' ? '' : 'none'; });
@@ -1761,6 +1762,7 @@ function loginSuccess(role, name) {
 }
 
 function doLogout() {
+  try { localStorage.removeItem('np_session'); } catch(e){}
   currentRole = null; currentUser = null;
   document.body.classList.remove('role-admin','role-agent');
   document.getElementById('auth-screen').classList.remove('hidden');
@@ -1959,10 +1961,22 @@ function saveNewSOP() {
   // Inject sidebar link
   const sidebarSOPs = document.querySelector('.sidebar-section');
   if (sidebarSOPs) {
-    const item = document.createElement('div');
-    item.className = 'sidebar-item admin-only';
-    item.innerHTML = `<i class="fas fa-file-alt"></i> ${title.substring(0,22)} <span class="sidebar-badge">SOP</span>`;
-    item.onclick = () => showSOP(key);
+    var item = document.createElement('div');
+    item.className = 'sidebar-item';
+    item.style.cssText = 'display:flex;align-items:center;gap:9px';
+    var iEl = document.createElement('i');
+    iEl.className = 'fas fa-file-alt';
+    iEl.style.cssText = 'font-size:14px;width:16px;text-align:center';
+    var labelSpan = document.createElement('span');
+    labelSpan.textContent = title.substring(0,22);
+    labelSpan.style.flex = '1';
+    var badge = document.createElement('span');
+    badge.className = 'sidebar-badge';
+    badge.textContent = 'SOP';
+    item.appendChild(iEl);
+    item.appendChild(labelSpan);
+    item.appendChild(badge);
+    (function(k){ item.onclick = function(){ showSOP(k); }; })(key);
     sidebarSOPs.appendChild(item);
   }
   closeModal();
@@ -2665,6 +2679,16 @@ function renderSOPContent(key) {
   var tipEl = document.getElementById('sop-tip-text');
   if (tipEl) tipEl.textContent = tips[key] || defaultTips[key] || '';
 }
+
+/* ── Restore session on page load ── */
+(function() {
+  try {
+    var sess = JSON.parse(localStorage.getItem('np_session') || 'null');
+    if (sess && sess.role && sess.name) {
+      loginSuccess(sess.role, sess.name);
+    }
+  } catch(e) {}
+})();
 </script>
 
 <!-- ═══════════════════════════════════════════════
