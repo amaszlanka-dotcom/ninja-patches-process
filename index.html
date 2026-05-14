@@ -1785,7 +1785,13 @@ function cancelEdits() {
     document.querySelector('.content').innerHTML = editSnapshot;
     editSnapshot = '';
   }
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.removeAttribute('contenteditable'));
+  // Only remove contenteditable from non-SOP fields
+  document.querySelectorAll('[contenteditable="true"]').forEach(function(el) {
+    var keepEditable = ['sop-title','sop-desc'].indexOf(el.id) > -1;
+    if (!keepEditable && !el.classList.contains('sop-step-edit')) {
+      el.removeAttribute('contenteditable');
+    }
+  });
   editMode = false;
   const sb = document.getElementById('save-edits-btn');
   const cb = document.getElementById('cancel-edits-btn');
@@ -2467,6 +2473,7 @@ function renderSOPContent(key) {
     h4.textContent = s.title;
     if (currentRole === 'admin') {
       h4.contentEditable = 'true';
+      h4.classList.add('sop-step-edit');
       h4.style.outline = '1px dashed #4caf7d30';
       h4.style.borderRadius = '3px';
       h4.style.padding = '1px 4px';
@@ -2488,6 +2495,7 @@ function renderSOPContent(key) {
     p.textContent = s.body;
     if (currentRole === 'admin') {
       p.contentEditable = 'true';
+      p.classList.add('sop-step-edit');
       p.style.outline = '1px dashed #4caf7d30';
       p.style.borderRadius = '3px';
       p.style.padding = '2px 4px';
