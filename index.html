@@ -472,7 +472,17 @@
     <!-- Agent locked notice (shown to agents at top of all pages) -->
     <div class="locked-notice"><i class="fas fa-lock" style="color:var(--accent3)"></i> <strong>Agent View</strong> — Read-only access. Training, phone simulator, and scenario practice are available. Contact an admin to request content changes.</div>
 
-    
+    <!-- Admin edit toolbar (shown to admins) -->
+    <div class="edit-toolbar">
+      <span class="edit-toolbar-label"><i class="fas fa-pen" style="margin-right:4px"></i>Admin Mode</span>
+      <button class="edit-btn" onclick="enableEditMode()"><i class="fas fa-edit"></i> Edit Page Content</button>
+      <button class="edit-btn save" id="save-edits-btn" style="display:none" onclick="saveEdits()"><i class="fas fa-save"></i> Save Changes</button>
+      <button class="edit-btn" style="display:none" id="cancel-edits-btn" onclick="cancelEdits()"><i class="fas fa-times"></i> Cancel</button>
+      <button class="edit-btn admin-only-inline" onclick="openAddSOPModal()"><i class="fas fa-plus"></i> Add SOP</button>
+      <button class="edit-btn admin-only-inline" onclick="openAddTemplateModal()"><i class="fas fa-plus"></i> Add Template</button>
+      <button class="edit-btn admin-only-inline" onclick="showPage('adminpanel')"><i class="fas fa-shield-alt"></i> Admin Panel</button>
+      <button class="edit-btn admin-only-inline" onclick="openEditTipsModal()"><i class="fas fa-lightbulb"></i> Edit Tips</button>
+    </div>
 
     <!-- HOME PAGE -->
     <div id="page-home" class="page active">
@@ -983,7 +993,7 @@
     </div>
 
     <!-- ADMIN PANEL PAGE -->
-    <div id="page-adminpanel" class="page">
+    <div id="page-adminpanel" class="page admin-only">
       <div style="padding:24px 36px 0">
         <div style="font-family:var(--font-head);font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;display:flex;align-items:center;gap:10px"><i class="fas fa-shield-alt" style="color:var(--accent);font-size:18px"></i> Admin Panel</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:0">Full platform management — content, credentials, and configuration.</div>
