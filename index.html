@@ -2175,7 +2175,7 @@ function saveNewSOP() {
     iEl.className = 'fas fa-file-alt';
     iEl.style.cssText = 'font-size:14px;width:16px;text-align:center';
     var labelSpan = document.createElement('span');
-    labelSpan.textContent = title.substring(0,22);
+    labelSpan.textContent = title;
     labelSpan.style.flex = '1';
     var badge = document.createElement('span');
     badge.className = 'sidebar-badge';
@@ -2194,7 +2194,7 @@ function saveNewSOP() {
     card.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
       + '<span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--accent)">'+( sopData[key].category||'Operations')+'</span></div>'
       + '<h3 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text)">'+title+'</h3>'
-      + '<p style="font-size:12px;color:var(--soft);line-height:1.5;margin-bottom:12px">'+(sopData[key].desc||'').substring(0,80)+'</p>'
+      + '<p style="font-size:12px;color:var(--soft);line-height:1.5;margin-bottom:12px">'+(sopData[key].desc||'')+'</p>'
       + '<div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)">'
       + '<span><i class="fas fa-clock" style="margin-right:3px"></i>3 min read</span></div>';
     (function(k){ card.onclick = function(){ showSOP(k); }; })(key);
@@ -2232,7 +2232,7 @@ function loadCustomSOPs() {
       var iEl = document.createElement('i'); iEl.className = 'fas fa-file-alt';
       iEl.style.cssText = 'font-size:14px;width:16px;text-align:center';
       var labelSpan = document.createElement('span');
-      labelSpan.textContent = (saved.title||'Custom SOP').substring(0,22);
+      labelSpan.textContent = (saved.title||'Custom SOP');
       labelSpan.style.flex = '1';
       var badge = document.createElement('span'); badge.className = 'sidebar-badge'; badge.textContent = 'SOP';
       item.appendChild(iEl); item.appendChild(labelSpan); item.appendChild(badge);
@@ -2249,7 +2249,7 @@ function loadCustomSOPs() {
       card.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
         + '<span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--accent)">'+(saved.category||'Operations')+'</span></div>'
         + '<h3 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text)">'+(saved.title||'')+'</h3>'
-        + '<p style="font-size:12px;color:var(--soft);line-height:1.5;margin-bottom:12px">'+(saved.desc||'').substring(0,80)+'</p>'
+        + '<p style="font-size:12px;color:var(--soft);line-height:1.5;margin-bottom:12px">'+(saved.desc||'')+'</p>'
         + '<div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)"><span><i class="fas fa-clock" style="margin-right:3px"></i>3 min read</span></div>';
       (function(k){ card.onclick = function(){ showSOP(k); }; })(key);
       grid.appendChild(card);
