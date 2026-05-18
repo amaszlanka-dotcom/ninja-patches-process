@@ -3827,32 +3827,31 @@ async function psimEndCall() {
 function openReorderSOPsModal() {
   var section = document.querySelector('.sidebar-section');
   if (!section) return;
-  var items = Array.from(section.querySelectorAll('.sidebar-item'));
+  window._sopReorderItems = Array.from(section.querySelectorAll('.sidebar-item'));
+  window._sopReorderSection = section;
 
   function buildList() {
-    return items.map(function(item, i) {
+    var its = window._sopReorderItems;
+    return its.map(function(item, i) {
       var label = item.querySelector('span[id^="sidebar-label-"]');
       var text = label ? label.textContent : item.textContent.replace('SOP','').trim();
       return '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px">'
         + '<span style="flex:1;font-size:13px;color:var(--text)">'+text+'</span>'
         + '<div style="display:flex;flex-direction:column;gap:2px">'
         + (i > 0 ? '<button onclick="sopReorderMove('+i+',-1)" style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--accent);cursor:pointer;font-size:11px">▲</button>' : '<button style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;cursor:default" disabled>▲</button>')
-        + (i < items.length-1 ? '<button onclick="sopReorderMove('+i+',1)" style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--accent);cursor:pointer;font-size:11px">▼</button>' : '<button style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;cursor:default" disabled>▼</button>')
+        + (i < its.length-1 ? '<button onclick="sopReorderMove('+i+',1)" style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--accent);cursor:pointer;font-size:11px">▼</button>' : '<button style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;cursor:default" disabled>▼</button>')
         + '</div></div>';
     }).join('');
   }
 
-  window._sopReorderItems = items;
-  window._sopReorderSection = section;
+  window._sopReorderBuildList = buildList;
 
   window._sopReorderMove = function(idx, dir) {
     var its = window._sopReorderItems;
     var swapIdx = idx + dir;
     if (swapIdx < 0 || swapIdx >= its.length) return;
     var tmp = its[idx]; its[idx] = its[swapIdx]; its[swapIdx] = tmp;
-    window._sopReorderItems = its;
-    // Re-render list
-    document.getElementById('sop-reorder-list').innerHTML = buildList();
+    document.getElementById('sop-reorder-list').innerHTML = window._sopReorderBuildList();
   };
 
   var box = document.getElementById('modal-box');
@@ -3894,30 +3893,30 @@ function restoreSidebarOrder() {
 function openReorderCardsModal() {
   var grid = document.getElementById('sop-card-grid');
   if (!grid) return;
-  var cards = Array.from(grid.querySelectorAll('.card'));
+  window._cardReorderCards = Array.from(grid.querySelectorAll('.card'));
+  window._cardReorderGrid = grid;
 
   function buildList() {
-    return cards.map(function(card, i) {
+    var cs = window._cardReorderCards;
+    return cs.map(function(card, i) {
       var title = card.querySelector('h3') ? card.querySelector('h3').textContent : 'Card '+(i+1);
       return '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px">'
         + '<span style="flex:1;font-size:13px;color:var(--text)">'+title+'</span>'
         + '<div style="display:flex;flex-direction:column;gap:2px">'
         + (i > 0 ? '<button onclick="cardReorderMove('+i+',-1)" style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--accent);cursor:pointer;font-size:11px">▲</button>' : '<button style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;cursor:default" disabled>▲</button>')
-        + (i < cards.length-1 ? '<button onclick="cardReorderMove('+i+',1)" style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--accent);cursor:pointer;font-size:11px">▼</button>' : '<button style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;cursor:default" disabled>▼</button>')
+        + (i < cs.length-1 ? '<button onclick="cardReorderMove('+i+',1)" style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--accent);cursor:pointer;font-size:11px">▼</button>' : '<button style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;cursor:default" disabled>▼</button>')
         + '</div></div>';
     }).join('');
   }
 
-  window._cardReorderCards = cards;
-  window._cardReorderGrid = grid;
+  window._cardReorderBuildList = buildList;
 
   window._cardReorderMove = function(idx, dir) {
     var cs = window._cardReorderCards;
     var swapIdx = idx + dir;
     if (swapIdx < 0 || swapIdx >= cs.length) return;
     var tmp = cs[idx]; cs[idx] = cs[swapIdx]; cs[swapIdx] = tmp;
-    window._cardReorderCards = cs;
-    document.getElementById('card-reorder-list').innerHTML = buildList();
+    document.getElementById('card-reorder-list').innerHTML = window._cardReorderBuildList();
   };
 
   var box = document.getElementById('modal-box');
