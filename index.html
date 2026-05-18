@@ -1846,7 +1846,6 @@ function loginSuccess(role, name) {
   loadSavedSidebarLabels();
   restoreSidebarOrder();
   restoreCardGridOrder();
-  updateSOPCount();
   // Restore sidebar section label
   var savedSopListLabel = autoLoad('sidebar_section_label_soplist');
   if (savedSopListLabel) {
@@ -1871,6 +1870,7 @@ function loginSuccess(role, name) {
     showPage('training');
   } else {
     showPage('home');
+    updateSOPCount();
   }
 }
 
