@@ -443,7 +443,10 @@
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-section">
-      <div class="sidebar-label" id="sidebar-section-label-soplist" ondblclick="editSidebarSectionLabel('soplist')" title="Double-click to rename">Patch SOPs</div>
+      <div class="sidebar-label" style="display:flex;align-items:center;justify-content:space-between;padding-right:4px">
+        <span id="sidebar-section-label-soplist" ondblclick="editSidebarSectionLabel('soplist')" title="Double-click to rename">Patch SOPs</span>
+        <button class="admin-only" onclick="openReorderSOPsModal()" style="display:none;background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:2px 4px;border-radius:4px" title="Reorder SOPs"><i class="fas fa-sort"></i></button>
+      </div>
       <div class="sidebar-item active" onclick="showSOP('cancel')" data-sop="cancel"><i class="fas fa-ban"></i> <span id="sidebar-label-cancel">Cancellations</span> <span class="sidebar-badge">SOP</span></div>
       <div class="sidebar-item" onclick="showSOP('unreviewed')" data-sop="unreviewed"><i class="fas fa-inbox"></i> <span id="sidebar-label-unreviewed">Unreviewed Orders</span> <span class="sidebar-badge">SOP</span></div>
       <div class="sidebar-item" onclick="showSOP('vendorminimums')" data-sop="vendorminimums"><i class="fas fa-chart-bar"></i> <span id="sidebar-label-vendorminimums">Vendor Chart</span> <span class="sidebar-badge">SOP</span></div>
@@ -533,7 +536,7 @@
       </div>
 
       <div class="section-pad">
-        <div class="section-title"><i class="fas fa-layer-group" style="font-size:13px;color:var(--accent)"></i> Core SOPs</div>
+        <div class="section-title"><i class="fas fa-layer-group" style="font-size:13px;color:var(--accent)"></i> Core SOPs <button class="admin-only" onclick="openReorderCardsModal()" style="display:none;margin-left:auto;padding:3px 10px;background:none;border:1px solid #4caf7d30;border-radius:5px;font-size:11px;color:var(--accent);cursor:pointer;font-family:var(--font-body)"><i class="fas fa-sort" style="margin-right:4px"></i>Reorder</button></div>
         <div class="card-grid" id="sop-card-grid">
           <div class="card" onclick="showSOP('unreviewed')" data-sop="unreviewed">
             <div class="card-icon teal"><i class="fas fa-inbox"></i></div>
@@ -1867,6 +1870,7 @@ function loginSuccess(role, name) {
     enableSidebarDragReorder();
     enableCardGridDragReorder();
     restoreCardGridOrder();
+    restoreSidebarOrder();
   }
 }
 
@@ -3747,80 +3751,128 @@ async function psimEndCall() {
 }
 
 /* ── Card grid drag-to-reorder (admin only) ── */
-function enableCardGridDragReorder() {
+/* ═══════════════════════════════════════
+   SOP REORDER MODAL (works on all devices)
+═══════════════════════════════════════ */
+function openReorderSOPsModal() {
+  var section = document.querySelector('.sidebar-section');
+  if (!section) return;
+  var items = Array.from(section.querySelectorAll('.sidebar-item'));
+
+  function buildList() {
+    return items.map(function(item, i) {
+      var label = item.querySelector('span[id^="sidebar-label-"]');
+      var text = label ? label.textContent : item.textContent.replace('SOP','').trim();
+      return '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px">'
+        + '<span style="flex:1;font-size:13px;color:var(--text)">'+text+'</span>'
+        + '<div style="display:flex;flex-direction:column;gap:2px">'
+        + (i > 0 ? '<button onclick="sopReorderMove('+i+',-1)" style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--accent);cursor:pointer;font-size:11px">▲</button>' : '<button style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;cursor:default" disabled>▲</button>')
+        + (i < items.length-1 ? '<button onclick="sopReorderMove('+i+',1)" style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--accent);cursor:pointer;font-size:11px">▼</button>' : '<button style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;cursor:default" disabled>▼</button>')
+        + '</div></div>';
+    }).join('');
+  }
+
+  window._sopReorderItems = items;
+  window._sopReorderSection = section;
+
+  window._sopReorderMove = function(idx, dir) {
+    var its = window._sopReorderItems;
+    var swapIdx = idx + dir;
+    if (swapIdx < 0 || swapIdx >= its.length) return;
+    var tmp = its[idx]; its[idx] = its[swapIdx]; its[swapIdx] = tmp;
+    window._sopReorderItems = its;
+    // Re-render list
+    document.getElementById('sop-reorder-list').innerHTML = buildList();
+  };
+
+  var box = document.getElementById('modal-box');
+  box.innerHTML = '<h3><i class="fas fa-sort" style="color:var(--accent);margin-right:8px"></i>Reorder Patch SOPs</h3>'
+    + '<p style="font-size:12px;color:var(--muted);margin-bottom:16px">Use the arrows to move SOPs up or down, then click Save.</p>'
+    + '<div id="sop-reorder-list">'+buildList()+'</div>'
+    + '<div class="modal-footer"><button class="modal-btn secondary" onclick="closeModal()">Cancel</button>'
+    + '<button class="modal-btn primary" onclick="saveSopReorder()">Save Order</button></div>';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function saveSopReorder() {
+  var items = window._sopReorderItems;
+  var section = window._sopReorderSection;
+  if (!items || !section) return;
+  // Re-insert in new order
+  items.forEach(function(item) { section.appendChild(item); });
+  // Save order keys
+  var order = items.map(function(item){ return item.getAttribute('data-sop') || ''; }).filter(Boolean);
+  try { localStorage.setItem('np_sidebar_order', JSON.stringify(order)); } catch(e){}
+  closeModal();
+  showToast('SOP order saved!', 'success');
+}
+
+function restoreSidebarOrder() {
+  try {
+    var order = JSON.parse(localStorage.getItem('np_sidebar_order') || 'null');
+    if (!order || !order.length) return;
+    var section = document.querySelector('.sidebar-section');
+    if (!section) return;
+    order.forEach(function(key) {
+      var item = section.querySelector('[data-sop="'+key+'"]');
+      if (item) section.appendChild(item);
+    });
+  } catch(e){}
+}
+
+/* ── Card grid reorder modal ── */
+function openReorderCardsModal() {
   var grid = document.getElementById('sop-card-grid');
   if (!grid) return;
+  var cards = Array.from(grid.querySelectorAll('.card'));
 
-  var dragSrc = null, didDrag = false;
-  var ghost = null, touchOffX = 0, touchOffY = 0;
-
-  function getCardAt(x, y) {
-    var cards = Array.from(grid.querySelectorAll('.card'));
-    for (var i = 0; i < cards.length; i++) {
-      var r = cards[i].getBoundingClientRect();
-      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return cards[i];
-    }
-    return null;
+  function buildList() {
+    return cards.map(function(card, i) {
+      var title = card.querySelector('h3') ? card.querySelector('h3').textContent : 'Card '+(i+1);
+      return '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px">'
+        + '<span style="flex:1;font-size:13px;color:var(--text)">'+title+'</span>'
+        + '<div style="display:flex;flex-direction:column;gap:2px">'
+        + (i > 0 ? '<button onclick="cardReorderMove('+i+',-1)" style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--accent);cursor:pointer;font-size:11px">▲</button>' : '<button style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;cursor:default" disabled>▲</button>')
+        + (i < cards.length-1 ? '<button onclick="cardReorderMove('+i+',1)" style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--accent);cursor:pointer;font-size:11px">▼</button>' : '<button style="padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;cursor:default" disabled>▼</button>')
+        + '</div></div>';
+    }).join('');
   }
 
-  function attachCard(card) {
-    /* Mouse drag */
-    card.setAttribute('draggable', 'true');
-    card.addEventListener('click', function(e){ if(didDrag){e.stopImmediatePropagation();e.preventDefault();didDrag=false;} }, true);
-    card.addEventListener('dragstart', function(e){ dragSrc=card; didDrag=false; setTimeout(function(){card.classList.add('card-dragging');},0); e.dataTransfer.effectAllowed='move'; });
-    card.addEventListener('dragend', function(){ card.classList.remove('card-dragging'); grid.querySelectorAll('.card').forEach(function(c){c.classList.remove('card-drag-over');}); if(dragSrc){didDrag=true;setTimeout(function(){didDrag=false;},300);} saveCardGridOrder(); dragSrc=null; });
-    card.addEventListener('dragover', function(e){ e.preventDefault(); if(card!==dragSrc) card.classList.add('card-drag-over'); });
-    card.addEventListener('dragleave', function(){ card.classList.remove('card-drag-over'); });
-    card.addEventListener('drop', function(e){ e.preventDefault(); card.classList.remove('card-drag-over'); if(dragSrc&&dragSrc!==card){ var cs=Array.from(grid.querySelectorAll('.card')); if(cs.indexOf(dragSrc)<cs.indexOf(card)) grid.insertBefore(dragSrc,card.nextSibling); else grid.insertBefore(dragSrc,card); showToast('Cards reordered.','success'); } });
+  window._cardReorderCards = cards;
+  window._cardReorderGrid = grid;
 
-    /* Touch drag */
-    card.addEventListener('touchstart', function(e){
-      var t=e.touches[0], r=card.getBoundingClientRect();
-      touchOffX=t.clientX-r.left; touchOffY=t.clientY-r.top;
-      dragSrc=card; didDrag=false;
-      ghost=card.cloneNode(true);
-      ghost.style.cssText='position:fixed;z-index:9999;opacity:.85;pointer-events:none;width:'+r.width+'px;box-shadow:0 8px 30px rgba(0,0,0,.4);border-radius:12px;left:'+(t.clientX-touchOffX)+'px;top:'+(t.clientY-touchOffY)+'px';
-      document.body.appendChild(ghost);
-      card.classList.add('card-dragging');
-    },{passive:true});
+  window._cardReorderMove = function(idx, dir) {
+    var cs = window._cardReorderCards;
+    var swapIdx = idx + dir;
+    if (swapIdx < 0 || swapIdx >= cs.length) return;
+    var tmp = cs[idx]; cs[idx] = cs[swapIdx]; cs[swapIdx] = tmp;
+    window._cardReorderCards = cs;
+    document.getElementById('card-reorder-list').innerHTML = buildList();
+  };
 
-    card.addEventListener('touchmove', function(e){
-      if(!dragSrc) return;
-      e.preventDefault(); didDrag=true;
-      var t=e.touches[0];
-      if(ghost){ghost.style.left=(t.clientX-touchOffX)+'px';ghost.style.top=(t.clientY-touchOffY)+'px';}
-      grid.querySelectorAll('.card').forEach(function(c){c.classList.remove('card-drag-over');});
-      var over=getCardAt(t.clientX,t.clientY);
-      if(over&&over!==dragSrc) over.classList.add('card-drag-over');
-    },{passive:false});
+  var box = document.getElementById('modal-box');
+  box.innerHTML = '<h3><i class="fas fa-sort" style="color:var(--accent);margin-right:8px"></i>Reorder SOP Cards</h3>'
+    + '<p style="font-size:12px;color:var(--muted);margin-bottom:16px">Use the arrows to reorder cards on the dashboard, then click Save.</p>'
+    + '<div id="card-reorder-list">'+buildList()+'</div>'
+    + '<div class="modal-footer"><button class="modal-btn secondary" onclick="closeModal()">Cancel</button>'
+    + '<button class="modal-btn primary" onclick="saveCardReorder()">Save Order</button></div>';
+  document.getElementById('modal-overlay').classList.add('open');
+}
 
-    card.addEventListener('touchend', function(e){
-      if(!dragSrc) return;
-      var t=e.changedTouches[0];
-      if(ghost){document.body.removeChild(ghost);ghost=null;}
-      card.classList.remove('card-dragging');
-      grid.querySelectorAll('.card').forEach(function(c){c.classList.remove('card-drag-over');});
-      var over=getCardAt(t.clientX,t.clientY);
-      if(over&&over!==dragSrc){
-        var cs=Array.from(grid.querySelectorAll('.card'));
-        if(cs.indexOf(dragSrc)<cs.indexOf(over)) grid.insertBefore(dragSrc,over.nextSibling);
-        else grid.insertBefore(dragSrc,over);
-        showToast('Cards reordered.','success');
-        saveCardGridOrder();
-      }
-      if(didDrag){setTimeout(function(){didDrag=false;},300);}
-      dragSrc=null;
-    },{passive:true});
-  }
-
-  grid.querySelectorAll('.card').forEach(attachCard);
-  grid._attachCard = attachCard;
+function saveCardReorder() {
+  var cards = window._cardReorderCards;
+  var grid = window._cardReorderGrid;
+  if (!cards || !grid) return;
+  cards.forEach(function(card) { grid.appendChild(card); });
+  saveCardGridOrder();
+  closeModal();
+  showToast('Card order saved!', 'success');
 }
 
 function saveCardGridOrder() {
   var grid = document.getElementById('sop-card-grid');
   if (!grid) return;
-  var order = Array.from(grid.querySelectorAll('.card')).map(function(c){ return c.getAttribute('data-sop') || c.querySelector('h3') && c.querySelector('h3').textContent || ''; });
+  var order = Array.from(grid.querySelectorAll('.card')).map(function(c){ return c.getAttribute('data-sop') || ''; }).filter(Boolean);
   try { localStorage.setItem('np_card_order', JSON.stringify(order)); } catch(e){}
 }
 
@@ -3838,73 +3890,12 @@ function restoreCardGridOrder() {
   } catch(e){}
 }
 
-/* ── Sidebar drag-to-reorder (admin only) ── */
-function enableSidebarDragReorder() {
-  var section = document.querySelector('.sidebar-section');
-  if (!section) return;
-  var dragSrc = null, didDrag = false;
-  var ghost = null, touchOffX = 0, touchOffY = 0;
+/* these are assigned to window inside the modal builders — declare stubs so onclick="" works */
+function sopReorderMove(idx, dir) { if(window._sopReorderMove) window._sopReorderMove(idx,dir); }
+function cardReorderMove(idx, dir) { if(window._cardReorderMove) window._cardReorderMove(idx,dir); }
 
-  function getSidebarItemAt(x, y) {
-    var items = Array.from(section.querySelectorAll('.sidebar-item'));
-    for (var i = 0; i < items.length; i++) {
-      var r = items[i].getBoundingClientRect();
-      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return items[i];
-    }
-    return null;
-  }
-
-  function attachItem(item) {
-    /* Mouse drag */
-    item.setAttribute('draggable', 'true');
-    item.addEventListener('click', function(e){ if(didDrag){e.stopImmediatePropagation();e.preventDefault();didDrag=false;} }, true);
-    item.addEventListener('dragstart', function(e){ dragSrc=item; didDrag=false; setTimeout(function(){item.classList.add('dragging');},0); e.dataTransfer.effectAllowed='move'; });
-    item.addEventListener('dragend', function(){ item.classList.remove('dragging'); section.querySelectorAll('.sidebar-item').forEach(function(i){i.classList.remove('drag-over');}); if(dragSrc){didDrag=true;setTimeout(function(){didDrag=false;},300);} dragSrc=null; });
-    item.addEventListener('dragover', function(e){ e.preventDefault(); if(item!==dragSrc) item.classList.add('drag-over'); });
-    item.addEventListener('dragleave', function(){ item.classList.remove('drag-over'); });
-    item.addEventListener('drop', function(e){ e.preventDefault(); item.classList.remove('drag-over'); if(dragSrc&&dragSrc!==item){ var all=Array.from(section.querySelectorAll('.sidebar-item')); if(all.indexOf(dragSrc)<all.indexOf(item)) section.insertBefore(dragSrc,item.nextSibling); else section.insertBefore(dragSrc,item); showToast('Sidebar reordered.','success'); } });
-
-    /* Touch drag */
-    item.addEventListener('touchstart', function(e){
-      var t=e.touches[0], r=item.getBoundingClientRect();
-      touchOffX=t.clientX-r.left; touchOffY=t.clientY-r.top;
-      dragSrc=item; didDrag=false;
-      ghost=item.cloneNode(true);
-      ghost.style.cssText='position:fixed;z-index:9999;opacity:.9;pointer-events:none;width:'+r.width+'px;background:var(--card);border:1px solid var(--accent);border-radius:7px;padding:8px 10px;box-shadow:0 4px 20px rgba(0,0,0,.4);left:'+(t.clientX-touchOffX)+'px;top:'+(t.clientY-touchOffY)+'px';
-      document.body.appendChild(ghost);
-      item.classList.add('dragging');
-    },{passive:true});
-
-    item.addEventListener('touchmove', function(e){
-      if(!dragSrc) return;
-      e.preventDefault(); didDrag=true;
-      var t=e.touches[0];
-      if(ghost){ghost.style.left=(t.clientX-touchOffX)+'px';ghost.style.top=(t.clientY-touchOffY)+'px';}
-      section.querySelectorAll('.sidebar-item').forEach(function(i){i.classList.remove('drag-over');});
-      var over=getSidebarItemAt(t.clientX,t.clientY);
-      if(over&&over!==dragSrc) over.classList.add('drag-over');
-    },{passive:false});
-
-    item.addEventListener('touchend', function(e){
-      if(!dragSrc) return;
-      var t=e.changedTouches[0];
-      if(ghost){document.body.removeChild(ghost);ghost=null;}
-      item.classList.remove('dragging');
-      section.querySelectorAll('.sidebar-item').forEach(function(i){i.classList.remove('drag-over');});
-      var over=getSidebarItemAt(t.clientX,t.clientY);
-      if(over&&over!==dragSrc){
-        var all=Array.from(section.querySelectorAll('.sidebar-item'));
-        if(all.indexOf(dragSrc)<all.indexOf(over)) section.insertBefore(dragSrc,over.nextSibling);
-        else section.insertBefore(dragSrc,over);
-        showToast('Sidebar reordered.','success');
-      }
-      if(didDrag){setTimeout(function(){didDrag=false;},300);}
-      dragSrc=null;
-    },{passive:true});
-  }
-
-  section.querySelectorAll('.sidebar-item').forEach(attachItem);
-}
+function enableCardGridDragReorder() { /* using modal reorder instead */ }
+function enableSidebarDragReorder() { /* using modal reorder instead */ }
 
 /* ── Theme Toggle ── */
 function toggleTheme() {
