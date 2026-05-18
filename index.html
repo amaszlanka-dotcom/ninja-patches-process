@@ -14,7 +14,17 @@
     --ninja-green:#4caf7d;--ninja-green-light:#4caf7d;--ninja-green-dim:#1a3028;
     --font-head:'Geist',sans-serif;--font-body:'Geist',sans-serif;
   }
+  body.light-mode{
+    --bg:#f4f6f9;--surface:#ffffff;--card:#f0f2f6;--border:#dde1ea;--accent:#2e9e65;--accent2:#2e9e65;--accent3:#6c4fd6;--text:#0f1117;--muted:#7a849a;--soft:#3a4155;
+    --ninja-green:#2e9e65;--ninja-green-light:#2e9e65;--ninja-green-dim:#d4ede2;
+  }
   body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;min-height:100vh;overflow-x:hidden}
+  body,body *{transition:background-color .2s,border-color .2s,color .15s}
+  /* ── THEME TOGGLE ── */
+  .theme-toggle{width:36px;height:36px;border-radius:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .theme-toggle:hover{border-color:var(--accent)}
+  .theme-toggle{width:36px;height:36px;border-radius:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;flex-shrink:0}
+  .theme-toggle:hover{border-color:var(--accent);background:var(--surface)}
 
   /* ── AUTH SCREEN ── */
   #auth-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;background-image:radial-gradient(ellipse at 30% 50%,#4caf7d06 0%,transparent 60%)}
@@ -117,6 +127,11 @@
   .modal-btn.secondary:hover{color:var(--text)}
 
   /* ── SIDEBAR DRAG-REORDER ── */
+  body.role-admin #sop-card-grid .card[draggable="true"]{cursor:grab}
+  body.role-admin #sop-card-grid .card[draggable="true"]:active{cursor:grabbing}
+  #sop-card-grid .card.card-drag-over{outline:2px dashed #4caf7d80;outline-offset:2px;background:#4caf7d08 !important}
+  #sop-card-grid .card.card-dragging{opacity:.35;transform:scale(.97)}
+  body.role-admin #sop-card-grid::before{content:'Drag cards to reorder';display:block;grid-column:1/-1;font-size:10px;color:var(--muted);text-align:right;letter-spacing:.8px;text-transform:uppercase;margin-bottom:-6px;opacity:.6}
   body.role-admin .sidebar-item[draggable="true"]{cursor:grab}
   .sidebar-item.drag-over{border:1px dashed #4caf7d70 !important;background:#4caf7d10 !important}
   .sidebar-item.dragging{opacity:.4}
@@ -415,6 +430,7 @@
     <button class="nav-pill admin-only" onclick="showPage('adminpanel')" style="color:var(--accent)"><i class="fas fa-shield-alt" style="font-size:11px;margin-right:5px"></i>Admin</button>
   </div>
   <div style="display:flex;align-items:center;gap:8px">
+    <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle light/dark mode">🌙</button>
     <span class="role-badge admin" id="topbar-role-badge">Admin</span>
     <div class="user-chip">
       <div class="user-dot" id="topbar-avatar">A</div>
@@ -521,7 +537,7 @@
 
       <div class="section-pad">
         <div class="section-title"><i class="fas fa-layer-group" style="font-size:13px;color:var(--accent)"></i> Core SOPs</div>
-        <div class="card-grid">
+        <div class="card-grid" id="sop-card-grid">
           <div class="card" onclick="showSOP('unreviewed')" data-sop="unreviewed">
             <div class="card-icon teal"><i class="fas fa-inbox"></i></div>
             <h3>Unreviewed Orders</h3>
@@ -1852,6 +1868,8 @@ function loginSuccess(role, name) {
   } else {
     showPage('home');
     enableSidebarDragReorder();
+    enableCardGridDragReorder();
+    restoreCardGridOrder();
   }
 }
 
@@ -3731,6 +3749,72 @@ async function psimEndCall() {
   }
 }
 
+/* ── Card grid drag-to-reorder (admin only) ── */
+function enableCardGridDragReorder() {
+  var grid = document.getElementById('sop-card-grid');
+  if (!grid) return;
+  var dragSrc = null;
+
+  function attachCard(card) {
+    card.setAttribute('draggable', 'true');
+    card.addEventListener('dragstart', function(e) {
+      dragSrc = card;
+      card.classList.add('card-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', function() {
+      card.classList.remove('card-dragging');
+      grid.querySelectorAll('.card').forEach(function(c){ c.classList.remove('card-drag-over'); });
+      saveCardGridOrder();
+    });
+    card.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (card !== dragSrc) card.classList.add('card-drag-over');
+    });
+    card.addEventListener('dragleave', function() {
+      card.classList.remove('card-drag-over');
+    });
+    card.addEventListener('drop', function(e) {
+      e.preventDefault();
+      card.classList.remove('card-drag-over');
+      if (dragSrc && dragSrc !== card) {
+        var cards = Array.from(grid.querySelectorAll('.card'));
+        var srcIdx = cards.indexOf(dragSrc);
+        var dstIdx = cards.indexOf(card);
+        if (srcIdx < dstIdx) grid.insertBefore(dragSrc, card.nextSibling);
+        else grid.insertBefore(dragSrc, card);
+      }
+    });
+  }
+
+  grid.querySelectorAll('.card').forEach(attachCard);
+
+  // Re-attach when new cards are added dynamically
+  grid._attachCard = attachCard;
+}
+
+function saveCardGridOrder() {
+  var grid = document.getElementById('sop-card-grid');
+  if (!grid) return;
+  var order = Array.from(grid.querySelectorAll('.card')).map(function(c){ return c.getAttribute('data-sop') || c.querySelector('h3') && c.querySelector('h3').textContent || ''; });
+  try { localStorage.setItem('np_card_order', JSON.stringify(order)); } catch(e){}
+}
+
+function restoreCardGridOrder() {
+  try {
+    var order = JSON.parse(localStorage.getItem('np_card_order') || 'null');
+    if (!order || !order.length) return;
+    var grid = document.getElementById('sop-card-grid');
+    if (!grid) return;
+    var cards = Array.from(grid.querySelectorAll('.card'));
+    order.forEach(function(key) {
+      var card = cards.find(function(c){ return c.getAttribute('data-sop') === key; });
+      if (card) grid.appendChild(card);
+    });
+  } catch(e){}
+}
+
 /* ── Sidebar drag-to-reorder (admin only) ── */
 function enableSidebarDragReorder() {
   var section = document.querySelector('.sidebar-section');
@@ -3768,6 +3852,23 @@ function enableSidebarDragReorder() {
     });
   });
 }
+
+/* ── Theme Toggle ── */
+function toggleTheme() {
+  var isLight = document.body.classList.toggle('light-mode');
+  var btn = document.getElementById('theme-toggle-btn');
+  if (btn) btn.textContent = isLight ? '☀️' : '🌙';
+  try { localStorage.setItem('np_theme', isLight ? 'light' : 'dark'); } catch(e){}
+}
+(function() {
+  try {
+    if (localStorage.getItem('np_theme') === 'light') {
+      document.body.classList.add('light-mode');
+      var btn = document.getElementById('theme-toggle-btn');
+      if (btn) btn.textContent = '☀️';
+    }
+  } catch(e){}
+})();
 
 /* ── sendPrompt: opens phone sim with a pre-filled message ── */
 function sendPrompt(text) {
