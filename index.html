@@ -14,14 +14,13 @@
     --ninja-green:#4caf7d;--ninja-green-light:#4caf7d;--ninja-green-dim:#1a3028;
     --font-head:'Geist',sans-serif;--font-body:'Geist',sans-serif;
   }
-  body.light-mode{
+  body.light-mode,body.light-mode .topbar,body.light-mode .sidebar,body.light-mode .card,body.light-mode .aside-card,body.light-mode .modal-box,body.light-mode .step-item,body.light-mode .policy-item,body.light-mode .scenario-card,body.light-mode .tmpl-card,body.light-mode .ref-item,body.light-mode input,body.light-mode textarea,body.light-mode select{transition:background-color .25s,border-color .25s,color .2s}
     --bg:#f4f6f9;--surface:#ffffff;--card:#f0f2f6;--border:#dde1ea;--accent:#2e9e65;--accent2:#2e9e65;--accent3:#6c4fd6;--text:#0f1117;--muted:#7a849a;--soft:#3a4155;
     --ninja-green:#2e9e65;--ninja-green-light:#2e9e65;--ninja-green-dim:#d4ede2;
   }
   body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;min-height:100vh;overflow-x:hidden}
-  body,body *{transition:background-color .2s,border-color .2s,color .15s}
   /* ── THEME TOGGLE ── */
-  .theme-toggle{width:36px;height:36px;border-radius:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .theme-toggle{width:34px;height:34px;border-radius:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:border-color .2s}
   .theme-toggle:hover{border-color:var(--accent)}
   .theme-toggle{width:36px;height:36px;border-radius:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;flex-shrink:0}
   .theme-toggle:hover{border-color:var(--accent);background:var(--surface)}
