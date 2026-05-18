@@ -1037,7 +1037,7 @@
           <h3><i class="fas fa-file-alt" style="color:var(--accent);font-size:14px"></i> SOPs</h3>
           <p>Add, edit, or remove Standard Operating Procedures.</p>
           <div class="admin-stat-row">
-            <div class="admin-stat"><div class="admin-stat-num" id="sop-count-display">6</div><div class="admin-stat-label">Active SOPs</div></div>
+            <div class="admin-stat"><div class="admin-stat-num" id="sop-count-display">0</div><div class="admin-stat-label">Active SOPs</div></div>
           </div>
           <button class="admin-action-btn" onclick="openAddSOPModal()"><i class="fas fa-plus"></i> Add New SOP</button>
           <button class="admin-action-btn" onclick="showPage('home');enableEditMode()"><i class="fas fa-edit"></i> Edit Existing SOPs</button>
@@ -1844,6 +1844,9 @@ function loginSuccess(role, name) {
   loadSavedSOPEdits();
   loadCustomSOPs();
   loadSavedSidebarLabels();
+  restoreSidebarOrder();
+  restoreCardGridOrder();
+  updateSOPCount();
   // Restore sidebar section label
   var savedSopListLabel = autoLoad('sidebar_section_label_soplist');
   if (savedSopListLabel) {
@@ -1868,10 +1871,6 @@ function loginSuccess(role, name) {
     showPage('training');
   } else {
     showPage('home');
-    enableSidebarDragReorder();
-    enableCardGridDragReorder();
-    restoreCardGridOrder();
-    restoreSidebarOrder();
   }
 }
 
@@ -2203,8 +2202,15 @@ function saveNewSOP() {
 
   closeModal();
   showToast('SOP "' + title + '" added!', 'success');
-  const cnt = document.getElementById('sop-count-display');
-  if (cnt) cnt.textContent = parseInt(cnt.textContent) + 1;
+  updateSOPCount();
+}
+
+function updateSOPCount() {
+  var cnt = document.getElementById('sop-count-display');
+  if (!cnt) return;
+  // Count all sidebar items with data-sop attribute
+  var items = document.querySelectorAll('.sidebar-section [data-sop]');
+  cnt.textContent = items.length;
 }
 
 function getCustomSOPKeys() {
@@ -2975,10 +2981,17 @@ function confirmDeleteSOP(key) {
   delBtn.onclick = function() {
     delete sopData[key];
     // Remove sidebar item
-    var sidebarItem = document.querySelector('[data-sop="'+key+'"]');
+    var sidebarItem = document.querySelector('.sidebar-section [data-sop="'+key+'"]');
     if (sidebarItem) sidebarItem.parentNode.removeChild(sidebarItem);
+    // Remove dashboard card
+    var card = document.querySelector('#sop-card-grid [data-sop="'+key+'"]');
+    if (card) card.parentNode.removeChild(card);
+    // Remove from custom keys list
+    var keys = getCustomSOPKeys().filter(function(k){ return k !== key; });
+    autoSave('np_custom_sop_keys', keys);
     closeModal();
     showPage('home');
+    updateSOPCount();
     showToast('SOP deleted.','success');
   };
   footer.appendChild(cancelBtn); footer.appendChild(delBtn);
@@ -3866,17 +3879,18 @@ function openReorderSOPsModal() {
 function saveSopReorder() {
   var items = window._sopReorderItems;
   var section = window._sopReorderSection;
+  console.log('saveSopReorder called, items:', items ? items.length : 'null');
   if (!items || !section) { showToast('Nothing to save.', 'warn'); return; }
-  // Re-insert DOM elements in new order
   items.forEach(function(item) { section.appendChild(item); });
-  // Build order array from data-sop attributes
   var order = items.map(function(item){ return item.getAttribute('data-sop') || ''; }).filter(Boolean);
+  console.log('Saving order:', order);
   try {
     localStorage.setItem('np_sidebar_order', JSON.stringify(order));
-    // Verify it saved
     var check = localStorage.getItem('np_sidebar_order');
+    console.log('Verified saved:', check);
     if (!check) throw new Error('write failed');
   } catch(e){
+    console.error('Save error:', e);
     showToast('Could not save order — storage may be full.', 'warn');
     return;
   }
@@ -3887,14 +3901,17 @@ function saveSopReorder() {
 function restoreSidebarOrder() {
   try {
     var raw = localStorage.getItem('np_sidebar_order');
+    console.log('restoreSidebarOrder raw:', raw);
     if (!raw) return;
     var order = JSON.parse(raw);
+    console.log('restoring order:', order);
     if (!Array.isArray(order) || !order.length) return;
     var section = document.querySelector('.sidebar-section');
-    if (!section) return;
+    if (!section) { console.warn('No .sidebar-section found'); return; }
     order.forEach(function(key) {
       if (!key) return;
       var item = section.querySelector('[data-sop="'+key+'"]');
+      console.log('key:', key, 'found:', !!item);
       if (item) section.appendChild(item);
     });
   } catch(e){ console.warn('restoreSidebarOrder error:', e); }
