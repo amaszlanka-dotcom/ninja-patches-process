@@ -3866,27 +3866,38 @@ function openReorderSOPsModal() {
 function saveSopReorder() {
   var items = window._sopReorderItems;
   var section = window._sopReorderSection;
-  if (!items || !section) return;
-  // Re-insert in new order
+  if (!items || !section) { showToast('Nothing to save.', 'warn'); return; }
+  // Re-insert DOM elements in new order
   items.forEach(function(item) { section.appendChild(item); });
-  // Save order keys
+  // Build order array from data-sop attributes
   var order = items.map(function(item){ return item.getAttribute('data-sop') || ''; }).filter(Boolean);
-  try { localStorage.setItem('np_sidebar_order', JSON.stringify(order)); } catch(e){}
+  try {
+    localStorage.setItem('np_sidebar_order', JSON.stringify(order));
+    // Verify it saved
+    var check = localStorage.getItem('np_sidebar_order');
+    if (!check) throw new Error('write failed');
+  } catch(e){
+    showToast('Could not save order — storage may be full.', 'warn');
+    return;
+  }
   closeModal();
-  showToast('SOP order saved!', 'success');
+  showToast('SOP order saved! ✓', 'success');
 }
 
 function restoreSidebarOrder() {
   try {
-    var order = JSON.parse(localStorage.getItem('np_sidebar_order') || 'null');
-    if (!order || !order.length) return;
+    var raw = localStorage.getItem('np_sidebar_order');
+    if (!raw) return;
+    var order = JSON.parse(raw);
+    if (!Array.isArray(order) || !order.length) return;
     var section = document.querySelector('.sidebar-section');
     if (!section) return;
     order.forEach(function(key) {
+      if (!key) return;
       var item = section.querySelector('[data-sop="'+key+'"]');
       if (item) section.appendChild(item);
     });
-  } catch(e){}
+  } catch(e){ console.warn('restoreSidebarOrder error:', e); }
 }
 
 /* ── Card grid reorder modal ── */
@@ -3931,11 +3942,19 @@ function openReorderCardsModal() {
 function saveCardReorder() {
   var cards = window._cardReorderCards;
   var grid = window._cardReorderGrid;
-  if (!cards || !grid) return;
+  if (!cards || !grid) { showToast('Nothing to save.', 'warn'); return; }
   cards.forEach(function(card) { grid.appendChild(card); });
-  saveCardGridOrder();
+  var order = cards.map(function(c){ return c.getAttribute('data-sop') || ''; }).filter(Boolean);
+  try {
+    localStorage.setItem('np_card_order', JSON.stringify(order));
+    var check = localStorage.getItem('np_card_order');
+    if (!check) throw new Error('write failed');
+  } catch(e){
+    showToast('Could not save order.', 'warn');
+    return;
+  }
   closeModal();
-  showToast('Card order saved!', 'success');
+  showToast('Card order saved! ✓', 'success');
 }
 
 function saveCardGridOrder() {
@@ -3947,16 +3966,18 @@ function saveCardGridOrder() {
 
 function restoreCardGridOrder() {
   try {
-    var order = JSON.parse(localStorage.getItem('np_card_order') || 'null');
-    if (!order || !order.length) return;
+    var raw = localStorage.getItem('np_card_order');
+    if (!raw) return;
+    var order = JSON.parse(raw);
+    if (!Array.isArray(order) || !order.length) return;
     var grid = document.getElementById('sop-card-grid');
     if (!grid) return;
-    var cards = Array.from(grid.querySelectorAll('.card'));
     order.forEach(function(key) {
-      var card = cards.find(function(c){ return c.getAttribute('data-sop') === key; });
+      if (!key) return;
+      var card = grid.querySelector('[data-sop="'+key+'"]');
       if (card) grid.appendChild(card);
     });
-  } catch(e){}
+  } catch(e){ console.warn('restoreCardGridOrder error:', e); }
 }
 
 /* these are assigned to window inside the modal builders — declare stubs so onclick="" works */
