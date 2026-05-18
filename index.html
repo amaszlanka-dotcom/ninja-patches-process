@@ -1842,6 +1842,7 @@ function loginSuccess(role, name) {
   document.body.classList.add('role-' + role);
   document.querySelectorAll('.admin-only').forEach(function(el){ el.style.display = role==='admin' ? '' : 'none'; });
   loadSavedSOPEdits();
+  loadCustomSOPs();
   loadSavedSidebarLabels();
   // Restore sidebar section label
   var savedSopListLabel = autoLoad('sidebar_section_label_soplist');
@@ -2160,12 +2161,16 @@ function saveNewSOP() {
     checklist: checklist,
     escalate: [document.getElementById('m-sop-esc').value || 'Contact supervisor for any exception']
   };
+  // Save to localStorage so it persists across reloads
+  autoSave('sopData_' + key, sopData[key]);
+  autoSave('np_custom_sop_keys', getCustomSOPKeys().concat([key]));
+
   // Inject sidebar link
   const sidebarSOPs = document.querySelector('.sidebar-section');
   if (sidebarSOPs) {
     var item = document.createElement('div');
     item.className = 'sidebar-item';
-    item.style.cssText = 'display:flex;align-items:center;gap:9px';
+    item.setAttribute('data-sop', key);
     var iEl = document.createElement('i');
     iEl.className = 'fas fa-file-alt';
     iEl.style.cssText = 'font-size:14px;width:16px;text-align:center';
@@ -2175,16 +2180,81 @@ function saveNewSOP() {
     var badge = document.createElement('span');
     badge.className = 'sidebar-badge';
     badge.textContent = 'SOP';
-    item.appendChild(iEl);
-    item.appendChild(labelSpan);
-    item.appendChild(badge);
+    item.appendChild(iEl); item.appendChild(labelSpan); item.appendChild(badge);
     (function(k){ item.onclick = function(){ showSOP(k); }; })(key);
     sidebarSOPs.appendChild(item);
   }
+
+  // Inject card on dashboard
+  var grid = document.getElementById('sop-card-grid');
+  if (grid) {
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('data-sop', key);
+    card.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+      + '<span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--accent)">'+( sopData[key].category||'Operations')+'</span></div>'
+      + '<h3 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text)">'+title+'</h3>'
+      + '<p style="font-size:12px;color:var(--soft);line-height:1.5;margin-bottom:12px">'+(sopData[key].desc||'').substring(0,80)+'</p>'
+      + '<div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)">'
+      + '<span><i class="fas fa-clock" style="margin-right:3px"></i>3 min read</span></div>';
+    (function(k){ card.onclick = function(){ showSOP(k); }; })(key);
+    grid.appendChild(card);
+  }
+
   closeModal();
   showToast('SOP "' + title + '" added!', 'success');
   const cnt = document.getElementById('sop-count-display');
   if (cnt) cnt.textContent = parseInt(cnt.textContent) + 1;
+}
+
+function getCustomSOPKeys() {
+  try {
+    var val = autoLoad('np_custom_sop_keys');
+    if (Array.isArray(val)) return val;
+    if (typeof val === 'string') return JSON.parse(val);
+    return [];
+  } catch(e){ return []; }
+}
+
+function loadCustomSOPs() {
+  var keys = getCustomSOPKeys();
+  keys.forEach(function(key) {
+    var saved = autoLoad('sopData_' + key);
+    if (!saved) return;
+    sopData[key] = saved;
+
+    // Inject sidebar link if not already there
+    var sidebarSOPs = document.querySelector('.sidebar-section');
+    if (sidebarSOPs && !sidebarSOPs.querySelector('[data-sop="'+key+'"]')) {
+      var item = document.createElement('div');
+      item.className = 'sidebar-item';
+      item.setAttribute('data-sop', key);
+      var iEl = document.createElement('i'); iEl.className = 'fas fa-file-alt';
+      iEl.style.cssText = 'font-size:14px;width:16px;text-align:center';
+      var labelSpan = document.createElement('span');
+      labelSpan.textContent = (saved.title||'Custom SOP').substring(0,22);
+      labelSpan.style.flex = '1';
+      var badge = document.createElement('span'); badge.className = 'sidebar-badge'; badge.textContent = 'SOP';
+      item.appendChild(iEl); item.appendChild(labelSpan); item.appendChild(badge);
+      (function(k){ item.onclick = function(){ showSOP(k); }; })(key);
+      sidebarSOPs.appendChild(item);
+    }
+
+    // Inject dashboard card if not already there
+    var grid = document.getElementById('sop-card-grid');
+    if (grid && !grid.querySelector('[data-sop="'+key+'"]')) {
+      var card = document.createElement('div');
+      card.className = 'card';
+      card.setAttribute('data-sop', key);
+      card.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+        + '<span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--accent)">'+(saved.category||'Operations')+'</span></div>'
+        + '<h3 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text)">'+(saved.title||'')+'</h3>'
+        + '<p style="font-size:12px;color:var(--soft);line-height:1.5;margin-bottom:12px">'+(saved.desc||'').substring(0,80)+'</p>'
+        + '<div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)"><span><i class="fas fa-clock" style="margin-right:3px"></i>3 min read</span></div>';
+      (function(k){ card.onclick = function(){ showSOP(k); }; })(key);
+      grid.appendChild(card);
+    }
+  });
 }
 
 /* ── Add Template Modal ── */
