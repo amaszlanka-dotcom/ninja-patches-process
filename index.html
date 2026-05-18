@@ -116,6 +116,11 @@
   .modal-btn.secondary{background:var(--card);border:1px solid var(--border);color:var(--soft)}
   .modal-btn.secondary:hover{color:var(--text)}
 
+  /* ── SIDEBAR DRAG-REORDER ── */
+  body.role-admin .sidebar-item[draggable="true"]{cursor:grab}
+  .sidebar-item.drag-over{border:1px dashed #4caf7d70 !important;background:#4caf7d10 !important}
+  .sidebar-item.dragging{opacity:.4}
+
   /* ── AGENT LOCKED OVERLAY ── */
   .locked-notice{display:none;padding:10px 16px;background:#7c5ce810;border-bottom:1px solid #7c5ce820;font-size:12px;color:var(--accent3);align-items:center;gap:8px}
   body.role-agent .locked-notice{display:flex}
@@ -425,7 +430,7 @@
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-section">
-      <div class="sidebar-label">Quick Access</div>
+      <div class="sidebar-label" id="sidebar-section-label-soplist" ondblclick="editSidebarSectionLabel('soplist')" title="Double-click to rename">Patch SOPs</div>
       <div class="sidebar-item active" onclick="showSOP('cancel')" data-sop="cancel"><i class="fas fa-ban"></i> <span id="sidebar-label-cancel">Cancellations</span> <span class="sidebar-badge">SOP</span></div>
       <div class="sidebar-item" onclick="showSOP('unreviewed')" data-sop="unreviewed"><i class="fas fa-inbox"></i> <span id="sidebar-label-unreviewed">Unreviewed Orders</span> <span class="sidebar-badge">SOP</span></div>
       <div class="sidebar-item" onclick="showSOP('vendorminimums')" data-sop="vendorminimums"><i class="fas fa-chart-bar"></i> <span id="sidebar-label-vendorminimums">Vendor Chart</span> <span class="sidebar-badge">SOP</span></div>
@@ -647,7 +652,8 @@
           </div>
           <div class="aside-card">
             <h5 style="display:flex;align-items:center;justify-content:space-between">
-              <span><i class="fas fa-check-circle"></i> Quick Checklist</span>
+              <span id="sop-checklist-title"><i class="fas fa-check-circle"></i> Quick Checklist</span>
+              <button id="edit-checklist-name-btn" class="admin-only" onclick="promptRenameChecklist()" style="display:none;padding:2px 8px;background:none;border:1px solid #4caf7d40;border-radius:4px;font-size:10px;color:var(--accent);cursor:pointer">Rename</button>
             </h5>
             <ul class="check-list" id="sop-checklist"></ul>
           </div>
@@ -1547,6 +1553,12 @@ function showSOP(key) {
   document.getElementById('sop-read-time').textContent = d.readTime;
   document.getElementById('sop-updated').textContent = d.updated;
 
+  // Checklist name
+  var clTitle = document.getElementById('sop-checklist-title');
+  if (clTitle) clTitle.innerHTML = '<i class="fas fa-check-circle"></i> ' + (d.checklistName || 'Quick Checklist');
+  var clNameBtn = document.getElementById('edit-checklist-name-btn');
+  if (clNameBtn) clNameBtn.style.display = currentRole === 'admin' ? 'inline-flex' : 'none';
+
   var cl = document.getElementById('sop-checklist');
   if (cl) {
     cl.innerHTML = '';
@@ -1815,6 +1827,12 @@ function loginSuccess(role, name) {
   document.querySelectorAll('.admin-only').forEach(function(el){ el.style.display = role==='admin' ? '' : 'none'; });
   loadSavedSOPEdits();
   loadSavedSidebarLabels();
+  // Restore sidebar section label
+  var savedSopListLabel = autoLoad('sidebar_section_label_soplist');
+  if (savedSopListLabel) {
+    var sopListLabelEl = document.getElementById('sidebar-section-label-soplist');
+    if (sopListLabelEl) sopListLabelEl.textContent = savedSopListLabel;
+  }
   renderCustomScenarios();
 
   // Update topbar
@@ -1833,6 +1851,7 @@ function loginSuccess(role, name) {
     showPage('training');
   } else {
     showPage('home');
+    enableSidebarDragReorder();
   }
 }
 
@@ -2000,37 +2019,126 @@ function addAgent() {
 }
 
 /* ── Add SOP Modal ── */
+var _newSOPSteps = [];
 function openAddSOPModal() {
-  openModal(`
-    <h3><i class="fas fa-file-alt" style="color:var(--accent);margin-right:8px"></i>Add New SOP</h3>
-    <p>Create a new Standard Operating Procedure. It will appear in the Quick Access sidebar and SOPs section.</p>
-    <div class="modal-field"><label>SOP Title</label><input class="modal-input" id="m-sop-title" placeholder="e.g. Return & Exchange SOP"/></div>
-    <div class="modal-field"><label>Category</label><input class="modal-input" id="m-sop-cat" placeholder="e.g. Order Management"/></div>
-    <div class="modal-field"><label>Description</label><textarea class="modal-textarea" id="m-sop-desc" placeholder="Brief description of when and why this SOP is used..."></textarea></div>
-    <div class="modal-field"><label>Step 1 — Action</label><input class="modal-input" id="m-sop-s1" placeholder="e.g. Locate the order in Shopify"/></div>
-    <div class="modal-field"><label>Step 1 — Detail</label><textarea class="modal-textarea" id="m-sop-s1d" placeholder="Full instructions for step 1..." style="min-height:60px"></textarea></div>
-    <div class="modal-field"><label>Step 2 — Action</label><input class="modal-input" id="m-sop-s2" placeholder="e.g. Verify eligibility"/></div>
-    <div class="modal-field"><label>Step 2 — Detail</label><textarea class="modal-textarea" id="m-sop-s2d" placeholder="Full instructions for step 2..." style="min-height:60px"></textarea></div>
-    <div class="modal-field"><label>Escalation Trigger</label><input class="modal-input" id="m-sop-esc" placeholder="e.g. Refund over $200, customer threatens chargeback"/></div>
-    <div class="modal-footer">
-      <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
-      <button class="modal-btn primary" onclick="saveNewSOP()">Add SOP</button>
-    </div>`);
+  _newSOPSteps = [{title:'',body:''}];
+  _renderAddSOPModal();
+}
+function _renderAddSOPModal() {
+  var box = document.getElementById('modal-box');
+  box.innerHTML = '';
+  var h3 = document.createElement('h3');
+  h3.innerHTML = '<i class="fas fa-file-alt" style="color:var(--accent);margin-right:8px"></i>Add New SOP';
+  var sub = document.createElement('p');
+  sub.textContent = 'Create a new Standard Operating Procedure. It will appear in the Patch SOPs sidebar and SOPs section.';
+  box.appendChild(h3); box.appendChild(sub);
+  // Title
+  var f1 = document.createElement('div'); f1.className='modal-field';
+  f1.innerHTML='<label>SOP Title</label><input class="modal-input" id="m-sop-title" placeholder="e.g. Return & Exchange SOP"/>';
+  box.appendChild(f1);
+  // Category
+  var f2 = document.createElement('div'); f2.className='modal-field';
+  f2.innerHTML='<label>Category</label><input class="modal-input" id="m-sop-cat" placeholder="e.g. Order Management"/>';
+  box.appendChild(f2);
+  // Desc
+  var f3 = document.createElement('div'); f3.className='modal-field';
+  f3.innerHTML='<label>Description</label><textarea class="modal-textarea" id="m-sop-desc" placeholder="Brief description..."></textarea>';
+  box.appendChild(f3);
+  // Steps
+  var stepsHdr = document.createElement('div');
+  stepsHdr.style.cssText='font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:14px 0 8px;display:flex;align-items:center;justify-content:space-between';
+  stepsHdr.innerHTML='<span>Steps</span>';
+  box.appendChild(stepsHdr);
+  var stepsWrap = document.createElement('div'); stepsWrap.id='m-sop-steps-wrap';
+  box.appendChild(stepsWrap);
+  _newSOPSteps.forEach(function(_,i){ _renderAddSOPStepRow(stepsWrap, i); });
+  var addStepBtn = document.createElement('button');
+  addStepBtn.type='button';
+  addStepBtn.style.cssText='padding:7px 14px;background:var(--card);border:1px dashed #4caf7d40;border-radius:7px;font-size:12px;color:var(--accent);cursor:pointer;width:100%;margin-bottom:10px';
+  addStepBtn.innerHTML='<i class="fas fa-plus" style="margin-right:5px"></i>Add Another Step';
+  addStepBtn.onclick=function(){
+    var title=document.getElementById('m-sop-title') ? document.getElementById('m-sop-title').value : '';
+    // save current step inputs
+    document.querySelectorAll('#m-sop-steps-wrap .m-step-row').forEach(function(row,i){
+      var t=row.querySelector('.m-step-title'); var b=row.querySelector('.m-step-body');
+      _newSOPSteps[i]={title: t?t.value:'', body: b?b.value:''};
+    });
+    _newSOPSteps.push({title:'',body:''});
+    _renderAddSOPModal();
+    // restore title/cat/desc
+    if(title) document.getElementById('m-sop-title').value=title;
+  };
+  box.appendChild(addStepBtn);
+  // Checklist
+  var f4 = document.createElement('div'); f4.className='modal-field';
+  f4.innerHTML='<label>Quick Checklist Items <span style="font-weight:400;color:var(--muted)">(one per line)</span></label><textarea class="modal-textarea" id="m-sop-checklist" placeholder="Review all steps before acting&#10;Confirm production status&#10;Document outcome in Shopify" style="min-height:70px"></textarea>';
+  box.appendChild(f4);
+  // Escalation
+  var f5 = document.createElement('div'); f5.className='modal-field';
+  f5.innerHTML='<label>Escalation Trigger</label><input class="modal-input" id="m-sop-esc" placeholder="e.g. Refund over $200, customer threatens chargeback"/>';
+  box.appendChild(f5);
+  // Footer
+  var footer = document.createElement('div'); footer.className='modal-footer';
+  var cancelBtn = document.createElement('button'); cancelBtn.className='modal-btn secondary'; cancelBtn.textContent='Cancel'; cancelBtn.onclick=closeModal;
+  var saveBtn = document.createElement('button'); saveBtn.className='modal-btn primary'; saveBtn.textContent='Add SOP'; saveBtn.onclick=saveNewSOP;
+  footer.appendChild(cancelBtn); footer.appendChild(saveBtn);
+  box.appendChild(footer);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function _renderAddSOPStepRow(wrap, i) {
+  var sw = document.createElement('div');
+  sw.className='m-step-row';
+  sw.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;position:relative';
+  var hdr = document.createElement('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:6px';
+  var lbl = document.createElement('div');
+  lbl.style.cssText='font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase';
+  lbl.textContent='Step '+(i+1);
+  hdr.appendChild(lbl);
+  if (_newSOPSteps.length > 1) {
+    var rmBtn = document.createElement('button');
+    rmBtn.type='button'; rmBtn.innerHTML='<i class="fas fa-times"></i>';
+    rmBtn.style.cssText='background:#ff475715;border:1px solid #ff475730;border-radius:4px;color:#ff4757;font-size:10px;cursor:pointer;padding:2px 6px';
+    rmBtn.title='Remove step';
+    (function(idx){ rmBtn.onclick=function(){
+      document.querySelectorAll('#m-sop-steps-wrap .m-step-row').forEach(function(row,j){
+        var t=row.querySelector('.m-step-title'); var b=row.querySelector('.m-step-body');
+        _newSOPSteps[j]={title:t?t.value:'',body:b?b.value:''};
+      });
+      _newSOPSteps.splice(idx,1); _renderAddSOPModal();
+    }; })(i);
+    hdr.appendChild(rmBtn);
+  }
+  sw.appendChild(hdr);
+  var st = document.createElement('input'); st.type='text'; st.className='modal-input m-step-title';
+  st.placeholder='Step title'; st.value=_newSOPSteps[i].title||''; st.style.marginBottom='6px';
+  var sb = document.createElement('textarea'); sb.className='modal-textarea m-step-body';
+  sb.placeholder='Step details...'; sb.value=_newSOPSteps[i].body||''; sb.style.minHeight='55px';
+  sw.appendChild(st); sw.appendChild(sb); wrap.appendChild(sw);
 }
 
 function saveNewSOP() {
   const title = document.getElementById('m-sop-title').value.trim();
   if (!title) { showToast('SOP title is required.', 'warn'); return; }
+  // Collect steps from modal
+  var finalSteps = [];
+  document.querySelectorAll('#m-sop-steps-wrap .m-step-row').forEach(function(row,i){
+    var t=row.querySelector('.m-step-title'); var b=row.querySelector('.m-step-body');
+    var colors=['','teal','purple'];
+    finalSteps.push({ num:String(i+1).padStart(2,'0'), color:colors[i%3]||'', title:t?t.value.trim()||('Step '+(i+1)):'', body:b?b.value.trim():'', note:null, warn:null });
+  });
+  if (!finalSteps.length) finalSteps=[{num:'01',color:'',title:'Step 1',body:'',note:null,warn:null}];
+  // Checklist
+  var checklistRaw = document.getElementById('m-sop-checklist') ? document.getElementById('m-sop-checklist').value : '';
+  var checklist = checklistRaw.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+  if (!checklist.length) checklist=['Review all steps before acting','Confirm production status','Document outcome in Shopify'];
   const key = 'custom_' + Date.now();
   sopData[key] = {
     title, category: document.getElementById('m-sop-cat').value || 'Operations',
     readTime: '3 min read', updated: 'Added ' + new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'}),
     desc: document.getElementById('m-sop-desc').value || '',
-    steps: [
-      { num:'01', color:'', title: document.getElementById('m-sop-s1').value || 'Step 1', body: document.getElementById('m-sop-s1d').value || '', note: null, warn: null },
-      { num:'02', color:'teal', title: document.getElementById('m-sop-s2').value || 'Step 2', body: document.getElementById('m-sop-s2d').value || '', note: null, warn: null }
-    ],
-    checklist: ['Review all steps before acting','Confirm production status','Document outcome in Shopify'],
+    steps: finalSteps,
+    checklist: checklist,
     escalate: [document.getElementById('m-sop-esc').value || 'Contact supervisor for any exception']
   };
   // Inject sidebar link
@@ -2442,7 +2550,8 @@ function openImageUploadModal(sopKey) {
   addBtn.onclick = function() {
     if (!preview._dataUrl) { showToast('Please select an image first.','warn'); return; }
     var cap = document.getElementById('img-caption-input').value.trim();
-    addImageToSOP(sopKey, preview._dataUrl, cap);
+    var titleVal = document.getElementById('img-title-input').value.trim();
+    addImageToSOP(sopKey, preview._dataUrl, cap, titleVal);
     closeModal();
   };
   footer.appendChild(cancelBtn); footer.appendChild(addBtn);
@@ -2497,72 +2606,141 @@ function openSOPEditModal(key) {
   t2.style.cssText = 'min-height:80px;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:#e8eaf0;font-size:13px;line-height:1.6;outline:none';
   t2.innerHTML = d.desc || '';
   f2.appendChild(l2); f2.appendChild(descToolbar); f2.appendChild(t2); box.appendChild(f2);
-  // Steps
+  // Steps section
   var stepsLabel = document.createElement('div');
-  stepsLabel.style.cssText = 'font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:14px 0 8px';
-  stepsLabel.textContent = 'Steps';
+  stepsLabel.style.cssText = 'font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:14px 0 8px;display:flex;align-items:center;justify-content:space-between';
+  stepsLabel.innerHTML = '<span>Steps</span>';
   box.appendChild(stepsLabel);
-  d.steps.forEach(function(s, i) {
-    var sw = document.createElement('div');
-    sw.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px';
-    var sl = document.createElement('div');
-    sl.style.cssText = 'font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px';
-    sl.textContent = 'Step ' + (i+1);
-    var st = document.createElement('input'); st.type='text'; st.className='modal-input';
-    st.id = 'edit-step-title-'+i; st.value = s.title; st.placeholder = 'Step title';
-    st.style.marginBottom = '6px';
-    // Rich text toolbar
-    var toolbar = document.createElement('div');
-    toolbar.style.cssText = 'display:flex;gap:4px;margin-bottom:4px;flex-wrap:wrap';
-    var fmtBtns = [
-      {cmd:'bold', icon:'<b>B</b>', title:'Bold'},
-      {cmd:'italic', icon:'<i>I</i>', title:'Italic'},
-      {cmd:'underline', icon:'<u>U</u>', title:'Underline'},
-    ];
-    var fontSizes = ['12','13','14','15','16','18','20'];
-    var fontColors = ['#e8eaf0','#4caf7d','#f5a623','#ff4757','#74b9ff','#a29bfe'];
-    (function(bodyId) {
-      fmtBtns.forEach(function(b) {
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.innerHTML = b.icon;
-        btn.title = b.title;
-        btn.style.cssText = 'padding:2px 7px;background:var(--card);border:1px solid var(--border);border-radius:4px;color:var(--text);cursor:pointer;font-size:12px';
-        btn.onclick = function(e) { e.preventDefault(); document.getElementById(bodyId).focus(); document.execCommand(b.cmd, false, null); };
-        toolbar.appendChild(btn);
-      });
-      // Font size
-      var sizeSelect = document.createElement('select');
-      sizeSelect.style.cssText = 'padding:2px 5px;background:var(--card);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;cursor:pointer';
-      sizeSelect.title = 'Font size';
-      fontSizes.forEach(function(s) { var o=document.createElement('option'); o.value=s; o.textContent=s+'px'; if(s==='13') o.selected=true; sizeSelect.appendChild(o); });
-      sizeSelect.onchange = function() { document.getElementById(bodyId).focus(); document.execCommand('fontSize', false, '7'); var els=document.getElementById(bodyId).querySelectorAll('font[size="7"]'); els.forEach(function(el){ el.removeAttribute('size'); el.style.fontSize=sizeSelect.value+'px'; }); };
-      toolbar.appendChild(sizeSelect);
-      // Color picker
-      fontColors.forEach(function(col) {
-        var swatch = document.createElement('button');
-        swatch.type='button';
-        swatch.style.cssText = 'width:18px;height:18px;background:'+col+';border:1px solid #ffffff20;border-radius:3px;cursor:pointer;padding:0';
-        swatch.title = 'Text color: '+col;
-        swatch.onclick = function(e) { e.preventDefault(); document.getElementById(bodyId).focus(); document.execCommand('foreColor', false, col); };
-        toolbar.appendChild(swatch);
-      });
-    })('edit-step-body-'+i);
-    var sb = document.createElement('div');
-    sb.id = 'edit-step-body-'+i;
-    sb.contentEditable = 'true';
-    sb.style.cssText = 'min-height:55px;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:#e8eaf0;font-size:13px;line-height:1.6;outline:none';
-    sb.innerHTML = s.body || '';
-    sw.appendChild(sl); sw.appendChild(st); sw.appendChild(toolbar); sw.appendChild(sb);
-    box.appendChild(sw);
-  });
+  var stepsWrap = document.createElement('div');
+  stepsWrap.id = 'edit-sop-steps-wrap';
+  box.appendChild(stepsWrap);
+  function renderEditSteps() {
+    stepsWrap.innerHTML = '';
+    d.steps.forEach(function(s, i) {
+      var sw = document.createElement('div');
+      sw.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;position:relative';
+      var shdr = document.createElement('div');
+      shdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:6px';
+      var sl = document.createElement('div');
+      sl.style.cssText = 'font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase';
+      sl.textContent = 'Step ' + (i+1);
+      shdr.appendChild(sl);
+      // Delete step button
+      var rmStep = document.createElement('button');
+      rmStep.type='button'; rmStep.innerHTML='<i class="fas fa-trash"></i> Remove';
+      rmStep.style.cssText='background:#ff475715;border:1px solid #ff475730;border-radius:4px;color:#ff4757;font-size:10px;cursor:pointer;padding:2px 7px';
+      (function(idx){ rmStep.onclick=function(){
+        d.steps.splice(idx,1); renderEditSteps();
+        showToast('Step removed.','info');
+      }; })(i);
+      shdr.appendChild(rmStep);
+      sw.appendChild(shdr);
+      var st = document.createElement('input'); st.type='text'; st.className='modal-input';
+      st.id = 'edit-step-title-'+i; st.value = s.title; st.placeholder = 'Step title';
+      st.style.marginBottom = '6px';
+      // Rich text toolbar
+      var toolbar = document.createElement('div');
+      toolbar.style.cssText = 'display:flex;gap:4px;margin-bottom:4px;flex-wrap:wrap';
+      var fmtBtns = [
+        {cmd:'bold', icon:'<b>B</b>', title:'Bold'},
+        {cmd:'italic', icon:'<i>I</i>', title:'Italic'},
+        {cmd:'underline', icon:'<u>U</u>', title:'Underline'},
+      ];
+      var fontSizes = ['12','13','14','15','16','18','20'];
+      var fontColors = ['#e8eaf0','#4caf7d','#f5a623','#ff4757','#74b9ff','#a29bfe'];
+      (function(bodyId) {
+        fmtBtns.forEach(function(b) {
+          var btn = document.createElement('button');
+          btn.type = 'button'; btn.innerHTML = b.icon; btn.title = b.title;
+          btn.style.cssText = 'padding:2px 7px;background:var(--card);border:1px solid var(--border);border-radius:4px;color:var(--text);cursor:pointer;font-size:12px';
+          btn.onclick = function(e) { e.preventDefault(); document.getElementById(bodyId).focus(); document.execCommand(b.cmd, false, null); };
+          toolbar.appendChild(btn);
+        });
+        var sizeSelect = document.createElement('select');
+        sizeSelect.style.cssText = 'padding:2px 5px;background:var(--card);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;cursor:pointer';
+        fontSizes.forEach(function(sz) { var o=document.createElement('option'); o.value=sz; o.textContent=sz+'px'; if(sz==='13') o.selected=true; sizeSelect.appendChild(o); });
+        sizeSelect.onchange = function() { document.getElementById(bodyId).focus(); document.execCommand('fontSize', false, '7'); var els=document.getElementById(bodyId).querySelectorAll('font[size="7"]'); els.forEach(function(el){ el.removeAttribute('size'); el.style.fontSize=sizeSelect.value+'px'; }); };
+        toolbar.appendChild(sizeSelect);
+        fontColors.forEach(function(col) {
+          var swatch = document.createElement('button'); swatch.type='button';
+          swatch.style.cssText = 'width:18px;height:18px;background:'+col+';border:1px solid #ffffff20;border-radius:3px;cursor:pointer;padding:0';
+          swatch.onclick = function(e) { e.preventDefault(); document.getElementById(bodyId).focus(); document.execCommand('foreColor', false, col); };
+          toolbar.appendChild(swatch);
+        });
+      })('edit-step-body-'+i);
+      var sb = document.createElement('div');
+      sb.id = 'edit-step-body-'+i;
+      sb.contentEditable = 'true';
+      sb.style.cssText = 'min-height:55px;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:#e8eaf0;font-size:13px;line-height:1.6;outline:none;margin-bottom:6px';
+      sb.innerHTML = s.body || '';
+      // Note/Tip field
+      var noteLbl = document.createElement('label'); noteLbl.style.cssText='font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:600;display:block;margin-bottom:3px;margin-top:4px';
+      noteLbl.textContent='Tip / Note (leave blank to remove)';
+      var noteInp = document.createElement('input'); noteInp.type='text'; noteInp.className='modal-input';
+      noteInp.id='edit-step-note-'+i; noteInp.value = s.note||''; noteInp.placeholder='Optional tip shown below this step';
+      noteInp.style.marginBottom='5px';
+      // Warn field
+      var warnLbl = document.createElement('label'); warnLbl.style.cssText='font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:600;display:block;margin-bottom:3px';
+      warnLbl.textContent='Warning (leave blank to remove)';
+      var warnInp = document.createElement('input'); warnInp.type='text'; warnInp.className='modal-input';
+      warnInp.id='edit-step-warn-'+i; warnInp.value = s.warn||''; warnInp.placeholder='Optional warning shown below this step';
+      sw.appendChild(st); sw.appendChild(toolbar); sw.appendChild(sb);
+      sw.appendChild(noteLbl); sw.appendChild(noteInp);
+      sw.appendChild(warnLbl); sw.appendChild(warnInp);
+      stepsWrap.appendChild(sw);
+    });
+  }
+  renderEditSteps();
+  // Add step button
+  var addStepBtn = document.createElement('button');
+  addStepBtn.type='button';
+  addStepBtn.style.cssText='padding:7px 14px;background:var(--card);border:1px dashed #4caf7d40;border-radius:7px;font-size:12px;color:var(--accent);cursor:pointer;width:100%;margin-bottom:14px';
+  addStepBtn.innerHTML='<i class="fas fa-plus" style="margin-right:5px"></i>Add Another Step';
+  addStepBtn.onclick=function(){
+    // save current step edits before re-render
+    d.steps.forEach(function(s,i){
+      var st=document.getElementById('edit-step-title-'+i);
+      var sb=document.getElementById('edit-step-body-'+i);
+      var sn=document.getElementById('edit-step-note-'+i);
+      var sw=document.getElementById('edit-step-warn-'+i);
+      if(st) s.title=st.value.trim()||s.title;
+      if(sb) s.body=sb.innerHTML.trim()||s.body;
+      if(sn) s.note=sn.value.trim()||null;
+      if(sw) s.warn=sw.value.trim()||null;
+    });
+    var colors=['','teal','purple'];
+    var idx=d.steps.length;
+    d.steps.push({num:String(idx+1).padStart(2,'0'),color:colors[idx%3]||'',title:'',body:'',note:null,warn:null});
+    renderEditSteps();
+    showToast('New step added.','success');
+  };
+  box.appendChild(addStepBtn);
+  // Checklist name
+  var checkNameWrap = document.createElement('div'); checkNameWrap.className='modal-field';
+  var checkNameLbl = document.createElement('label'); checkNameLbl.textContent='Quick Checklist Name';
+  var checkNameInp = document.createElement('input'); checkNameInp.type='text'; checkNameInp.className='modal-input';
+  checkNameInp.id='edit-checklist-name'; checkNameInp.placeholder='e.g. Quick Checklist';
+  checkNameInp.value = d.checklistName || 'Quick Checklist';
+  checkNameWrap.appendChild(checkNameLbl); checkNameWrap.appendChild(checkNameInp);
+  box.appendChild(checkNameWrap);
+  // Checklist items
+  var checkWrap = document.createElement('div'); checkWrap.className='modal-field';
+  var checkLbl = document.createElement('label'); checkLbl.textContent='Quick Checklist Items (one per line)';
+  var checkTA = document.createElement('textarea'); checkTA.className='modal-textarea';
+  checkTA.id='edit-checklist-items'; checkTA.style.minHeight='80px';
+  checkTA.value = (d.checklist||[]).join('\n');
+  checkWrap.appendChild(checkLbl); checkWrap.appendChild(checkTA);
+  box.appendChild(checkWrap);
   // Footer
   var footer = document.createElement('div'); footer.className = 'modal-footer';
   var cancelBtn = document.createElement('button'); cancelBtn.className='modal-btn secondary';
   cancelBtn.textContent = 'Cancel'; cancelBtn.onclick = closeModal;
   var saveBtn = document.createElement('button'); saveBtn.className='modal-btn primary';
   saveBtn.textContent = 'Save Changes';
-  saveBtn.onclick = function() { saveSOPEdits(key, d.steps.length); };
+  saveBtn.onclick = function() {
+    var domStepCount = document.querySelectorAll('#edit-sop-steps-wrap > div').length;
+    saveSOPEdits(key, domStepCount);
+  };
   footer.appendChild(cancelBtn); footer.appendChild(saveBtn);
   box.appendChild(footer);
   document.getElementById('modal-overlay').classList.add('open');
@@ -2576,14 +2754,68 @@ function saveSOPEdits(key, stepCount) {
   for (var i = 0; i < stepCount; i++) {
     var st = document.getElementById('edit-step-title-'+i);
     var sb = document.getElementById('edit-step-body-'+i);
-    if (st && sopData[key].steps[i]) sopData[key].steps[i].title = st.value.trim() || sopData[key].steps[i].title;
-    if (sb && sopData[key].steps[i]) sopData[key].steps[i].body = sb.innerHTML.trim() || sopData[key].steps[i].body;
+    var sn = document.getElementById('edit-step-note-'+i);
+    var sw = document.getElementById('edit-step-warn-'+i);
+    if (sopData[key].steps[i]) {
+      if (st) sopData[key].steps[i].title = st.value.trim() || sopData[key].steps[i].title;
+      if (sb) sopData[key].steps[i].body = sb.innerHTML.trim() || sopData[key].steps[i].body;
+      if (sn) sopData[key].steps[i].note = sn.value.trim() || null;
+      if (sw) sopData[key].steps[i].warn = sw.value.trim() || null;
+    }
+  }
+  // Checklist name
+  var checkNameEl = document.getElementById('edit-checklist-name');
+  if (checkNameEl) sopData[key].checklistName = checkNameEl.value.trim() || 'Quick Checklist';
+  // Checklist items
+  var checkItemsEl = document.getElementById('edit-checklist-items');
+  if (checkItemsEl) {
+    var items = checkItemsEl.value.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+    if (items.length) sopData[key].checklist = items;
   }
   autoSave('sopData_'+key, sopData[key]);
   showAutoSaveIndicator();
   closeModal();
   showSOP(key);
   showToast('SOP updated!', 'success');
+}
+
+function promptRenameChecklist() {
+  var key = window._currentSOPKey;
+  if (!key || !sopData[key]) return;
+  var current = sopData[key].checklistName || 'Quick Checklist';
+  var val = window.prompt('Checklist section name:', current);
+  if (val && val.trim()) {
+    sopData[key].checklistName = val.trim();
+    autoSave('sopData_'+key, sopData[key]);
+    showAutoSaveIndicator();
+    showSOP(key);
+    showToast('Checklist renamed.', 'success');
+  }
+}
+
+function editSidebarSectionLabel(id) {
+  if (currentRole !== 'admin') return;
+  var el = document.getElementById('sidebar-section-label-' + id);
+  if (!el) return;
+  var current = el.textContent.trim();
+  var input = document.createElement('input');
+  input.type = 'text'; input.value = current;
+  input.style.cssText = 'background:var(--input-bg,#161b24);border:1px solid #4caf7d50;border-radius:4px;color:var(--text);font-size:10px;padding:1px 5px;width:120px;outline:none;letter-spacing:1.8px;text-transform:uppercase';
+  input.onclick = function(e) { e.stopPropagation(); };
+  function save() {
+    var val = input.value.trim() || current;
+    el.textContent = val;
+    autoSave('sidebar_section_label_' + id, val);
+    showAutoSaveIndicator();
+  }
+  input.onblur = save;
+  input.onkeydown = function(e) {
+    if (e.key === 'Enter') { save(); input.blur(); }
+    if (e.key === 'Escape') { el.textContent = current; }
+  };
+  el.textContent = '';
+  el.appendChild(input);
+  input.focus(); input.select();
 }
 
 function editSidebarLabel(key) {
@@ -2632,6 +2864,8 @@ function loadSavedSOPEdits() {
       if (saved.title) sopData[key].title = saved.title;
       if (saved.desc) sopData[key].desc = saved.desc;
       if (saved.steps) sopData[key].steps = saved.steps;
+      if (saved.checklist) sopData[key].checklist = saved.checklist;
+      if (saved.checklistName) sopData[key].checklistName = saved.checklistName;
     }
   });
 }
@@ -3497,8 +3731,54 @@ async function psimEndCall() {
   }
 }
 
-/* Hook showPage to init phone sim page on first visit */
-/* phone sim and route guard merged into showPage */
+/* ── Sidebar drag-to-reorder (admin only) ── */
+function enableSidebarDragReorder() {
+  var section = document.querySelector('.sidebar-section');
+  if (!section) return;
+  var items = section.querySelectorAll('.sidebar-item');
+  var dragSrc = null;
+  items.forEach(function(item) {
+    item.setAttribute('draggable', 'true');
+    item.addEventListener('dragstart', function(e) {
+      dragSrc = item;
+      item.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', function() {
+      item.classList.remove('dragging');
+      section.querySelectorAll('.sidebar-item').forEach(function(i){ i.classList.remove('drag-over'); });
+    });
+    item.addEventListener('dragover', function(e) {
+      e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+      if (item !== dragSrc) item.classList.add('drag-over');
+    });
+    item.addEventListener('dragleave', function() { item.classList.remove('drag-over'); });
+    item.addEventListener('drop', function(e) {
+      e.preventDefault();
+      item.classList.remove('drag-over');
+      if (dragSrc && dragSrc !== item) {
+        var parent = item.parentNode;
+        var allItems = Array.from(parent.querySelectorAll('.sidebar-item'));
+        var srcIdx = allItems.indexOf(dragSrc);
+        var dstIdx = allItems.indexOf(item);
+        if (srcIdx < dstIdx) parent.insertBefore(dragSrc, item.nextSibling);
+        else parent.insertBefore(dragSrc, item);
+        showToast('Sidebar reordered.', 'success');
+      }
+    });
+  });
+}
+
+/* ── sendPrompt: opens phone sim with a pre-filled message ── */
+function sendPrompt(text) {
+  showPage('phonesim');
+  setTimeout(function() {
+    var input = document.getElementById('call-input');
+    if (input) { input.value = text; input.focus(); }
+    else { showToast('Type your scenario in the Phone Simulator.', 'info'); }
+  }, 300);
+}
+
 </script>
 </body>
 </html>
