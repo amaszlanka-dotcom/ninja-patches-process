@@ -2303,7 +2303,7 @@ function saveNewSOP() {
 function updateSOPCount() {
   var cnt = document.getElementById('sop-count-display');
   if (!cnt) { setTimeout(updateSOPCount, 200); return; }
-  var items = document.querySelectorAll('.sidebar-section [data-sop]');
+  var items = document.querySelectorAll('.sidebar-section .sidebar-item[data-sop]');
   cnt.textContent = items.length;
 }
 
