@@ -2037,6 +2037,39 @@ function addAgent() {
   document.getElementById('admin-agent-count').textContent = platformCredentials.agents.length;
 }
 
+/* ── SOP Icon Helper ── */
+var SOP_ICONS = [
+  'fa-file-alt','fa-ban','fa-inbox','fa-edit','fa-eye','fa-clock','fa-industry',
+  'fa-shipping-fast','fa-search-location','fa-exclamation-triangle','fa-undo',
+  'fa-dollar-sign','fa-user','fa-users','fa-phone','fa-envelope','fa-tag',
+  'fa-box','fa-truck','fa-wrench','fa-shield-alt','fa-chart-bar','fa-list-check',
+  'fa-handshake','fa-star','fa-bolt','fa-flag','fa-lock','fa-map-marker-alt',
+  'fa-cut','fa-print','fa-camera','fa-cog','fa-check-circle','fa-info-circle'
+];
+
+function autoPickIcon(title) {
+  var t = (title||'').toLowerCase();
+  if (/cancel|refund|return/.test(t))       return 'fa-ban';
+  if (/order change|edit|modif/.test(t))     return 'fa-edit';
+  if (/proof|review|approv/.test(t))         return 'fa-eye';
+  if (/delay|production|timeline/.test(t))   return 'fa-clock';
+  if (/vendor|supplier|logins/.test(t))      return 'fa-industry';
+  if (/ship|nda|next day|transit/.test(t))   return 'fa-shipping-fast';
+  if (/lost|track|search/.test(t))           return 'fa-search-location';
+  if (/escalat|urgent|threat/.test(t))       return 'fa-exclamation-triangle';
+  if (/unreviewed|queue|new order/.test(t))  return 'fa-inbox';
+  if (/resolut|issue|problem/.test(t))       return 'fa-wrench';
+  if (/phone|call|customer/.test(t))         return 'fa-phone';
+  if (/email|template|message/.test(t))      return 'fa-envelope';
+  if (/payment|charge|invoice/.test(t))      return 'fa-dollar-sign';
+  if (/agent|rep|staff|team/.test(t))        return 'fa-users';
+  if (/policy|rule|guideline/.test(t))       return 'fa-shield-alt';
+  if (/chart|report|analytic/.test(t))       return 'fa-chart-bar';
+  if (/fast|quick|rush|ninja/.test(t))       return 'fa-bolt';
+  if (/place|placing|create order/.test(t))  return 'fa-box';
+  return 'fa-file-alt';
+}
+
 /* ── Add SOP Modal ── */
 var _newSOPSteps = [];
 function openAddSOPModal() {
@@ -2063,6 +2096,66 @@ function _renderAddSOPModal() {
   var f3 = document.createElement('div'); f3.className='modal-field';
   f3.innerHTML='<label>Description</label><textarea class="modal-textarea" id="m-sop-desc" placeholder="Brief description..."></textarea>';
   box.appendChild(f3);
+  // Icon picker
+  var fIcon = document.createElement('div'); fIcon.className='modal-field';
+  var iconLbl = document.createElement('label'); iconLbl.textContent='Icon';
+  var iconWrap = document.createElement('div');
+  iconWrap.style.cssText='display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px';
+  // Preview
+  var iconPreview = document.createElement('div');
+  iconPreview.id='m-sop-icon-preview';
+  iconPreview.style.cssText='width:36px;height:36px;background:var(--surface);border:1px solid var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--accent);flex-shrink:0';
+  iconPreview.innerHTML='<i class="fas fa-file-alt"></i>';
+  // Hidden input
+  var iconInput = document.createElement('input');
+  iconInput.type='hidden'; iconInput.id='m-sop-icon'; iconInput.value='fa-file-alt';
+  // Auto-suggest button
+  var autoBtn = document.createElement('button');
+  autoBtn.type='button';
+  autoBtn.style.cssText='padding:5px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;font-size:11px;color:var(--accent);cursor:pointer';
+  autoBtn.innerHTML='<i class="fas fa-magic" style="margin-right:4px"></i>Auto';
+  autoBtn.title='Auto-pick icon based on title';
+  autoBtn.onclick=function(){
+    var t=document.getElementById('m-sop-title').value;
+    var icon=autoPickIcon(t);
+    iconInput.value=icon;
+    iconPreview.innerHTML='<i class="fas '+icon+'"></i>';
+    // highlight selected grid btn
+    iconWrap.querySelectorAll('.icon-opt').forEach(function(b){ b.style.background=b.getAttribute('data-icon')===icon?'var(--accent)':'var(--surface)'; b.style.color=b.getAttribute('data-icon')===icon?'#fff':'var(--muted)'; });
+  };
+  iconWrap.appendChild(iconPreview);
+  iconWrap.appendChild(iconInput);
+  iconWrap.appendChild(autoBtn);
+  // Icon grid
+  var iconGrid = document.createElement('div');
+  iconGrid.style.cssText='display:flex;flex-wrap:wrap;gap:4px;margin-top:8px';
+  SOP_ICONS.forEach(function(icon){
+    var btn=document.createElement('button');
+    btn.type='button'; btn.className='icon-opt';
+    btn.setAttribute('data-icon', icon);
+    btn.style.cssText='width:32px;height:32px;background:var(--surface);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--muted)';
+    if(icon==='fa-file-alt'){ btn.style.background='var(--accent)'; btn.style.color='#fff'; }
+    btn.innerHTML='<i class="fas '+icon+'"></i>';
+    btn.onclick=function(){
+      iconInput.value=icon;
+      iconPreview.innerHTML='<i class="fas '+icon+'"></i>';
+      iconGrid.querySelectorAll('.icon-opt').forEach(function(b){ b.style.background='var(--surface)'; b.style.color='var(--muted)'; });
+      btn.style.background='var(--accent)'; btn.style.color='#fff';
+    };
+    iconGrid.appendChild(btn);
+  });
+  fIcon.appendChild(iconLbl); fIcon.appendChild(iconWrap); fIcon.appendChild(iconGrid);
+  box.appendChild(fIcon);
+  // Auto-pick icon when title is typed
+  setTimeout(function(){
+    var titleInp=document.getElementById('m-sop-title');
+    if(titleInp) titleInp.addEventListener('input',function(){
+      var icon=autoPickIcon(titleInp.value);
+      iconInput.value=icon;
+      iconPreview.innerHTML='<i class="fas '+icon+'"></i>';
+      iconGrid.querySelectorAll('.icon-opt').forEach(function(b){ b.style.background=b.getAttribute('data-icon')===icon?'var(--accent)':'var(--surface)'; b.style.color=b.getAttribute('data-icon')===icon?'#fff':'var(--muted)'; });
+    });
+  },100);
   // Steps
   var stepsHdr = document.createElement('div');
   stepsHdr.style.cssText='font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:14px 0 8px;display:flex;align-items:center;justify-content:space-between';
@@ -2077,14 +2170,12 @@ function _renderAddSOPModal() {
   addStepBtn.innerHTML='<i class="fas fa-plus" style="margin-right:5px"></i>Add Another Step';
   addStepBtn.onclick=function(){
     var title=document.getElementById('m-sop-title') ? document.getElementById('m-sop-title').value : '';
-    // save current step inputs
     document.querySelectorAll('#m-sop-steps-wrap .m-step-row').forEach(function(row,i){
       var t=row.querySelector('.m-step-title'); var b=row.querySelector('.m-step-body');
       _newSOPSteps[i]={title: t?t.value:'', body: b?b.value:''};
     });
     _newSOPSteps.push({title:'',body:''});
     _renderAddSOPModal();
-    // restore title/cat/desc
     if(title) document.getElementById('m-sop-title').value=title;
   };
   box.appendChild(addStepBtn);
@@ -2152,8 +2243,10 @@ function saveNewSOP() {
   var checklist = checklistRaw.split('\n').map(function(l){return l.trim();}).filter(Boolean);
   if (!checklist.length) checklist=['Review all steps before acting','Confirm production status','Document outcome in Shopify'];
   const key = 'custom_' + Date.now();
+  var chosenIcon = document.getElementById('m-sop-icon') ? document.getElementById('m-sop-icon').value : autoPickIcon(title);
   sopData[key] = {
     title, category: document.getElementById('m-sop-cat').value || 'Operations',
+    icon: chosenIcon,
     readTime: '3 min read', updated: 'Added ' + new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'}),
     desc: document.getElementById('m-sop-desc').value || '',
     steps: finalSteps,
@@ -2171,7 +2264,7 @@ function saveNewSOP() {
     item.className = 'sidebar-item';
     item.setAttribute('data-sop', key);
     var iEl = document.createElement('i');
-    iEl.className = 'fas fa-file-alt';
+    iEl.className = 'fas ' + (sopData[key].icon || autoPickIcon(title));
     iEl.style.cssText = 'font-size:14px;width:16px;text-align:center';
     var labelSpan = document.createElement('span');
     labelSpan.textContent = title;
@@ -2235,7 +2328,8 @@ function loadCustomSOPs() {
       var item = document.createElement('div');
       item.className = 'sidebar-item';
       item.setAttribute('data-sop', key);
-      var iEl = document.createElement('i'); iEl.className = 'fas fa-file-alt';
+      var iEl = document.createElement('i');
+      iEl.className = 'fas ' + (saved.icon || autoPickIcon(saved.title||''));
       iEl.style.cssText = 'font-size:14px;width:16px;text-align:center';
       var labelSpan = document.createElement('span');
       labelSpan.textContent = (saved.title||'Custom SOP');
