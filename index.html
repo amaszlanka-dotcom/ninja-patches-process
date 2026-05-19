@@ -1843,8 +1843,6 @@ function loginSuccess(role, name) {
   loadSavedSOPEdits();
   loadCustomSOPs();
   loadSavedSidebarLabels();
-  restoreSidebarOrder();
-  restoreCardGridOrder();
   // Restore sidebar section label
   var savedSopListLabel = autoLoad('sidebar_section_label_soplist');
   if (savedSopListLabel) {
@@ -1869,7 +1867,12 @@ function loginSuccess(role, name) {
     showPage('training');
   } else {
     showPage('home');
-    setTimeout(function(){ updateSOPCount(); }, 150);
+    // Delay restores so ALL sidebar items (including custom SOPs) are in DOM first
+    setTimeout(function(){
+      restoreSidebarOrder();
+      restoreCardGridOrder();
+      updateSOPCount();
+    }, 300);
   }
 }
 
