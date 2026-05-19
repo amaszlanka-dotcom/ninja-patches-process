@@ -3974,19 +3974,16 @@ function openReorderSOPsModal() {
 function saveSopReorder() {
   var items = window._sopReorderItems;
   var section = window._sopReorderSection;
-  console.log('saveSopReorder called, items:', items ? items.length : 'null');
   if (!items || !section) { showToast('Nothing to save.', 'warn'); return; }
+  // Re-insert in new order
   items.forEach(function(item) { section.appendChild(item); });
-  var order = items.map(function(item){ return item.getAttribute('data-sop') || ''; }).filter(Boolean);
-  console.log('Saving order:', order);
+  // Save ALL sidebar items (including any not in modal list)
+  var allItems = Array.from(section.querySelectorAll('.sidebar-item[data-sop]'));
+  var order = allItems.map(function(item){ return item.getAttribute('data-sop') || ''; }).filter(Boolean);
   try {
     localStorage.setItem('np_sidebar_order', JSON.stringify(order));
-    var check = localStorage.getItem('np_sidebar_order');
-    console.log('Verified saved:', check);
-    if (!check) throw new Error('write failed');
   } catch(e){
-    console.error('Save error:', e);
-    showToast('Could not save order — storage may be full.', 'warn');
+    showToast('Could not save order.', 'warn');
     return;
   }
   closeModal();
@@ -3996,20 +3993,18 @@ function saveSopReorder() {
 function restoreSidebarOrder() {
   try {
     var raw = localStorage.getItem('np_sidebar_order');
-    console.log('restoreSidebarOrder raw:', raw);
     if (!raw) return;
     var order = JSON.parse(raw);
-    console.log('restoring order:', order);
     if (!Array.isArray(order) || !order.length) return;
     var section = document.querySelector('.sidebar-section');
-    if (!section) { console.warn('No .sidebar-section found'); return; }
+    if (!section) return;
+    // Move items into saved order — any not in saved order stay at end
     order.forEach(function(key) {
       if (!key) return;
-      var item = section.querySelector('[data-sop="'+key+'"]');
-      console.log('key:', key, 'found:', !!item);
+      var item = section.querySelector('.sidebar-item[data-sop="'+key+'"]');
       if (item) section.appendChild(item);
     });
-  } catch(e){ console.warn('restoreSidebarOrder error:', e); }
+  } catch(e){}
 }
 
 /* ── Card grid reorder modal ── */
