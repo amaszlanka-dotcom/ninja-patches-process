@@ -128,7 +128,6 @@
   body.role-admin #sop-card-grid .card[draggable="true"]:active{cursor:grabbing}
   #sop-card-grid .card.card-drag-over{outline:2px dashed #4caf7d80;outline-offset:2px;background:#4caf7d08 !important}
   #sop-card-grid .card.card-dragging{opacity:.35;transform:scale(.97)}
-  body.role-admin #sop-card-grid::before{content:'Drag cards to reorder';display:block;grid-column:1/-1;font-size:10px;color:var(--muted);text-align:right;letter-spacing:.8px;text-transform:uppercase;margin-bottom:-6px;opacity:.6}
   body.role-admin .sidebar-item[draggable="true"]{cursor:grab}
   .sidebar-item.drag-over{border:1px dashed #4caf7d70 !important;background:#4caf7d10 !important}
   .sidebar-item.dragging{opacity:.4}
@@ -1870,7 +1869,7 @@ function loginSuccess(role, name) {
     showPage('training');
   } else {
     showPage('home');
-    updateSOPCount();
+    setTimeout(function(){ updateSOPCount(); }, 150);
   }
 }
 
@@ -2300,8 +2299,7 @@ function saveNewSOP() {
 
 function updateSOPCount() {
   var cnt = document.getElementById('sop-count-display');
-  if (!cnt) return;
-  // Count all sidebar items with data-sop attribute
+  if (!cnt) { setTimeout(updateSOPCount, 200); return; }
   var items = document.querySelectorAll('.sidebar-section [data-sop]');
   cnt.textContent = items.length;
 }
