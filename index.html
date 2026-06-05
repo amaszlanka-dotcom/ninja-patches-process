@@ -762,8 +762,8 @@
               <div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;background:#4caf7d20;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--accent);font-family:var(--font-head)">4</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600">Day 4</div></div>
               <span id="day4-status" style="font-size:10px;padding:3px 9px;border-radius:10px;font-weight:700;background:#4caf7d20;color:var(--accent)">Start</span>
             </div>
-            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px">Customer Communication</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.55">Approved scripts, objection handling, and managing difficult customer situations.</div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px">Proof Statuses — Waiting &amp; Sent</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.55">Waiting on Proof, Partial Proof, Stitch Out, and Proof Sent to Customer.</div>
           </div>
 
           <div class="training-day-card" id="training-day-5" onclick="showTrainingDay(5)" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:all .2s">
@@ -790,8 +790,8 @@
               <div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;background:#3b9eff20;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#3b9eff;font-family:var(--font-head)">6</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600">Day 6</div></div>
               <span style="font-size:10px;padding:3px 9px;border-radius:10px;font-weight:700;background:#3b9eff20;color:#3b9eff">Coming Soon</span>
             </div>
-            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px">Vendor Communication</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.55">Vendor reps, approved channels, tagging, and how to communicate delays or revisions.</div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px">Shipping &amp; Delivery Statuses</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.55">Vendor Shipped, Vendor Delivered, Shipped, and Partially Shipped.</div>
           </div>
 
           <div class="training-day-card" id="training-day-7" onclick="showTrainingDay(7)" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:all .2s">
@@ -799,8 +799,8 @@
               <div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;background:#3b9eff20;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#3b9eff;font-family:var(--font-head)">7</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600">Day 7</div></div>
               <span style="font-size:10px;padding:3px 9px;border-radius:10px;font-weight:700;background:#3b9eff20;color:#3b9eff">Coming Soon</span>
             </div>
-            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px">Proof Process Deep Dive</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.55">Proof submissions, customer approvals, rejections, revision cycles, and edge cases.</div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px">Salesforce Cases</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.55">Post-delivery emails, order updates, order issues, and case resolution templates.</div>
           </div>
 
           <div class="training-day-card" id="training-day-8" onclick="showTrainingDay(8)" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:all .2s">
@@ -2337,6 +2337,224 @@
       </div>
     </div>
 
+
+    <!-- DAY 4 LESSON PAGE -->
+    <div id="page-training-day4" class="page">
+      <div style="padding:18px 40px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--surface);position:sticky;top:64px;z-index:50">
+        <button onclick="showPage('training')" style="padding:7px 14px;background:var(--card);border:1px solid var(--border);border-radius:7px;font-size:12px;color:var(--soft);cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;gap:6px;flex-shrink:0"><i class="fas fa-arrow-left"></i> Back</button>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:700;margin-bottom:1px">Week 1 · Day 4</div>
+          <div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--text)">Proof Statuses — Waiting & Sent</div>
+        </div>
+      </div>
+      <div style="max-width:860px;margin:0 auto;padding:36px 40px">
+
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#3b9eff18;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#3b9eff;flex-shrink:0"><i class="fas fa-hourglass-half"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Waiting on Proof</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">The customer ordered a proof for their order. We are waiting for the vendor to send us the proof so we can get their approval before moving to production.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#3b9eff18;border:1px dashed #3b9eff30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#3b9eff18;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#3b9eff;flex-shrink:0"><i class="fas fa-layer-group"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Waiting on Partial Proof</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">The customer ordered proofs for multiple different patch types and we have received part of the proofs from the vendor. The partial proof was sent to the customer and we are waiting on the remainder.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#3b9eff18;border:1px dashed #3b9eff30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#7c5ce818;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--accent3);flex-shrink:0"><i class="fas fa-sewing-needle"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Waiting on Stitch Out</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">The vendor is performing a physical stitch out for the patch type the customer ordered. We do not advertise stitch out proofs, but if a customer requests one, we will send it out.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#7c5ce818;border:1px dashed var(--accent3)30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#4caf7d18;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--accent);flex-shrink:0"><i class="fas fa-paper-plane"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Proof Sent to Customer</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">We received the proof from the vendor and emailed it to the customer. We are waiting for their approval before proceeding.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#4caf7d18;border:1px dashed #4caf7d30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="margin-top:36px;padding-top:24px;border-top:1px solid var(--border);text-align:center">
+          <button onclick="showPage('training')" style="padding:12px 28px;background:var(--accent);border:none;border-radius:8px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:var(--font-body)">Back to Training ↗</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 5 LESSON PAGE -->
+    <div id="page-training-day5" class="page">
+      <div style="padding:18px 40px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--surface);position:sticky;top:64px;z-index:50">
+        <button onclick="showPage('training')" style="padding:7px 14px;background:var(--card);border:1px solid var(--border);border-radius:7px;font-size:12px;color:var(--soft);cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;gap:6px;flex-shrink:0"><i class="fas fa-arrow-left"></i> Back</button>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:700;margin-bottom:1px">Week 1 · Day 5</div>
+          <div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--text)">Proof Approval, Production & Customer Issues</div>
+        </div>
+      </div>
+      <div style="max-width:860px;margin:0 auto;padding:36px 40px">
+
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#4caf7d18;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--accent);flex-shrink:0"><i class="fas fa-check-circle"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Proof Approved</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">The customer has approved the proof. We can now send the order to the vendor for production.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#4caf7d18;border:1px dashed #4caf7d30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#4caf7d18;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--accent);flex-shrink:0"><i class="fas fa-industry"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">No Proof — Send to Production</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">No proof is needed for this order. We can send it directly to production and place the order through the vendor website.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#4caf7d18;border:1px dashed #4caf7d30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#f5a62318;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--orange,#f5a623);flex-shrink:0"><i class="fas fa-print"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Print Method Review</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">The vendor received the order we placed and sent it back stating they are unable to achieve the requested print method. An in-house rep (ShawnE) will review it and contact the customer.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#f5a62318;border:1px dashed var(--orange,#f5a623)30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#f5a62318;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--orange,#f5a623);flex-shrink:0"><i class="fas fa-question-circle"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Customer Action Needed</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">We need clarification about the order — this could be to understand exactly what the customer is looking for, a bad art file, wrong size, or other issues that require customer input before we can proceed.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#f5a62318;border:1px dashed var(--orange,#f5a623)30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="margin-top:36px;padding-top:24px;border-top:1px solid var(--border);text-align:center">
+          <button onclick="showPage('training')" style="padding:12px 28px;background:var(--accent);border:none;border-radius:8px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:var(--font-body)">Back to Training ↗</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 6 LESSON PAGE -->
+    <div id="page-training-day6" class="page">
+      <div style="padding:18px 40px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--surface);position:sticky;top:64px;z-index:50">
+        <button onclick="showPage('training')" style="padding:7px 14px;background:var(--card);border:1px solid var(--border);border-radius:7px;font-size:12px;color:var(--soft);cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;gap:6px;flex-shrink:0"><i class="fas fa-arrow-left"></i> Back</button>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:700;margin-bottom:1px">Week 1 · Day 6</div>
+          <div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--text)">Shipping & Delivery Statuses</div>
+        </div>
+      </div>
+      <div style="max-width:860px;margin:0 auto;padding:36px 40px">
+
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#3b9eff18;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#3b9eff;flex-shrink:0"><i class="fas fa-shipping-fast"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Vendor Shipped</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">The vendor has shipped the package — either directly to the customer (NinjaFast option) or to our Philadelphia facility where we will then ship it out to the customer ourselves.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#3b9eff18;border:1px dashed #3b9eff30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#3b9eff18;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#3b9eff;flex-shrink:0"><i class="fas fa-warehouse"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Vendor Delivered</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">We received the package from the vendor at our Philadelphia facility. The order is now at our location and will be prepared for shipment to the customer.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#3b9eff18;border:1px dashed #3b9eff30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#4caf7d18;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--accent);flex-shrink:0"><i class="fas fa-box"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Shipped</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">The order has been shipped from our Philadelphia facility to the customer. Tracking information should be provided to the customer at this stage.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#4caf7d18;border:1px dashed #4caf7d30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#f5a62318;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--orange,#f5a623);flex-shrink:0"><i class="fas fa-boxes"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Partially Shipped</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">The customer ordered multiple different products and we have shipped part of the order. The remaining items are still in process and will ship separately.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#f5a62318;border:1px dashed var(--orange,#f5a623)30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="margin-top:36px;padding-top:24px;border-top:1px solid var(--border);text-align:center">
+          <button onclick="showPage('training')" style="padding:12px 28px;background:var(--accent);border:none;border-radius:8px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:var(--font-body)">Back to Training ↗</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 7 LESSON PAGE -->
+    <div id="page-training-day7" class="page">
+      <div style="padding:18px 40px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--surface);position:sticky;top:64px;z-index:50">
+        <button onclick="showPage('training')" style="padding:7px 14px;background:var(--card);border:1px solid var(--border);border-radius:7px;font-size:12px;color:var(--soft);cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;gap:6px;flex-shrink:0"><i class="fas fa-arrow-left"></i> Back</button>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:700;margin-bottom:1px">Week 1 · Day 7</div>
+          <div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--text)">Salesforce Cases</div>
+        </div>
+      </div>
+      <div style="max-width:860px;margin:0 auto;padding:36px 40px">
+
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#3b9eff18;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#3b9eff;flex-shrink:0"><i class="fas fa-envelope"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Introduction to Salesforce Cases</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">Salesforce cases are primarily post-delivery emails covering order updates, order issues, and customer inquiries. This day covers how to handle and respond to each case type.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#3b9eff18;border:1px dashed #3b9eff30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#4caf7d18;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--accent);flex-shrink:0"><i class="fas fa-list"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Case Types & Templates</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">Content for case types, approved response templates, and escalation rules will be added here.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#4caf7d18;border:1px dashed #4caf7d30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="display:flex;align-items:center;gap:10px;margin:32px 0 16px">
+          <div style="width:36px;height:36px;background:#f5a62318;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--orange,#f5a623);flex-shrink:0"><i class="fas fa-exclamation-circle"></i></div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)">Common Issues & Resolutions</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.6">Common post-delivery issues and how to resolve them will be added here.</div>
+        
+            <div style="margin-bottom:20px;padding:14px 16px;background:#f5a62318;border:1px dashed var(--orange,#f5a623)30;border-radius:10px;font-size:13px;color:var(--muted);text-align:center;line-height:1.65">
+              <i class="fas fa-pen" style="margin-right:6px;opacity:.5"></i> Content for this section will be added by admin.
+            </div>
+        
+        <div style="margin-top:36px;padding-top:24px;border-top:1px solid var(--border);text-align:center">
+          <button onclick="showPage('training')" style="padding:12px 28px;background:var(--accent);border:none;border-radius:8px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:var(--font-body)">Back to Training ↗</button>
+        </div>
+      </div>
+    </div>
     <!-- SCENARIO PLAYER -->
     <div id="page-scenario" class="page">
       <div class="player-wrap">
@@ -5091,6 +5309,14 @@ function showTrainingDay(day) {
     setTimeout(initDay2Quiz, 100);
   } else if (day === 3) {
     showPage('training-day3');
+  } else if (day === 4) {
+    showPage('training-day4');
+  } else if (day === 5) {
+    showPage('training-day5');
+  } else if (day === 6) {
+    showPage('training-day6');
+  } else if (day === 7) {
+    showPage('training-day7');
   } else {
     showPage('training');
     showToast('Day ' + day + ' content coming soon!', 'info');
