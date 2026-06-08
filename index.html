@@ -6364,6 +6364,12 @@ function bqRenderGate(d, idx) {
     return;
   }
 
+  // ── Interactive practice steps (Duolingo-style: scenario, matching, sales, email) ──
+  if (st && st.practice) {
+    ipRenderGate(d, idx, st, container, gateWrap);
+    return;
+  }
+
   // Ack-only sections (no quiz)
   if (st && st.ack && !(st.questions && st.questions.length)) {
     var bd = bqGetBreakdown(d, idx);
@@ -6558,12 +6564,366 @@ function bqRetry(d, idx) {
   container.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   INTERACTIVE PRACTICE ENGINE  (Duolingo-style lesson types)
+   Step types: 'scenario' | 'matching' | 'sales' | 'email'
+   Renders inside the existing day-step gate, hooks into tdSaveProg so
+   the step must be completed to advance — same gating as quizzes.
+═══════════════════════════════════════════════════════════════════ */
+var _ipState = {};
+function ipState(d, idx){ var k=d+'_'+idx; if(!_ipState[k]) _ipState[k]={}; return _ipState[k]; }
+
+function ipDone(d, idx){
+  var p = tdProg(d); p['step'+idx] = 'done'; tdSaveProg(d, p);
+  setTimeout(function(){ tdGate(d, idx); tdNav(d); tdButtons(d); tdBar(d); }, 700);
+}
+
+function ipRenderGate(d, idx, st, container, gateWrap){
+  // Replace the lock heading with a practice heading
+  var head = gateWrap.querySelector('div');
+  if (head && head.querySelector && head.querySelector('.fa-lock')) {
+    var icons = {scenario:'fa-comments', matching:'fa-shuffle', sales:'fa-comment-dollar', email:'fa-pen-to-square'};
+    var labels = {scenario:'Customer Scenario — choose the best response', matching:'Matching — pair each customer to the right answer', sales:'Sales Drill — pick the strongest response', email:'Write the Reply — compose your customer email'};
+    head.innerHTML = '<i class="fas '+(icons[st.practice]||'fa-bolt')+'" style="font-size:13px;color:var(--accent3)"></i><div style="font-size:14px;font-weight:700;color:var(--text)">'+(labels[st.practice]||'Practice')+'</div>';
+    head.style.display='flex'; head.style.alignItems='center'; head.style.gap='8px'; head.style.marginBottom='14px';
+  }
+  if (st.practice === 'scenario') ipScenario(d, idx, st, container);
+  else if (st.practice === 'matching') ipMatching(d, idx, st, container);
+  else if (st.practice === 'sales') ipSales(d, idx, st, container);
+  else if (st.practice === 'email') ipEmail(d, idx, st, container);
+}
+
+/* ── SCENARIO ── */
+function ipScenario(d, idx, st, container){
+  var sc = st.scenario;
+  var stt = ipState(d, idx); stt.picked = null; stt.revealed = false;
+  function render(){
+    var h = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px">';
+    h += '<div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">';
+    h += '<div style="width:34px;height:34px;border-radius:50%;background:#3b9eff20;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#3b9eff;flex-shrink:0">'+sc.avatar+'</div>';
+    h += '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">'+sc.from+'</div><div style="font-size:12px;color:var(--muted)">'+sc.subject+'</div></div>';
+    h += '<div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">'+(sc.tags||[]).map(function(t){return '<span style="font-size:10px;padding:2px 7px;background:var(--card);border-radius:10px;color:var(--muted)">'+t+'</span>';}).join('')+'</div>';
+    h += '</div>';
+    h += '<div style="padding:15px 16px;font-size:14px;color:var(--soft);line-height:1.7;white-space:pre-wrap">'+sc.body+'</div>';
+    if (sc.context) h += '<div style="padding:10px 16px;border-top:1px solid var(--border);background:var(--card);font-size:12px;color:var(--orange,#f5a623)"><i class="fas fa-clipboard-list" style="margin-right:6px"></i>'+sc.context+'</div>';
+    h += '</div>';
+    h += '<div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">How do you respond?</div>';
+    h += '<div style="display:flex;flex-direction:column;gap:9px" id="ipsc-opts-'+d+'-'+idx+'"></div>';
+    h += '<div id="ipsc-foot-'+d+'-'+idx+'" style="margin-top:14px"></div>';
+    container.innerHTML = h;
+    renderOpts();
+  }
+  function renderOpts(){
+    var box = document.getElementById('ipsc-opts-'+d+'-'+idx);
+    box.innerHTML = '';
+    sc.options.forEach(function(opt, i){
+      var isPicked = stt.picked === i;
+      var isCorrect = stt.revealed && opt.correct;
+      var isWrong = stt.revealed && isPicked && !opt.correct;
+      var bg = isCorrect ? '#4caf7d10' : isWrong ? '#ff475710' : isPicked ? '#7c5ce810' : 'var(--card)';
+      var bc = isCorrect ? '#4caf7d50' : isWrong ? '#ff475750' : isPicked ? '#7c5ce855' : 'var(--border)';
+      var letter = isCorrect ? '&#x2713;' : isWrong ? '&#x2717;' : String.fromCharCode(65+i);
+      var lc = isCorrect ? 'var(--accent)' : isWrong ? '#ff4757' : isPicked ? 'var(--accent3)' : 'var(--muted)';
+      var div = document.createElement('div');
+      div.style.cssText = 'padding:13px 15px;background:'+bg+';border:1px solid '+bc+';border-radius:10px;cursor:'+(stt.revealed?'default':'pointer')+';transition:all .15s';
+      var fb = (stt.revealed && (isPicked || isCorrect)) ? '<div style="margin-top:9px;font-size:12px;color:var(--soft);line-height:1.6;padding-top:9px;border-top:1px solid var(--border)"><strong style="color:'+(isCorrect?'var(--accent)':'#ff4757')+'">'+(isCorrect?'Best choice.':'Not the best choice.')+'</strong> '+opt.feedback+'</div>' : '';
+      div.innerHTML = '<div style="display:flex;align-items:flex-start;gap:10px"><div style="width:22px;height:22px;border-radius:50%;background:var(--surface);border:1px solid '+bc+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:'+lc+';flex-shrink:0;margin-top:1px">'+letter+'</div><div style="flex:1"><div style="font-size:13px;color:var(--soft);line-height:1.5">'+opt.label+'</div>'+fb+'</div></div>';
+      if (!stt.revealed) div.onclick = function(){ stt.picked = i; renderOpts(); renderFoot(); };
+      box.appendChild(div);
+    });
+  }
+  function renderFoot(){
+    var foot = document.getElementById('ipsc-foot-'+d+'-'+idx);
+    if (stt.revealed){
+      foot.innerHTML = '<button onclick="ipDone('+d+','+idx+')" style="width:100%;padding:13px;background:var(--accent);border:none;border-radius:9px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:var(--font-body)">Continue <i class="fas fa-arrow-right" style="margin-left:6px"></i></button>';
+    } else {
+      foot.innerHTML = '<button id="ipsc-sub-'+d+'-'+idx+'" style="width:100%;padding:13px;background:'+(stt.picked!==null?'var(--orange,#f5a623)':'var(--border)')+';border:none;border-radius:9px;font-size:14px;font-weight:700;color:'+(stt.picked!==null?'#fff':'var(--muted)')+';cursor:'+(stt.picked!==null?'pointer':'default')+';font-family:var(--font-body)">Submit Response</button>';
+      var b = document.getElementById('ipsc-sub-'+d+'-'+idx);
+      if (stt.picked!==null) b.onclick = function(){ stt.revealed = true; renderOpts(); renderFoot();
+        tdLog(d,{section:st.title,question:'Scenario: '+sc.subject,yourAnswer:sc.options[stt.picked].label,correctAnswer:(sc.options.filter(function(o){return o.correct;})[0]||{}).label,correct:!!sc.options[stt.picked].correct,ts:Date.now()});
+      };
+    }
+  }
+  render(); renderFoot();
+}
+
+/* ── MATCHING ── */
+function ipMatching(d, idx, st, container){
+  var pairs = st.pairs;
+  var stt = ipState(d, idx);
+  if (!stt.matched) stt.matched = {};
+  if (!stt.products) stt.products = ipShuffle([...new Set(pairs.map(function(p){return p.product;}))]);
+  stt.sel = null;
+  function render(){
+    var allDone = Object.keys(stt.matched).length === pairs.length;
+    var h = '<div style="font-size:13px;color:var(--muted);margin-bottom:14px">Click a customer situation, then click the answer that fits. Match all '+pairs.length+' to continue.</div>';
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">';
+    h += '<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px">Customer Situation</div><div id="ipm-left-'+d+'-'+idx+'" style="display:flex;flex-direction:column;gap:6px"></div></div>';
+    h += '<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px">Answer</div><div id="ipm-right-'+d+'-'+idx+'" style="display:flex;flex-direction:column;gap:6px"></div></div>';
+    h += '</div>';
+    h += '<div id="ipm-foot-'+d+'-'+idx+'" style="margin-top:16px"></div>';
+    container.innerHTML = h;
+    renderCols();
+  }
+  function renderCols(){
+    var L = document.getElementById('ipm-left-'+d+'-'+idx), R = document.getElementById('ipm-right-'+d+'-'+idx);
+    L.innerHTML=''; R.innerHTML='';
+    pairs.forEach(function(p,i){
+      var done = stt.matched[i] !== undefined; var sel = stt.sel === i;
+      var div = document.createElement('div');
+      div.style.cssText = 'padding:11px 13px;border-radius:9px;font-size:12px;line-height:1.5;transition:all .15s;border:1px solid '+(done?'#4caf7d40':sel?'#3b9eff60':'var(--border)')+';background:'+(done?'#4caf7d10':sel?'#3b9eff10':'var(--card)')+';color:'+(done?'var(--accent)':'var(--soft)')+';cursor:'+(done?'default':'pointer');
+      div.innerHTML = done ? '<i class="fas fa-check" style="margin-right:6px"></i>'+p.customer : p.customer;
+      if (!done) div.onclick = function(){ stt.sel = sel?null:i; renderCols(); };
+      L.appendChild(div);
+    });
+    stt.products.forEach(function(prod){
+      var used = Object.values(stt.matched).indexOf(prod) !== -1;
+      var div = document.createElement('div');
+      div.style.cssText = 'padding:11px 13px;border-radius:9px;font-size:12px;font-weight:600;text-align:center;transition:all .15s;border:1px solid '+(used?'#4caf7d40':'var(--border)')+';background:'+(used?'#4caf7d10':'var(--surface)')+';color:'+(used?'var(--accent)':'var(--text)')+';cursor:'+(used||stt.sel===null?'default':'pointer')+';opacity:'+(used?'0.5':'1');
+      div.textContent = prod;
+      if (!used) div.onclick = function(){
+        if (stt.sel === null) return;
+        if (pairs[stt.sel].product === prod){ stt.matched[stt.sel] = prod; stt.sel = null; renderCols(); checkDone(); }
+        else { div.style.borderColor='#ff475760'; div.style.background='#ff475710'; setTimeout(function(){ renderCols(); }, 500); }
+      };
+      R.appendChild(div);
+    });
+  }
+  function checkDone(){
+    if (Object.keys(stt.matched).length === pairs.length){
+      var foot = document.getElementById('ipm-foot-'+d+'-'+idx);
+      tdLog(d,{section:st.title,question:'Matching exercise',yourAnswer:'all matched',correctAnswer:'all matched',correct:true,ts:Date.now()});
+      foot.innerHTML = '<div style="padding:13px;background:#4caf7d10;border:1px solid #4caf7d30;border-radius:10px;text-align:center;margin-bottom:12px;font-size:15px;font-weight:800;color:var(--accent)"><i class="fas fa-bullseye" style="margin-right:7px"></i>All matched!</div><button onclick="ipDone('+d+','+idx+')" style="width:100%;padding:13px;background:var(--accent);border:none;border-radius:9px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:var(--font-body)">Continue <i class="fas fa-arrow-right" style="margin-left:6px"></i></button>';
+    }
+  }
+  render();
+}
+function ipShuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+
+/* ── SALES DRILL ── */
+function ipSales(d, idx, st, container){
+  var rounds = st.rounds;
+  var stt = ipState(d, idx); stt.r = 0; stt.picked = null;
+  function render(){
+    var cur = rounds[stt.r];
+    var h = '<div style="font-size:12px;color:var(--muted);margin-bottom:14px">Scenario '+(stt.r+1)+' of '+rounds.length+' — pick the strongest response.</div>';
+    h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--orange,#f5a623);margin-bottom:8px">Customer says:</div><div style="font-size:15px;font-weight:600;color:var(--text);line-height:1.5">'+cur.customer+'</div></div>';
+    h += '<div style="display:flex;flex-direction:column;gap:9px" id="ips-opts-'+d+'-'+idx+'"></div>';
+    h += '<div id="ips-foot-'+d+'-'+idx+'" style="margin-top:14px"></div>';
+    container.innerHTML = h; renderOpts();
+  }
+  function renderOpts(){
+    var cur = rounds[stt.r];
+    var box = document.getElementById('ips-opts-'+d+'-'+idx); box.innerHTML='';
+    var qcol = {strong:'var(--accent)', average:'var(--orange,#f5a623)', weak:'#ff4757'};
+    var qbg = {strong:'#4caf7d10', average:'#f5a62310', weak:'#ff475710'};
+    cur.responses.forEach(function(r,i){
+      var sel = stt.picked && stt.picked.text === r.text;
+      var div = document.createElement('div');
+      div.style.cssText = 'padding:13px 15px;border-radius:10px;transition:all .15s;border:1px solid '+(sel?qcol[r.quality]+'55':'var(--border)')+';background:'+(sel?qbg[r.quality]:'var(--card)')+';cursor:'+(stt.picked?'default':'pointer');
+      var fb = (stt.picked && sel) ? '<div style="margin-top:9px;font-size:12px;color:var(--soft);line-height:1.6;padding-top:9px;border-top:1px solid var(--border)"><strong style="color:'+qcol[r.quality]+'">'+(r.quality==='strong'?'Strong response.':r.quality==='average'?'Decent, but not ideal.':'Weak response.')+'</strong> '+r.why+'</div>' : '';
+      var hint = (stt.picked && !sel && r.quality==='strong') ? '<div style="margin-top:7px;font-size:12px;color:var(--accent);line-height:1.5"><i class="fas fa-arrow-left" style="margin-right:5px"></i>This was the strongest response.</div>' : '';
+      div.innerHTML = '<div style="font-size:13px;color:'+(sel?qcol[r.quality]:'var(--soft)')+';line-height:1.5">'+r.text+'</div>'+fb+hint;
+      if (!stt.picked) div.onclick = function(){
+        stt.picked = r; renderOpts();
+        tdLog(d,{section:st.title,question:'Sales: '+cur.customer,yourAnswer:r.text,correctAnswer:(cur.responses.filter(function(x){return x.quality==='strong';})[0]||{}).text,correct:r.quality==='strong',ts:Date.now()});
+        renderFoot();
+      };
+      box.appendChild(div);
+    });
+  }
+  function renderFoot(){
+    var foot = document.getElementById('ips-foot-'+d+'-'+idx);
+    if (!stt.picked){ foot.innerHTML=''; return; }
+    var last = stt.r >= rounds.length-1;
+    foot.innerHTML = '<button id="ips-next-'+d+'-'+idx+'" style="width:100%;padding:13px;background:var(--accent3);border:none;border-radius:9px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:var(--font-body)">'+(last?'Finish Drill':'Next Scenario')+' <i class="fas fa-arrow-right" style="margin-left:6px"></i></button>';
+    document.getElementById('ips-next-'+d+'-'+idx).onclick = function(){
+      if (last) ipDone(d, idx);
+      else { stt.r++; stt.picked=null; render(); }
+    };
+  }
+  render();
+}
+
+/* ── EMAIL REPLY ── */
+function ipEmail(d, idx, st, container){
+  var em = st.email;
+  var stt = ipState(d, idx); stt.submitted = false; stt.showSample = false;
+  function render(){
+    var h = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px">';
+    h += '<div style="padding:11px 16px;border-bottom:1px solid var(--border);background:var(--card)"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Incoming Email</div><div style="font-size:12px;color:var(--soft)">From: '+em.from+'</div><div style="font-size:12px;color:var(--soft)">Subject: '+em.subject+'</div></div>';
+    h += '<div style="padding:15px 16px;font-size:14px;color:var(--soft);line-height:1.7;white-space:pre-wrap">'+em.body+'</div></div>';
+    h += '<div style="background:#3b9eff0d;border:1px solid #3b9eff28;border-radius:10px;padding:12px 15px;margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:#3b9eff;text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px">Key points to cover</div><ul style="margin:0;padding:0 0 0 16px">'+em.keyPoints.map(function(p){return '<li style="font-size:12px;color:var(--soft);line-height:1.6;margin-bottom:2px">'+p+'</li>';}).join('')+'</ul></div>';
+    h += '<div id="ipe-body-'+d+'-'+idx+'"></div>';
+    container.innerHTML = h; renderBody();
+  }
+  function renderBody(){
+    var box = document.getElementById('ipe-body-'+d+'-'+idx);
+    if (!stt.submitted){
+      box.innerHTML = '<textarea id="ipe-ta-'+d+'-'+idx+'" placeholder="Write your email reply here..." style="width:100%;min-height:180px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:13px 15px;color:var(--text);font-size:13px;line-height:1.6;font-family:var(--font-body);resize:vertical;outline:none;box-sizing:border-box"></textarea>'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px"><div id="ipe-count-'+d+'-'+idx+'" style="font-size:12px;color:var(--muted)">0 chars</div><button id="ipe-sub-'+d+'-'+idx+'" style="padding:11px 24px;background:var(--border);border:none;border-radius:8px;font-size:13px;font-weight:700;color:var(--muted);cursor:default;font-family:var(--font-body)">Submit Reply</button></div>';
+      var ta = document.getElementById('ipe-ta-'+d+'-'+idx);
+      var cnt = document.getElementById('ipe-count-'+d+'-'+idx);
+      var sub = document.getElementById('ipe-sub-'+d+'-'+idx);
+      ta.oninput = function(){
+        var n = ta.value.trim().length; cnt.textContent = n+' chars'+(n<50?' (write at least 50)':'');
+        cnt.style.color = n<50?'#ff4757':'var(--muted)';
+        sub.style.background = n>=50?'var(--accent)':'var(--border)'; sub.style.color = n>=50?'#fff':'var(--muted)'; sub.style.cursor = n>=50?'pointer':'default';
+      };
+      sub.onclick = function(){ if (ta.value.trim().length<50) return; stt.text = ta.value; stt.submitted = true;
+        tdLog(d,{section:st.title,question:'Email reply: '+em.subject,yourAnswer:stt.text.slice(0,200),correctAnswer:'(sample provided)',correct:true,ts:Date.now()}); renderBody(); };
+    } else {
+      var h = '<div style="background:#4caf7d10;border:1px solid #4caf7d30;border-radius:10px;padding:13px 15px;margin-bottom:14px"><div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:5px"><i class="fas fa-check-circle" style="margin-right:6px"></i>Reply submitted!</div><div style="font-size:12px;color:var(--soft)">Compare your response to the sample below.</div></div>';
+      h += '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px;margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Your response</div><div style="font-size:13px;color:var(--soft);line-height:1.6;white-space:pre-wrap">'+stt.text+'</div></div>';
+      if (!stt.showSample){
+        h += '<button id="ipe-show-'+d+'-'+idx+'" style="width:100%;padding:11px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;color:var(--soft);cursor:pointer;font-family:var(--font-body);margin-bottom:14px"><i class="fas fa-eye" style="margin-right:6px"></i>Show Sample Response</button>';
+      } else {
+        h += '<div style="background:var(--surface);border:1px solid #4caf7d30;border-radius:10px;padding:15px;margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Sample response</div><div style="font-size:13px;color:var(--soft);line-height:1.6;white-space:pre-wrap">'+em.sample+'</div></div>';
+      }
+      h += '<button onclick="ipDone('+d+','+idx+')" style="width:100%;padding:13px;background:var(--accent);border:none;border-radius:9px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:var(--font-body)">Continue <i class="fas fa-arrow-right" style="margin-left:6px"></i></button>';
+      box.innerHTML = h;
+      if (!stt.showSample) document.getElementById('ipe-show-'+d+'-'+idx).onclick = function(){ stt.showSample = true; renderBody(); };
+    }
+  }
+  render();
+}
+
+/* ── PRACTICE STEP DATA (injected into each day) ── */
+var IP_PRACTICE = {
+  1: [
+    { practice:'scenario', title:'Scenario — First Customer Call',
+      scenario:{ from:'Maria Santos', avatar:'MS', subject:'Question about my order', tags:['New customer','Proof question'],
+        body:"Hi! I just placed my first order for embroidered patches. I didn't add a proof because I trusted the designer — but now I'm nervous. Can I still cancel and redo it with a proof?",
+        context:"Order in Shopify shows status: Unreviewed. Total: $187. No proof selected at checkout.",
+        options:[
+          {label:"Yes — cancel and reorder with a proof.", correct:false, feedback:"Canceling is premature. The order is Unreviewed, so it can still be modified without a full cancel/reorder."},
+          {label:"Good news — the order is still Unreviewed, so we can add a proof for $19.99 since it's under $300. I'll walk you through it.", correct:true, feedback:"Unreviewed orders can be modified. Offer the $19.99 proof, reassure her, and turn anxiety into confidence."},
+          {label:"Your order is already in production — nothing can be changed.", correct:false, feedback:"False and damaging. The order is Unreviewed, not in production. Never give wrong info in a panic."},
+          {label:"Proofs aren't really necessary — most orders turn out fine.", correct:false, feedback:"Never dismiss a customer's concern. She wants a proof — address that need."}
+        ] } },
+    { practice:'matching', title:'Match the Customer to the Patch Type',
+      pairs:[
+        {customer:"Military unit needs morale patches that survive rain and rough use", product:"PVC Rubber"},
+        {customer:"High school wants the soft, fuzzy varsity-jacket look", product:"Chenille"},
+        {customer:"Brewery logo is a photo with gradients and fine color detail", product:"Full Color Printed"},
+        {customer:"Corporate client wants a premium, upscale feel on denim jackets", product:"Genuine Leather"},
+        {customer:"Logo has ultra-fine text that must stay crisp", product:"Woven"}
+      ] },
+    { practice:'sales', title:'Sales Drill — Handling Objections',
+      rounds:[
+        { customer:"\"These seem expensive. A competitor quoted me way less.\"",
+          responses:[
+            {text:"\"I understand — let me match their price right now.\"", quality:"weak", why:"Never match blindly before understanding the full comparison — you may undersell."},
+            {text:"\"Our price includes no setup fees, no art fees, and free shipping. Many competitors add $50–$150 in hidden fees. Can I help you compare the all-in total?\"", quality:"strong", why:"Value selling — reframe the total cost picture instead of defending the sticker price."},
+            {text:"\"Cheaper options usually mean lower quality.\"", quality:"average", why:"Defensive and a little arrogant. Better to demonstrate your value than attack competitors."}
+          ] },
+        { customer:"\"Why does it take 9–12 days? I need them faster.\"",
+          responses:[
+            {text:"\"Sorry, that's just how long it takes.\"", quality:"weak", why:"Offers no solution and gives up."},
+            {text:"\"We have NinjaFast! For eligible patch types we can produce in about 5 business days — let me check if yours qualifies.\"", quality:"strong", why:"Identifies the problem and offers a real solution while setting correct expectations."},
+            {text:"\"I'll rush it for you.\"", quality:"weak", why:"Never promise a rush unless NinjaFast is actually added."}
+          ] }
+      ] }
+  ],
+  2: [
+    { practice:'email', title:'Write the Reply — Proof Color Fix',
+      email:{ from:'Sandra M. <sandra.m@eventsco.com>', subject:'Re: My order PATCH-291055',
+        body:"I got your email that my proof is ready — it looks great! But the background color is slightly off. It should be Navy Blue (Pantone 289C) but it looks more like Royal Blue. Can this be fixed before production? And how long will that take?",
+        keyPoints:["Yes — the color can be corrected before production","Production does NOT start until they approve the corrected proof","A revised proof typically takes 1–2 business days","Be warm, specific, and reassuring"],
+        sample:"Hi Sandra,\n\nThank you for catching that — great eye on the color! We absolutely want to get this right before production starts.\n\nI'll request a corrected proof from our vendor right away with the correct Navy Blue (Pantone 289C). You can expect the updated proof within 1–2 business days.\n\nJust a reminder: production doesn't begin until you give final approval, so there's no risk of the wrong color going through.\n\nI'll follow up the moment the corrected proof is ready!\n\nBest,\n[Your Name]\nNinja Patches Customer Service" } },
+    { practice:'scenario', title:'Scenario — Urgent File Change',
+      scenario:{ from:'Kevin T.', avatar:'KT', subject:'URGENT — need to change my order', tags:['Urgent','File change'],
+        body:"I placed an order this morning for 50 embroidered patches and selected NO proof. I just realized I sent the WRONG design file. Can you swap it? My boss will kill me if this goes wrong.",
+        context:"Order PATCH-299471. Status: Unreviewed. No proof selected. Placed 2 hours ago.",
+        options:[
+          {label:"Cancel the order and have them reorder.", correct:false, feedback:"Unnecessary. The order is Unreviewed — you can update the file directly."},
+          {label:"The order is in production — nothing can change.", correct:false, feedback:"False. Unreviewed ≠ production. This error destroys trust."},
+          {label:"Great news — the order is still Unreviewed, so we can replace the artwork. Send me the corrected file and I'll update it before assigning the vendor.", correct:true, feedback:"Correct. Reassure, get the right file, update it, then proceed. Unreviewed means full flexibility."},
+          {label:"I can swap it, but you'll need to buy a proof now.", correct:false, feedback:"Don't add unnecessary cost or conditions. Just update the file — a proof is the customer's choice."}
+        ] } }
+  ],
+  3: [
+    { practice:'scenario', title:'Scenario — Repeat Customer Vendor',
+      scenario:{ from:'Tasha B.', avatar:'TB', subject:'Reorder — same as last time', tags:['Repeat customer','Vendor'],
+        body:"Hi! We loved our patches last time. We want to reorder the exact same design — please make sure they look identical to the first batch.",
+        context:"Order history shows a previous order produced by a specific vendor. Their usual vendor is currently at capacity.",
+        options:[
+          {label:"Assign whichever vendor is available now to keep it moving.", correct:false, feedback:"Silently switching vendors risks color and stitch mismatches on a reorder — exactly what the customer fears."},
+          {label:"Escalate — repeat customers need vendor consistency. Confirm options before reassigning so the reorder matches.", correct:true, feedback:"Right. Vendor consistency protects the match. When the original vendor is unavailable, escalate rather than silently switching."},
+          {label:"Tell the customer we can't guarantee a match.", correct:false, feedback:"Premature and unhelpful — escalate to find the right path first."},
+          {label:"Cancel and ask them to reorder later.", correct:false, feedback:"Never cancel a willing repeat customer. Solve the vendor question internally."}
+        ] } }
+  ],
+  4: [
+    { practice:'scenario', title:'Scenario — "I Approved It Yesterday!"',
+      scenario:{ from:'Marcus L.', avatar:'ML', subject:'Why hasn\'t my order moved?', tags:['Proof approval'],
+        body:"I emailed my approval YESTERDAY and nothing has happened. Why is my order just sitting there?",
+        context:"Order status: Proof Sent to Customer. You have not yet checked your inbox for their reply.",
+        options:[
+          {label:"Tell them approvals take 24–48 hours to process.", correct:false, feedback:"Don't invent a delay. Check for their reply first."},
+          {label:"Check your inbox/order notes for their approval reply — if found, confirm it and move the order to Proof Approved, then send to production.", correct:true, feedback:"Correct. Their approval may already be sitting in the inbox. Find it, confirm, update status, send to production."},
+          {label:"Resend the proof and ask them to approve again.", correct:false, feedback:"Frustrating for a customer who already approved. Check first."},
+          {label:"Escalate to a supervisor immediately.", correct:false, feedback:"Premature — this is a simple inbox check, not an escalation."}
+        ] } }
+  ],
+  5: [
+    { practice:'scenario', title:'Scenario — Print Method Problem',
+      scenario:{ from:'(Vendor) BrightStitch', avatar:'BS', subject:'Cannot achieve requested method', tags:['Print Method'],
+        body:"We received this order but cannot achieve the requested print method on this material. How do you want to proceed?",
+        context:"Order needs the print-method decision. ShawnE handles all Print Method Review cases.",
+        options:[
+          {label:"Pick a different method yourself and tell the vendor to proceed.", correct:false, feedback:"CSRs don't make print-method calls. This goes to ShawnE."},
+          {label:"Set status to Print Method Review and route it to ShawnE, who reviews and contacts the customer.", correct:true, feedback:"Correct. Print Method Review = ShawnE's lane. Document and route — don't decide alone."},
+          {label:"Cancel and refund the order.", correct:false, feedback:"Way too drastic. There's a defined process — use it."},
+          {label:"Tell the customer it's impossible.", correct:false, feedback:"You don't know that yet — ShawnE reviews alternatives first."}
+        ] } }
+  ],
+  6: [
+    { practice:'scenario', title:'Scenario — "Where Is My Order?"',
+      scenario:{ from:'Dana P.', avatar:'DP', subject:'Where is my order??', tags:['Shipping','Status'],
+        body:"It's been over a week. Where are my patches?? I need an update NOW.",
+        context:"Order status: Vendor Delivered (standard, non-NinjaFast order).",
+        options:[
+          {label:"\"It's lost in transit, I'm sorry.\"", correct:false, feedback:"False and alarming. Vendor Delivered means it's safely at our facility."},
+          {label:"\"Good news — it arrived at our Philadelphia facility and is being prepared to ship out to you. You'll get tracking once it leaves.\"", correct:true, feedback:"Correct. Vendor Delivered = at our facility, prepping the outbound shipment. Reassure with accurate status."},
+          {label:"\"The vendor still has it.\"", correct:false, feedback:"Incorrect — Vendor Delivered means WE received it from the vendor."},
+          {label:"\"It already shipped to you.\"", correct:false, feedback:"Not yet — that's the next status (Shipped). Be accurate."}
+        ] } }
+  ],
+  7: [
+    { practice:'email', title:'Write the Reply — Post-Delivery Issue',
+      email:{ from:'Priya N. <priya@craftcollective.com>', subject:'Patches arrived but one is wrong',
+        body:"My order arrived today — thank you! But one of the three designs has the wrong border color. The other two are perfect. What can we do?",
+        keyPoints:["Acknowledge and apologize for the one incorrect design","Ask for a clear photo of the incorrect patch to document the case","Open a Salesforce case and explain next steps","Reassure — the two correct designs are fine; we'll make the third right","Warm, accountable, specific"],
+        sample:"Hi Priya,\n\nThank you for letting us know, and I'm sorry one of the three designs came through with the wrong border color — that's on us to make right.\n\nCould you reply with a clear photo of the incorrect patch? That lets me document everything and get a resolution moving quickly. I'm opening a case for your order now so it's tracked end to end.\n\nThe two correct designs are good to go — we'll focus on correcting the third. I'll follow up shortly with the next steps.\n\nThank you for your patience,\n[Your Name]\nNinja Patches Customer Service" } }
+  ]
+};
+
+var STEP_CONFIG = {
 /* ═══════════════════════════════════════
    GENERIC TRAINING STEP ENGINE (all days)
 ═══════════════════════════════════════ */
 var STEP_CONFIG = {"2": [{"title": "Day 1 Review \u2014 Patch Types", "ack": true}, {"title": "Understanding Orders in Shopify", "questions": [{"q": "Every Ninja Patches order number starts with which prefix?", "options": ["NP-", "PATCH-", "ORD-", "NINJA-"], "correct": 1}, {"q": "Which of these CANNOT be changed once an order is placed?", "options": ["Shipping address", "Billing address", "Design notes", "Backing option"], "correct": 1}, {"q": "SCENARIO: A customer uploaded their tax-exemption form AFTER placing the order and wants the tax refunded. What do you tell them?", "options": ["\"Refund processed!\"", "\"We cannot refund tax if the form was uploaded after the order was placed.\"", "\"Wait 24 hours and it refunds automatically.\"", "\"Call the IRS.\""], "correct": 1}]}, {"title": "SOPs \u2014 Unreviewed Orders & Vendors", "questions": [{"q": "COLUMN REVIEW: The Vendor column in Periscope is blank on a new order. What do you do?", "options": ["Skip the order", "Check the Vendor Chart for Patch Types to pick the right vendor", "Assign it to World by default", "Email the customer"], "correct": 1}, {"q": "COLUMN REVIEW: Which Periscope column tells you how long an order has been sitting unassigned?", "options": ["Tags", "Shopify Link", "Time in Status", "Vendor"], "correct": 2}, {"q": "COLUMN REVIEW: Which tags might you see in the Tags column that change how you handle the order?", "options": ["NinjaFast, NEEDS PROOF, Repeat Customer", "Paid, Unpaid, Refunded", "Red, Yellow, Green", "None \u2014 tags are decorative"], "correct": 0}, {"q": "What is the LAST step after fully assigning an order to a vendor?", "options": ["Update the W3OS status", "Add your name to the Shopify tags", "Notify the vendor rep", "Open Periscope"], "correct": 1}, {"q": "An order is 30 pieces with no proof requested. What status does it get after assignment?", "options": ["No Proof, Sent to Prod", "Waiting on Proof", "Proof Approved", "Unreviewed"], "correct": 1}, {"q": "Why do we add our name to the Shopify tags as the LAST step instead of the first?", "options": ["It signals the order is fully handled \u2014 vendor assigned, notified, status updated \u2014 so no one double-processes it", "It's alphabetical tradition", "For payroll tracking", "No particular reason"], "correct": 0}]}, {"title": "Days 1 & 2 Knowledge Check", "final": "q2"}], "3": [{"title": "Days 1 & 2 Refresher", "questions": [{"q": "What is the standard shipping window?", "options": ["3-5 business days", "9-12 business days", "15-20 business days", "30 days"], "correct": 1}, {"q": "SCENARIO: A customer calls asking to cancel an order that is \"Sent to Production.\" What do you say?", "options": ["\"Canceled!\"", "\"Once in production, orders cannot be canceled or edited.\"", "\"Only if you pay a fee.\"", "\"Let me ask the vendor.\""], "correct": 1}]}, {"title": "Practice \u2014 Vendor Assignment", "questions": [{"q": "A repeat customer places a new order. Which vendor should handle it?", "options": ["Any preferred vendor", "The cheapest vendor", "The same vendor as their previous order", "World, always"], "correct": 2}, {"q": "SCENARIO: A NinjaFast embroidered order comes in. Before assigning, what must you confirm with the vendor?", "options": ["Their holiday schedule", "That they can produce and ship within 5 business days", "The customer's birthday", "Nothing \u2014 just assign it"], "correct": 1}]}, {"title": "Proof Review Cycle SOP", "questions": [{"q": "When does production begin?", "options": ["As soon as the order is placed", "Only after the proof is approved", "After 48 hours automatically", "When the vendor decides"], "correct": 1}, {"q": "How long is the standard proof turnaround?", "options": ["Same day", "2-3 business days", "1-2 weeks", "30 days"], "correct": 1}]}, {"title": "Day 3 Final Assessment", "final": "gate", "questions": [{"q": "An order needs a vendor. The customer ordered from us twice before. Steps in order?", "options": ["Assign any vendor \u2192 add name", "Check order history \u2192 use the same vendor as before \u2192 tag, notify, update status \u2192 add your name last", "Add your name \u2192 pick vendor \u2192 done", "Email customer to pick a vendor"], "correct": 1}, {"q": "Under 25 pcs WITH a proof \u2014 what W3OS status after assignment?", "options": ["No Proof, Sent to Prod", "Waiting on Proof", "Proof Approved", "Vendor Shipped"], "correct": 1}, {"q": "The vendor hasn't responded to a status request in 26 hours. What do you do?", "options": ["Wait another week", "Send one follow-up using the same template and log it", "Escalate to legal immediately", "Cancel the order"], "correct": 1}, {"q": "FINAL: What is the correct FIRST action when working an order in the Unreviewed queue?", "options": ["Open and review the Shopify order details, then check the Vendor, Time in Status, and Tags columns", "Add your name to the tags immediately", "Assign World to everything by default", "Email the customer to introduce yourself"], "correct": 0}]}], "4": [{"title": "Waiting on Proof", "questions": [{"q": "In \"Waiting on Proof\", what exactly are we waiting for?", "options": ["Customer to upload art", "The vendor to send us the proof", "Payment to clear", "Shipping label"], "correct": 1}]}, {"title": "Waiting on Partial Proof", "questions": [{"q": "\"Waiting on Partial Proof\" means:", "options": ["The proof file is corrupted", "Customer ordered multiple patch types \u2014 we received and sent part of the proofs, the rest are pending", "The vendor lost the order", "Half the payment was received"], "correct": 1}]}, {"title": "Waiting on Stitch Out", "questions": [{"q": "Do we advertise stitch out proofs?", "options": ["Yes, on every product page", "No \u2014 but we will provide one if the customer requests it", "Only for orders over $500", "Stitch outs do not exist"], "correct": 1}]}, {"title": "Proof Sent to Customer", "questions": [{"q": "After the proof is sent to the customer, what happens next?", "options": ["Order goes straight to production", "We wait for the customer's approval", "The order is canceled", "The vendor ships the patches"], "correct": 1}]}, {"title": "Practice Scenarios", "final": "gate", "questions": [{"q": "SCENARIO: A customer ordered Embroidered + PVC proofs. The embroidered proof arrived and was emailed; PVC is still pending from the vendor. What status?", "options": ["Waiting on Proof", "Waiting on Partial Proof", "Proof Approved", "Customer Action Needed"], "correct": 1}, {"q": "SCENARIO: A customer asks for a physical stitched sample before production. What do you do?", "options": ["Tell them we never do that", "Request a stitch out from the vendor \u2014 status becomes Waiting on Stitch Out", "Cancel the order", "Send them a digital proof again"], "correct": 1}, {"q": "SCENARIO: \"I emailed you my approval yesterday, why hasn't anything happened?\" The order shows Proof Sent to Customer. First move?", "options": ["Tell them to wait", "Check for their approval reply, confirm it, then move the order to Proof Approved", "Resend the proof", "Refund the order"], "correct": 1}, {"q": "What is the difference between \"Waiting on Proof\" and \"Waiting on Partial Proof\"?", "options": ["Partial Proof = a multi-patch-type order where SOME proofs were received and sent to the customer, the rest still pending", "They mean the same thing", "Partial means the proof file was corrupted", "Partial means half the payment was received"], "correct": 0}]}], "5": [{"title": "Proof Approved", "questions": [{"q": "The customer approved their proof. What is the next action?", "options": ["Close the order", "Send the order to the vendor for production", "Request another proof", "Refund the proof fee"], "correct": 1}]}, {"title": "No Proof \u2014 Send to Production", "questions": [{"q": "For \"No Proof \u2014 Send to Prod\" orders, how is the order placed?", "options": ["Through the vendor website", "By phone only", "Via Salesforce", "It places itself automatically"], "correct": 0}]}, {"title": "Print Method Review", "questions": [{"q": "The vendor says they cannot achieve the requested print method. Who reviews it?", "options": ["The customer decides alone", "An in-house rep (ShawnE) reviews and contacts the customer", "The vendor picks a new method", "Any CSR closes the order"], "correct": 1}]}, {"title": "Customer Action Needed", "questions": [{"q": "Which of these would put an order in \"Customer Action Needed\"?", "options": ["A bad art file or wrong size needing clarification", "The vendor shipped early", "The customer paid twice", "The proof was approved"], "correct": 0}]}, {"title": "Practice Scenarios", "final": "gate", "questions": [{"q": "SCENARIO: Vendor returns an order saying the requested print method can't be achieved. Status + action?", "options": ["Sent to Production \u2014 do nothing", "Print Method Review \u2014 ShawnE reviews and contacts the customer", "Shipped \u2014 notify warehouse", "Waiting on Stitch Out"], "correct": 1}, {"q": "SCENARIO: An uploaded art file is too low-resolution to proceed. What status?", "options": ["Proof Approved", "Vendor Shipped", "Customer Action Needed", "Partially Shipped"], "correct": 2}, {"q": "SCENARIO: Customer emails \"Approved!\" on their proof at 9am. By noon, what should have happened?", "options": ["Nothing yet", "Approval logged and the order sent to the vendor for production", "A refund issued", "A new proof requested"], "correct": 1}, {"q": "SCENARIO: A customer's order has been in Customer Action Needed for 3 days with no reply. What do you do?", "options": ["Follow up with the customer (email/call) reminding them what we need, and log the follow-up on the order", "Cancel the order silently", "Send it to production anyway", "Issue a refund immediately"], "correct": 0}]}], "6": [{"title": "Vendor Shipped", "questions": [{"q": "On a NinjaFast order, where does the vendor ship the package?", "options": ["To our Philadelphia facility", "Directly to the customer", "To a third-party warehouse", "Back to the factory"], "correct": 1}]}, {"title": "Vendor Delivered", "questions": [{"q": "\"Vendor Delivered\" means:", "options": ["Customer received the order", "We received the package from the vendor at our Philadelphia facility", "The vendor confirmed the proof", "The order was refunded"], "correct": 1}]}, {"title": "Shipped", "questions": [{"q": "\"Shipped\" means the order:", "options": ["Left the vendor's factory", "Was shipped from our Philadelphia facility to the customer", "Is waiting on proof", "Was canceled"], "correct": 1}]}, {"title": "Partially Shipped", "questions": [{"q": "\"Partially Shipped\" applies when:", "options": ["The box was damaged", "The customer ordered multiple products and we shipped part of the order", "Shipping was upgraded", "The vendor split the invoice"], "correct": 1}]}, {"title": "Practice Scenarios", "final": "gate", "questions": [{"q": "SCENARIO: A standard (non-NinjaFast) order just left the vendor. Where is it headed?", "options": ["Directly to the customer", "Our Philadelphia facility", "The nearest USPS office", "Back to production"], "correct": 1}, {"q": "SCENARIO: A customer ordered 3 different products; 2 have shipped from Philadelphia. What status?", "options": ["Shipped", "Vendor Delivered", "Partially Shipped", "Vendor Shipped"], "correct": 2}, {"q": "SCENARIO: \"Where's my order?\" \u2014 status shows Vendor Delivered. What do you tell the customer?", "options": ["\"It's lost.\"", "\"It arrived at our Philadelphia facility and is being prepared to ship to you.\"", "\"The vendor has it.\"", "\"It was returned.\""], "correct": 1}, {"q": "Trace the journey of a STANDARD (non-NinjaFast) order from the vendor to the customer:", "options": ["Vendor Shipped \u2192 arrives at Philadelphia (Vendor Delivered) \u2192 we ship it out (Shipped) \u2192 customer receives it", "Vendor mails directly to the customer always", "Philadelphia \u2192 vendor \u2192 customer", "The customer picks it up from the vendor"], "correct": 0}]}], "7": [{"title": "Introduction to Salesforce Cases", "ack": true}, {"title": "Case Types & Templates", "ack": true}, {"title": "Common Issues & Resolutions", "ack": true, "final": "gate"}]};
 STEP_CONFIG[1] = { steps: DAY1_SECTIONS.map(function(s){ return {title:s.title, questions:s.questions}; }).concat([{title:'Knowledge Check', final:'q1'}]) };
 [2,3,4,5,6,7].forEach(function(d){ STEP_CONFIG[d] = { steps: STEP_CONFIG[d] }; });
+
+/* Splice the interactive practice steps into each day, just before the final
+   assessment step (the last step with a `final` flag, or the last step). */
+(function(){
+  for (var d = 1; d <= 7; d++) {
+    var cfg = STEP_CONFIG[d];
+    if (!cfg || !cfg.steps) continue;
+    var practice = IP_PRACTICE[d];
+    if (!practice || !practice.length) continue;
+    var steps = cfg.steps;
+    // find insertion index: before the first step flagged `final`, else at end
+    var insertAt = steps.length;
+    for (var i = 0; i < steps.length; i++) { if (steps[i].final) { insertAt = i; break; } }
+    var args = [insertAt, 0].concat(practice);
+    Array.prototype.splice.apply(steps, args);
+  }
+})();
+
 
 var tdCur = {};
 function tdProg(d){ try{ return JSON.parse(localStorage.getItem('np_day'+d+'_steps')||'{}'); }catch(e){ return {}; } }
@@ -6573,13 +6933,48 @@ function tdGetLog(d){ try{ return JSON.parse(localStorage.getItem('np_day'+d+'_a
 
 function tdInit(d){
   var cfgd = STEP_CONFIG[d]; if(!cfgd) return;
+  ipEnsureSteps(d);
   var p = tdProg(d), n = cfgd.steps.length, cur = 0;
   for (var i = 0; i < n; i++) { if (p['step'+i] === 'done') cur = Math.min(i+1, n-1); else break; }
   tdShow(d, cur);
 }
 
+/* Build DOM for interactive practice steps so they slot into the existing
+   .dayN-step position order. Practice steps were spliced into STEP_CONFIG
+   before the final step; we insert matching divs in the same DOM order. */
+function ipEnsureSteps(d){
+  var cfgd = STEP_CONFIG[d]; if (!cfgd) return;
+  if (document.querySelector('.ip-step-d'+d)) return; // already built
+  var existing = document.querySelectorAll('.day'+d+'-step');
+  if (!existing.length) return;
+  var parent = existing[0].parentNode;
+  cfgd.steps.forEach(function(st, idx){
+    if (!st.practice) return;
+    if (document.getElementById('day'+d+'-step-'+idx)) return; // safety
+    var div = document.createElement('div');
+    div.className = 'day'+d+'-step ip-step-d'+d;
+    div.id = 'day'+d+'-step-'+idx;
+    div.style.display = 'none';
+    var icons = {scenario:'fa-comments', matching:'fa-shuffle', sales:'fa-comment-dollar', email:'fa-pen-to-square'};
+    div.innerHTML =
+      '<div style="display:flex;align-items:center;gap:10px;margin:8px 0 20px">'
+      + '<div style="width:36px;height:36px;background:#7c5ce818;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--accent3);flex-shrink:0"><i class="fas '+(icons[st.practice]||'fa-bolt')+'"></i></div>'
+      + '<div style="font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--text)">'+st.title+'</div></div>'
+      + '<div style="background:#7c5ce80d;border:1px solid #7c5ce828;border-radius:12px;padding:16px 18px;margin-bottom:16px;font-size:13px;color:var(--soft);line-height:1.7">'
+      + '<i class="fas fa-bolt" style="color:var(--accent3);margin-right:7px"></i>This is a hands-on practice exercise. Work through it below — you must complete it to continue.</div>'
+      + '<div id="day'+d+'-gate-'+idx+'" style="margin-top:8px">'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><i class="fas fa-lock" style="font-size:13px;color:var(--accent3)"></i><div style="font-size:14px;font-weight:700;color:var(--text)">Complete this exercise to continue</div></div>'
+      + '<div id="day'+d+'-gate-questions-'+idx+'"></div></div>';
+    // Insert at correct DOM position: before the current child at this index
+    var siblings = parent.querySelectorAll('.day'+d+'-step');
+    if (idx < siblings.length) parent.insertBefore(div, siblings[idx]);
+    else parent.appendChild(div);
+  });
+}
+
 function tdShow(d, idx){
   tdCur[d] = idx;
+  ipEnsureSteps(d);
   var cfgd = STEP_CONFIG[d];
   document.querySelectorAll('.day'+d+'-step').forEach(function(s, i){ s.style.display = i === idx ? 'block' : 'none'; });
   tdNav(d); tdGate(d, idx); tdButtons(d); tdBar(d);
