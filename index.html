@@ -7125,6 +7125,10 @@ function tdShow(d, idx){
   tdCur[d] = idx;
   ipEnsureSteps(d);
   var cfgd = STEP_CONFIG[d];
+  // Ensure list is hidden and step chrome is visible
+  var list = document.getElementById('day'+d+'-list'); if (list) list.style.display = 'none';
+  var nav = document.getElementById('day'+d+'-step-nav'); if (nav) nav.style.display = 'flex';
+  var navBtns = document.getElementById('day'+d+'-nav-btns'); if (navBtns) navBtns.style.display = 'flex';
   document.querySelectorAll('.day'+d+'-step').forEach(function(s, i){ s.style.display = i === idx ? 'block' : 'none'; });
   tdNav(d); tdGate(d, idx); tdButtons(d); tdBar(d);
   // Restore pressing video watch state when on day 1 step 1
